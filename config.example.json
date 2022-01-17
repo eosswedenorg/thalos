@@ -1,0 +1,13 @@
+{
+    "api": "http://127.0.0.1:8080",
+    "ship_api": "127.0.0.1:8089",
+    "irreversible_only": false,
+    "max_messages_in_flight": 10,
+    "start_block_num": 4294967295,
+    "end_block_num": 4294967295,
+    "redis": {
+        "addr": "localhost:6379",
+        "password": "",
+        "db": 0
+    }
+}
