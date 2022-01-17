@@ -2,11 +2,13 @@
 package main
 
 import (
+    "fmt"
     "os"
     "os/signal"
     "context"
     "log"
     "time"
+    "github.com/pborman/getopt/v2"
     eos "github.com/eoscanada/eos-go"
     shipclient "github.com/eosswedenorg-go/eos-ship-client"
 )
@@ -79,8 +81,24 @@ func main() {
 
     var err error
 
+    showHelp := getopt.BoolLong("help", 'h', "display this help text")
+    showVersion := getopt.BoolLong("version", 'v', "display this help text")
+    configFile := getopt.StringLong("config", 'c', "./config.json", "Config file to read", "file")
+
+    getopt.Parse()
+
+    if *showHelp {
+        getopt.Usage()
+        return
+    }
+
+    if *showVersion {
+        fmt.Println("v0.0.0")
+        return
+    }
+
     // Parse config
-    config, err = LoadConfig("config.json")
+    config, err = LoadConfig(*configFile)
     if err != nil {
         log.Println(err)
         return
