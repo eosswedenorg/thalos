@@ -9,6 +9,7 @@ import (
     "log"
     "time"
     "github.com/pborman/getopt/v2"
+    "github.com/eosswedenorg-go/pid"
     eos "github.com/eoscanada/eos-go"
     shipclient "github.com/eosswedenorg-go/eos-ship-client"
 )
@@ -84,6 +85,7 @@ func main() {
     showHelp := getopt.BoolLong("help", 'h', "display this help text")
     showVersion := getopt.BoolLong("version", 'v', "display this help text")
     configFile := getopt.StringLong("config", 'c', "./config.json", "Config file to read", "file")
+    pidFile := getopt.StringLong("pid", 'p', "", "Where to write process id", "file")
 
     getopt.Parse()
 
@@ -95,6 +97,16 @@ func main() {
     if *showVersion {
         fmt.Println("v0.0.0")
         return
+    }
+
+    // Write PID file
+    if len(*pidFile) > 0 {
+        log.Printf("Writing pid to: %s", *pidFile)
+        err = pid.Save(*pidFile)
+        if err != nil {
+            log.Println(err)
+            return
+        }
     }
 
     // Parse config
