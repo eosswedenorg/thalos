@@ -119,6 +119,9 @@ func main() {
     // Connect to redis
     RedisConnect(config.Redis.Addr, config.Redis.Password, config.Redis.DB)
 
+    // Init Abi cache
+    InitAbiCache(config.Redis.CacheID)
+
     // Connect client and get chain info.
     eosClient = eos.New(config.Api)
     chainInfo, err = eosClient.GetInfo(eosClientCtx)
