@@ -42,7 +42,7 @@ func processTraces(traces []*ship.TransactionTraceV0) {
 
             payload, err := json.Marshal(act)
             if err != nil {
-                log.Println("Failed to encode action:")
+                log.Println("Failed to encode action:", err)
                 continue
             }
 
