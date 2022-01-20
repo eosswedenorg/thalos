@@ -17,8 +17,18 @@ func processBlock(block *ship.GetBlocksResultV0) {
 func processTraces(traces []*ship.TransactionTraceV0) {
 
     for _, trace := range traces {
-        //log.Println("Trace ID:", trace.ID)
 
+        payload, err := json.Marshal(trace)
+        if err == nil {
+            channel := RedisKey("transactions")
+            if err := RedisPublish(channel, payload).Err(); err != nil {
+                log.Printf("Failed to post to channel '%s': %s", channel, err)
+            }
+        } else {
+            log.Println("Failed to encode transaction:", err)
+        }
+
+        // Actions
         for _, actionTraceVar := range trace.ActionTraces {
             trace := actionTraceVar.Impl.(*ship.ActionTraceV0)
 
