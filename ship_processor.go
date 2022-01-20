@@ -53,10 +53,15 @@ func processTraces(traces []*ship.TransactionTraceV0) {
             }
 
             for _, channel := range channels {
-                if err := RedisPublish(channel, payload).Err(); err != nil {
+                if err := RedisRegisterPublish(channel, payload).Err(); err != nil {
                     log.Printf("Failed to post to channel '%s': %s", channel, err)
                 }
             }
         }
+    }
+
+    _, err := RedisSend()
+    if err != nil {
+        log.Println("Failed to send redis command:", err)
     }
 }
