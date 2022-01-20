@@ -5,35 +5,39 @@ import (
     "time"
     "encoding/json"
     eos "github.com/eoscanada/eos-go"
-    "github.com/go-redis/redis/v8"
+    redis_cache "github.com/go-redis/cache/v8"
+    "internal/abi_cache"
 )
+
+var abiCache *abi_cache.Cache
+
+func InitAbiCache(id string) {
+    // Init abi cache
+    abiCache = abi_cache.New("ship.cache." + id + ".abi", &redis_cache.Options{
+        Redis: rdb,
+         // Cache 10k keys for 10 minutes.
+        LocalCache: redis_cache.NewTinyLFU(10000, 10 * time.Minute),
+    })
+}
 
 func GetAbi(account eos.AccountName) (*eos.ABI, error) {
 
-    key := RedisKey("abi", string(account))
+    key := string(account)
 
-    data, err := RedisGet(key).Result()
-    if err == redis.Nil {
-        val, err := eosClient.GetABI(eosClientCtx, account)
-        if err != nil {
-            return nil, err
-        }
-
-        b, err := json.Marshal(val.ABI)
-        data = string(b)
-
-        err = RedisSet(key, data, time.Hour).Err()
-        if err != nil {
-            return nil, err
-        }
-    }
-
-    abi := eos.ABI{}
-    err = json.Unmarshal([]byte(data), &abi)
+    abi, err := abiCache.Get(key)
     if err != nil {
-        return nil, err
+        resp, err := eosClient.GetABI(eosClientCtx, account)
+        if err != nil {
+            return nil, err
+        }
+        abi = &resp.ABI
+
+        err = abiCache.Set(key, abi, time.Hour)
+        if err != nil {
+            return nil, err
+        }
     }
-    return &abi, nil
+    return abi, nil
 }
 
 func DecodeAction(abi *eos.ABI, data []byte, actionName eos.ActionName) (interface{}, error) {
