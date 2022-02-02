@@ -62,6 +62,11 @@ func run() {
         case <-interrupt:
             log.Println("Interrupt, closing")
 
+            if shClient.IsOpen() == false {
+                log.Println("ship client not connected, exiting...")
+                return
+            }
+
             // Cleanly close the connection by sending a close message and then
             // waiting (with timeout) for the server to close the connection.
             shClient.SendCloseMessage()
