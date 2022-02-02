@@ -14,12 +14,14 @@ var redisCtx = context.Background()
 
 var redisPrefix = "ship."
 
-func RedisConnect(addr string, password string, db int) {
+func RedisConnect(addr string, password string, db int) error {
     rdb = redis.NewClient(&redis.Options{
         Addr:     addr,
         Password: password,
         DB:       db,
     })
+
+    return rdb.Ping(redisCtx).Err()
 }
 
 func RedisKey(components ...string) (string) {
