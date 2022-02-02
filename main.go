@@ -120,6 +120,7 @@ func main() {
     RedisConnect(config.Redis.Addr, config.Redis.Password, config.Redis.DB)
 
     // Connect client and get chain info.
+    log.Printf("Get chain info from api at: %s", config.Api)
     eosClient = eos.New(config.Api)
     chainInfo, err = eosClient.GetInfo(eosClientCtx)
     if err != nil {
