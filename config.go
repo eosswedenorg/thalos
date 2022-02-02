@@ -12,6 +12,7 @@ type RedisConfig struct {
     Addr string `json:"addr"`
     Password string `json:"password"`
     DB int `json:db`
+    CacheID string `json:"cache_id"`
 }
 
 type Config struct {

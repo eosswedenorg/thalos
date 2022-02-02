@@ -7,6 +7,7 @@ require (
 	github.com/eoscanada/eos-go v0.10.2
 	github.com/eosswedenorg-go/eos-ship-client v0.0.0-20220202131720-5e908c506be2
 	github.com/eosswedenorg-go/pid v1.0.1
+	github.com/go-redis/cache/v8 v8.4.3
 	github.com/go-redis/redis/v8 v8.11.4
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/pborman/getopt/v2 v2.1.0
@@ -20,4 +21,7 @@ require (
 	golang.org/x/sys v0.0.0-20220128215802-99c3d69c2c27 // indirect
 	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211 // indirect
 	golang.org/x/tools v0.1.9 // indirect
+	internal/abi_cache v0.0.0
 )
+
+replace internal/abi_cache => ./internal/abi_cache

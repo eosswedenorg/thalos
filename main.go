@@ -162,6 +162,9 @@ func main() {
         return
     }
 
+    // Init Abi cache
+    InitAbiCache(config.Redis.CacheID)
+
     // Connect client and get chain info.
     log.Printf("Get chain info from api at: %s", config.Api)
     eosClient = eos.New(config.Api)

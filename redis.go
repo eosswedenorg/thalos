@@ -10,6 +10,8 @@ import (
 
 var rdb *redis.Client
 
+var redis_pipe redis.Pipeliner
+
 var redisCtx = context.Background()
 
 var redisPrefix = "ship."
@@ -20,6 +22,8 @@ func RedisConnect(addr string, password string, db int) error {
         Password: password,
         DB:       db,
     })
+
+    redis_pipe = rdb.Pipeline()
 
     return rdb.Ping(redisCtx).Err()
 }
@@ -38,4 +42,12 @@ func RedisSet(key string, value interface{}, expiration time.Duration) (*redis.S
 
 func RedisPublish(channel string, message interface{}) (*redis.IntCmd) {
     return rdb.Publish(redisCtx, channel, message)
+}
+
+func RedisRegisterPublish(channel string, message interface{}) (*redis.IntCmd) {
+    return redis_pipe.Publish(redisCtx, channel, message)
+}
+
+func RedisSend() ([]redis.Cmder, error) {
+    return redis_pipe.Exec(redisCtx)
 }
