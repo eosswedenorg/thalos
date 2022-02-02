@@ -5,7 +5,7 @@ PIDFILE="$(pwd)/eosio-ship-trace-reader.pid"
 if [ -f "$PIDFILE" ]; then
     pid=$(cat "$PIDFILE")
     echo $pid
-    kill $pid
+    kill -s INT $pid
     rm -r "$PIDFILE"
     echo -ne "Stopping process"
     while true; do
