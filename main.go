@@ -27,6 +27,52 @@ var shClient *shipclient.ShipClient
 var eosClient *eos.API
 var eosClientCtx = context.Background()
 
+
+// Reader states
+const RS_CONNECT = 1
+const RS_READ = 2
+
+func readerLoop() {
+
+    state := RS_CONNECT
+
+    for {
+        switch state {
+        case RS_CONNECT :
+            log.Printf("Connecting to ship at: %s", config.ShipApi)
+            err := shClient.Connect(config.ShipApi)
+            if err != nil {
+                log.Println(err)
+                log.Printf("Trying again in 5 seconds ....")
+                time.Sleep(5 * time.Second)
+                break;
+            }
+
+            err = shClient.SendBlocksRequest()
+            if err != nil {
+                log.Println(err)
+                break
+            }
+
+            // Connected
+            log.Printf("Connected, Start: %d, End: %d", shClient.StartBlock, shClient.EndBlock)
+            state = RS_READ
+        case RS_READ :
+            err := shClient.Read()
+            if err != nil {
+                log.Print(err.Error())
+
+                // Reconnect
+                if err.Type == shipclient.ErrSockRead {
+                    state = RS_CONNECT
+                }
+            }
+        }
+    }
+
+    shClient.Close()
+}
+
 func run() {
 
     // Create done and interrupt channels.
@@ -38,19 +84,7 @@ func run() {
 
     // Spawn message read loop in another thread.
     go func() {
-        for {
-            err := shClient.Read()
-            if err != nil {
-                log.Print(err.Error())
-
-                // Bail out on socket read error.
-                if err.Type == shipclient.ErrSockRead {
-                    break
-                }
-            }
-        }
-
-        shClient.Close()
+        readerLoop()
 
         // Reader exited. signal that we are done.
         done <- true
@@ -148,20 +182,6 @@ func main() {
     shClient = shipclient.NewClient(config.StartBlockNum, config.EndBlockNum, config.IrreversibleOnly)
     shClient.BlockHandler = processBlock
     shClient.TraceHandler = processTraces
-
-    err = shClient.Connect(config.ShipApi)
-    if err != nil {
-        log.Println(err)
-        return
-    }
-
-    err = shClient.SendBlocksRequest()
-    if err != nil {
-        log.Println(err)
-        return
-    }
-
-    log.Printf("Start: %d, End: %d", shClient.StartBlock, shClient.EndBlock)
 
     // Run the application
     run()
