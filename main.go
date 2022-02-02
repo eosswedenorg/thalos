@@ -156,7 +156,11 @@ func main() {
     }
 
     // Connect to redis
-    RedisConnect(config.Redis.Addr, config.Redis.Password, config.Redis.DB)
+    err = RedisConnect(config.Redis.Addr, config.Redis.Password, config.Redis.DB)
+    if err != nil {
+        log.Println("Failed to connect to redis:", err)
+        return
+    }
 
     // Connect client and get chain info.
     log.Printf("Get chain info from api at: %s", config.Api)
