@@ -3,6 +3,8 @@ package main
 
 import (
     "time"
+    "errors"
+    "fmt"
     "encoding/json"
     eos "github.com/eoscanada/eos-go"
     redis_cache "github.com/go-redis/cache/v8"
@@ -28,13 +30,13 @@ func GetAbi(account eos.AccountName) (*eos.ABI, error) {
     if err != nil {
         resp, err := eosClient.GetABI(eosClientCtx, account)
         if err != nil {
-            return nil, err
+            return nil, errors.New(fmt.Sprintf("api: %s", err))
         }
         abi = &resp.ABI
 
         err = abiCache.Set(key, abi, time.Hour)
         if err != nil {
-            return nil, err
+            return nil, errors.New(fmt.Sprintf("cache: %s", err))
         }
     }
     return abi, nil
