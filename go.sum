@@ -129,11 +129,8 @@ github.com/envoyproxy/go-control-plane v0.9.9-0.20201210154907-fd9021fe5dad/go.m
 github.com/envoyproxy/go-control-plane v0.9.9-0.20210217033140-668b12f5399d/go.mod h1:cXg6YxExXjJnVBQHBLXeUAgxn2UodCpnH306RInaBQk=
 github.com/envoyproxy/go-control-plane v0.9.9-0.20210512163311-63b5d3c536b0/go.mod h1:hliV/p42l8fGbc6Y9bQ70uLwIvmJyVE5k4iMKlh8wCQ=
 github.com/envoyproxy/protoc-gen-validate v0.1.0/go.mod h1:iSmxcyjqTsJpI2R4NaDN7+kN2VEUnK/pcBlmesArF7c=
-github.com/eoscanada/eos-go v0.10.1-0.20220112183548-39fba816311f/go.mod h1:dKlu/HXNPI4I5yD7cITTwzfYLNfVaaFt9Y4VngtnhrY=
 github.com/eoscanada/eos-go v0.10.2 h1:Akd5K803VezcEqTxg8Oy4bfq+uxS2+RZ/7/Eow4O4tg=
 github.com/eoscanada/eos-go v0.10.2/go.mod h1:dKlu/HXNPI4I5yD7cITTwzfYLNfVaaFt9Y4VngtnhrY=
-github.com/eosswedenorg-go/eos-ship-client v0.0.0-20220202131720-5e908c506be2 h1:jS4x6R9KZanGvpgxW0d5U6/DDUqx2CpbND+IiyRx/Q8=
-github.com/eosswedenorg-go/eos-ship-client v0.0.0-20220202131720-5e908c506be2/go.mod h1:CeLc0kNIEsJOdiafqrJQynbXfsRauvC2B6sRnR+PaOU=
 github.com/eosswedenorg-go/eos-ship-client v0.1.0 h1:jYhFD8KJh12YZjU6Itgee8y2oKr1xB5PWrQLItvCzVw=
 github.com/eosswedenorg-go/eos-ship-client v0.1.0/go.mod h1:b6TlyvM7ynnZuzggLIdOIAS2iTYTnppkiCbe9IvS2Lg=
 github.com/eosswedenorg-go/pid v1.0.1 h1:W4AEnnNwb041SpNR1uTZ/KbJ0OTA5eqiqIR1Q5Ah6A0=
