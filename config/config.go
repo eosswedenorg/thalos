@@ -1,5 +1,5 @@
 
-package main
+package config
 
 import (
     "io/ioutil"
@@ -27,7 +27,7 @@ type Config struct {
     EndBlockNum uint32 `json:"end_block_num"`
 }
 
-func LoadConfig(filename string) (Config, error) {
+func Load(filename string) (Config, error) {
 
     cfg := Config{
         StartBlockNum: NULL_BLOCK_NUMBER,

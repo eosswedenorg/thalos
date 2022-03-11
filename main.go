@@ -10,6 +10,7 @@ import (
     "time"
     "github.com/pborman/getopt/v2"
     "github.com/eosswedenorg-go/pid"
+    "eosio-ship-trace-reader/config"
     eos "github.com/eoscanada/eos-go"
     shipclient "github.com/eosswedenorg-go/eos-ship-client"
 )
@@ -18,7 +19,7 @@ import (
 //  Global variables
 // ---------------------------
 
-var config Config
+var conf config.Config
 
 var chainInfo *eos.InfoResp
 
@@ -39,8 +40,8 @@ func readerLoop() {
     for {
         switch state {
         case RS_CONNECT :
-            log.Printf("Connecting to ship at: %s", config.ShipApi)
-            err := shClient.Connect(config.ShipApi)
+            log.Printf("Connecting to ship at: %s", conf.ShipApi)
+            err := shClient.Connect(conf.ShipApi)
             if err != nil {
                 log.Println(err)
                 log.Printf("Trying again in 5 seconds ....")
@@ -149,25 +150,25 @@ func main() {
     }
 
     // Parse config
-    config, err = LoadConfig(*configFile)
+    conf, err = config.Load(*configFile)
     if err != nil {
         log.Println(err)
         return
     }
 
     // Connect to redis
-    err = RedisConnect(config.Redis.Addr, config.Redis.Password, config.Redis.DB)
+    err = RedisConnect(conf.Redis.Addr, conf.Redis.Password, conf.Redis.DB)
     if err != nil {
         log.Println("Failed to connect to redis:", err)
         return
     }
 
     // Init Abi cache
-    InitAbiCache(config.Redis.CacheID)
+    InitAbiCache(conf.Redis.CacheID)
 
     // Connect client and get chain info.
-    log.Printf("Get chain info from api at: %s", config.Api)
-    eosClient = eos.New(config.Api)
+    log.Printf("Get chain info from api at: %s", conf.Api)
+    eosClient = eos.New(conf.Api)
     chainInfo, err = eosClient.GetInfo(eosClientCtx)
     if err != nil {
         log.Println("Failed to get info:", err)
@@ -176,17 +177,17 @@ func main() {
 
     redisPrefix += chainInfo.ChainID.String() + "."
 
-    if config.StartBlockNum == NULL_BLOCK_NUMBER {
+    if conf.StartBlockNum == config.NULL_BLOCK_NUMBER {
 
-        if config.IrreversibleOnly {
-            config.StartBlockNum = uint32(chainInfo.LastIrreversibleBlockNum)
+        if conf.IrreversibleOnly {
+            conf.StartBlockNum = uint32(chainInfo.LastIrreversibleBlockNum)
         } else {
-            config.StartBlockNum = uint32(chainInfo.HeadBlockNum)
+            conf.StartBlockNum = uint32(chainInfo.HeadBlockNum)
         }
     }
 
     // Construct ship client
-    shClient = shipclient.NewClient(config.StartBlockNum, config.EndBlockNum, config.IrreversibleOnly)
+    shClient = shipclient.NewClient(conf.StartBlockNum, conf.EndBlockNum, conf.IrreversibleOnly)
     shClient.BlockHandler = processBlock
     shClient.TraceHandler = processTraces
 
