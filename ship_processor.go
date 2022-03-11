@@ -5,6 +5,7 @@ import (
     "log"
     "encoding/json"
     "github.com/eoscanada/eos-go/ship"
+    "eosio-ship-trace-reader/redis"
 )
 
 func processBlock(block *ship.GetBlocksResultV0) {
@@ -20,8 +21,8 @@ func processTraces(traces []*ship.TransactionTraceV0) {
 
         payload, err := json.Marshal(trace)
         if err == nil {
-            channel := RedisKey("transactions")
-            if err := RedisPublish(channel, payload).Err(); err != nil {
+            channel := redis.Key("transactions")
+            if err := redis.Publish(channel, payload).Err(); err != nil {
                 log.Printf("Failed to post to channel '%s': %s", channel, err)
             }
         } else {
@@ -57,21 +58,21 @@ func processTraces(traces []*ship.TransactionTraceV0) {
             }
 
             channels := []string{
-                RedisKey("actions"),
-                RedisKey(string(act.Contract), "actions"),
-                RedisKey(string(act.Contract), "actions", string(act.Action)),
+                redis.Key("actions"),
+                redis.Key(string(act.Contract), "actions"),
+                redis.Key(string(act.Contract), "actions", string(act.Action)),
             }
 
             for _, channel := range channels {
-                if err := RedisRegisterPublish(channel, payload).Err(); err != nil {
+                if err := redis.RegisterPublish(channel, payload).Err(); err != nil {
                     log.Printf("Failed to post to channel '%s': %s", channel, err)
                 }
             }
         }
     }
 
-    _, err := RedisSend()
+    _, err := redis.Send()
     if err != nil {
-        log.Println("Failed to send redis command:", err)
+        log.Println("Failed to send redis. command:", err)
     }
 }

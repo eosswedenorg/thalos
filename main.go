@@ -11,6 +11,7 @@ import (
     "github.com/pborman/getopt/v2"
     "github.com/eosswedenorg-go/pid"
     "eosio-ship-trace-reader/config"
+    "eosio-ship-trace-reader/redis"
     eos "github.com/eoscanada/eos-go"
     shipclient "github.com/eosswedenorg-go/eos-ship-client"
 )
@@ -157,7 +158,7 @@ func main() {
     }
 
     // Connect to redis
-    err = RedisConnect(conf.Redis.Addr, conf.Redis.Password, conf.Redis.DB)
+    err = redis.Connect(conf.Redis.Addr, conf.Redis.Password, conf.Redis.DB)
     if err != nil {
         log.Println("Failed to connect to redis:", err)
         return
@@ -175,7 +176,7 @@ func main() {
         return
     }
 
-    redisPrefix += chainInfo.ChainID.String() + "."
+    redis.Prefix += chainInfo.ChainID.String() + "."
 
     if conf.StartBlockNum == config.NULL_BLOCK_NUMBER {
 

@@ -9,6 +9,7 @@ import (
     eos "github.com/eoscanada/eos-go"
     redis_cache "github.com/go-redis/cache/v8"
     "eosio-ship-trace-reader/abi_cache"
+    "eosio-ship-trace-reader/redis"
 )
 
 var abiCache *abi_cache.Cache
@@ -16,7 +17,7 @@ var abiCache *abi_cache.Cache
 func InitAbiCache(id string) {
     // Init abi cache
     abiCache = abi_cache.New("ship.cache." + id + ".abi", &redis_cache.Options{
-        Redis: rdb,
+        Redis: redis.Client(),
          // Cache 10k keys for 10 minutes.
         LocalCache: redis_cache.NewTinyLFU(10000, 10 * time.Minute),
     })
