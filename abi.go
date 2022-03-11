@@ -8,7 +8,7 @@ import (
     "encoding/json"
     eos "github.com/eoscanada/eos-go"
     redis_cache "github.com/go-redis/cache/v8"
-    "internal/abi_cache"
+    "eosio-ship-trace-reader/abi_cache"
 )
 
 var abiCache *abi_cache.Cache

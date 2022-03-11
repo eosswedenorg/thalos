@@ -21,7 +21,4 @@ require (
 	golang.org/x/sys v0.0.0-20220128215802-99c3d69c2c27 // indirect
 	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211 // indirect
 	golang.org/x/tools v0.1.9 // indirect
-	internal/abi_cache v0.0.0
 )
-
-replace internal/abi_cache => ./internal/abi_cache
