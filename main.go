@@ -12,6 +12,7 @@ import (
     "github.com/eosswedenorg-go/pid"
     "eosio-ship-trace-reader/config"
     "eosio-ship-trace-reader/redis"
+    "eosio-ship-trace-reader/telegram"
     eos "github.com/eoscanada/eos-go"
     shipclient "github.com/eosswedenorg-go/eos-ship-client"
 )
@@ -152,6 +153,13 @@ func main() {
 
     // Parse config
     conf, err = config.Load(*configFile)
+    if err != nil {
+        log.Println(err)
+        return
+    }
+
+    // Init telegram
+    err = telegram.Init(conf.Name, conf.Telegram.Id, conf.Telegram.Channel)
     if err != nil {
         log.Println(err)
         return
