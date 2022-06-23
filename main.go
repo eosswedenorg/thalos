@@ -38,14 +38,25 @@ const RS_READ = 2
 func readerLoop() {
 
     state := RS_CONNECT
+    var recon_cnt uint  = 0
 
     for {
         switch state {
         case RS_CONNECT :
-            log.Printf("Connecting to ship at: %s", conf.ShipApi)
+            recon_cnt++
+            log.Printf("Connecting to ship at: %s (Try %d)", conf.ShipApi, recon_cnt)
             err := shClient.Connect(conf.ShipApi)
             if err != nil {
                 log.Println(err)
+
+                if recon_cnt >= 3 {
+                    msg := fmt.Sprintf("Failed to connect to ship at '%s'", conf.ShipApi)
+                    if err = telegram.Send(msg); err != nil {
+                        log.Println(err)
+                    }
+                    recon_cnt = 0
+                }
+
                 log.Printf("Trying again in 5 seconds ....")
                 time.Sleep(5 * time.Second)
                 break;
@@ -60,6 +71,7 @@ func readerLoop() {
             // Connected
             log.Printf("Connected, Start: %d, End: %d", shClient.StartBlock, shClient.EndBlock)
             state = RS_READ
+            recon_cnt = 0
         case RS_READ :
             err := shClient.Read()
             if err != nil {
