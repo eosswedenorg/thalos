@@ -15,12 +15,19 @@ type RedisConfig struct {
     CacheID string `json:"cache_id"`
 }
 
+type TelegramConfig struct {
+    Id string `json:"id"`
+    Channel int64 `json:"channel"`
+}
+
 type Config struct {
     Name string `json:"name"`
     ShipApi string `json:"ship_api"`
     Api string `json:"api"`
 
     Redis RedisConfig `json:"redis"`
+
+    Telegram TelegramConfig `json:"telegram"`
 
     IrreversibleOnly bool `json:"irreversible_only"`
     MaxMessagesInFlight uint32 `json:"max_messages_in_flight"`
