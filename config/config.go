@@ -16,6 +16,7 @@ type RedisConfig struct {
 }
 
 type Config struct {
+    Name string `json:"name"`
     ShipApi string `json:"ship_api"`
     Api string `json:"api"`
 
