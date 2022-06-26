@@ -173,7 +173,7 @@ func main() {
     // Init telegram
     err = telegram.Init(conf.Name, conf.Telegram.Id, conf.Telegram.Channel)
     if err != nil {
-        log.Println(err)
+        log.Println("Failed to initialize telegram", err)
         return
     }
 
