@@ -8,10 +8,14 @@ import (
     "eosio-ship-trace-reader/redis"
 )
 
+var block_num uint32
+
 func processBlock(block *ship.GetBlocksResultV0) {
 
-    if block.ThisBlock.BlockNum % 100 == 0 {
-        log.Printf("Current: %d, Head: %d\n", block.ThisBlock.BlockNum, block.Head.BlockNum)
+    block_num = block.ThisBlock.BlockNum
+
+    if block_num % 100 == 0 {
+        log.Printf("Current: %d, Head: %d\n", block_num, block.Head.BlockNum)
     }
 }
 
