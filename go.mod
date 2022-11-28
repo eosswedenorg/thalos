@@ -10,5 +10,6 @@ require (
 	github.com/go-redis/redis/v8 v8.11.4
 	github.com/go-telegram-bot-api/telegram-bot-api/v5 v5.5.1
 	github.com/pborman/getopt/v2 v2.1.0
+	github.com/sirupsen/logrus v1.9.0
 	github.com/stretchr/testify v1.7.0
 )
