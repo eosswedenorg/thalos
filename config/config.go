@@ -10,7 +10,7 @@ const NULL_BLOCK_NUMBER uint32 = 0xffffffff
 type RedisConfig struct {
 	Addr     string `json:"addr"`
 	Password string `json:"password"`
-	DB       int    `json:db`
+	DB       int    `json:"db"`
 	CacheID  string `json:"cache_id"`
 }
 
