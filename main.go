@@ -79,9 +79,11 @@ func readerLoop() {
 			if err != nil {
 				log.WithError(err).Error("Failed to read from ship")
 
-				// Reconnect
-				if err.Type == shipclient.ErrSockRead {
-					state = RS_CONNECT
+				if shErr, ok := err.(shipclient.ShipClientError); ok {
+					// Reconnect
+					if shErr.Type == shipclient.ErrSockRead {
+						state = RS_CONNECT
+					}
 				}
 			}
 		}
