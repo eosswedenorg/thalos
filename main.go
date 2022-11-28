@@ -3,10 +3,11 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
 	"os"
 	"os/signal"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 
 	"eosio-ship-trace-reader/config"
 	"eosio-ship-trace-reader/redis"
@@ -45,7 +46,7 @@ func readerLoop() {
 		switch state {
 		case RS_CONNECT:
 			recon_cnt++
-			log.Printf("Connecting to ship at: %s (Try %d)", conf.ShipApi, recon_cnt)
+			log.Infof("Connecting to ship at: %s (Try %d)", conf.ShipApi, recon_cnt)
 			err := shClient.Connect(conf.ShipApi)
 			if err != nil {
 				log.Println(err)
@@ -53,12 +54,12 @@ func readerLoop() {
 				if recon_cnt >= 3 {
 					msg := fmt.Sprintf("Failed to connect to ship at '%s'", conf.ShipApi)
 					if err = telegram.Send(msg); err != nil {
-						log.Println(err)
+						log.WithError(err).Error("Failed to send to telegram")
 					}
 					recon_cnt = 0
 				}
 
-				log.Printf("Trying again in 5 seconds ....")
+				log.Info("Trying again in 5 seconds ....")
 				time.Sleep(5 * time.Second)
 				break
 			}
@@ -70,13 +71,13 @@ func readerLoop() {
 			}
 
 			// Connected
-			log.Printf("Connected, Start: %d, End: %d", shClient.StartBlock, shClient.EndBlock)
+			log.Infof("Connected, Start: %d, End: %d", shClient.StartBlock, shClient.EndBlock)
 			state = RS_READ
 			recon_cnt = 0
 		case RS_READ:
 			err := shClient.Read()
 			if err != nil {
-				log.Print(err.Error())
+				log.WithError(err).Error("Failed to read from ship")
 
 				// Reconnect
 				if err.Type == shipclient.ErrSockRead {
@@ -109,10 +110,10 @@ func run() {
 	for {
 		select {
 		case <-interrupt:
-			log.Println("Interrupt, closing")
+			log.Info("Interrupt, closing")
 
 			if !shClient.IsOpen() {
-				log.Println("ship client not connected, exiting...")
+				log.Info("ship client not connected, exiting...")
 				return
 			}
 
@@ -120,21 +121,31 @@ func run() {
 			// waiting (with timeout) for the server to close the connection.
 			err := shClient.SendCloseMessage()
 			if err != nil {
-				log.Println("failed to send close message to ship server", err)
+				log.WithError(err).Info("failed to send close message to ship server")
 			}
 
 			select {
 			case <-done:
-				log.Println("Closed")
+				log.Info("Closed")
 			case <-time.After(time.Second * 10):
-				log.Println("Timeout")
+				log.Info("Timeout")
 			}
 			return
 		case <-done:
-			log.Println("Closed")
+			log.Info("Closed")
 			return
 		}
 	}
+}
+
+func init() {
+	// Initialize logger
+	formatter := log.TextFormatter{
+		FullTimestamp:   true,
+		TimestampFormat: "2006-01-02 15:04:05.0000",
+	}
+
+	log.SetFormatter(&formatter)
 }
 
 func main() {
@@ -159,10 +170,10 @@ func main() {
 
 	// Write PID file
 	if len(*pidFile) > 0 {
-		log.Printf("Writing pid to: %s", *pidFile)
+		log.Infof("Writing pid to: %s", *pidFile)
 		err = pid.Save(*pidFile)
 		if err != nil {
-			log.Println(err)
+			log.WithError(err).Fatal("failed to write pid file")
 			return
 		}
 	}
@@ -170,21 +181,21 @@ func main() {
 	// Parse config
 	conf, err = config.Load(*configFile)
 	if err != nil {
-		log.Println(err)
+		log.WithError(err).Fatal("failed to read config file")
 		return
 	}
 
 	// Init telegram
 	err = telegram.Init(conf.Name, conf.Telegram.Id, conf.Telegram.Channel)
 	if err != nil {
-		log.Println("Failed to initialize telegram", err)
+		log.WithError(err).Fatal("Failed to initialize telegram")
 		return
 	}
 
 	// Connect to redis
 	err = redis.Connect(conf.Redis.Addr, conf.Redis.Password, conf.Redis.DB)
 	if err != nil {
-		log.Println("Failed to connect to redis:", err)
+		log.WithError(err).Fatal("Failed to connect to redis")
 		return
 	}
 
@@ -196,7 +207,7 @@ func main() {
 	eosClient = eos.New(conf.Api)
 	chainInfo, err = eosClient.GetInfo(eosClientCtx)
 	if err != nil {
-		log.Println("Failed to get info:", err)
+		log.WithError(err).Fatal("Failed to get info")
 		return
 	}
 

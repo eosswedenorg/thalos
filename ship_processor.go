@@ -2,7 +2,8 @@ package main
 
 import (
 	"encoding/json"
-	"log"
+
+	log "github.com/sirupsen/logrus"
 
 	"eosio-ship-trace-reader/redis"
 	"github.com/eoscanada/eos-go/ship"
@@ -10,7 +11,7 @@ import (
 
 func processBlock(block *ship.GetBlocksResultV0) {
 	if block.ThisBlock.BlockNum%100 == 0 {
-		log.Printf("Current: %d, Head: %d\n", block.ThisBlock.BlockNum, block.Head.BlockNum)
+		log.Infof("Current: %d, Head: %d\n", block.ThisBlock.BlockNum, block.Head.BlockNum)
 	}
 }
 
@@ -21,10 +22,10 @@ func processTraces(traces []*ship.TransactionTraceV0) {
 		if err == nil {
 			channel := redis.Key("transactions")
 			if err := redis.Publish(channel, payload).Err(); err != nil {
-				log.Printf("Failed to post to channel '%s': %s", channel, err)
+				log.WithError(err).Errorf("Failed to post to channel '%s'", channel)
 			}
 		} else {
-			log.Println("Failed to encode transaction:", err)
+			log.WithError(err).Warn("Failed to encode transaction")
 		}
 
 		// Actions
@@ -41,16 +42,16 @@ func processTraces(traces []*ship.TransactionTraceV0) {
 			if err == nil {
 				v, err := DecodeAction(abi, trace.Act.Data, trace.Act.Name)
 				if err != nil {
-					log.Print(err)
+					log.WithError(err).Warn("Failed to decode action")
 				}
 				act.Data = v
 			} else {
-				log.Printf("Failed to get abi for contract %s: %s\n", trace.Act.Account, err)
+				log.WithError(err).Errorf("Failed to get abi for contract %s", trace.Act.Account)
 			}
 
 			payload, err := json.Marshal(act)
 			if err != nil {
-				log.Println("Failed to encode action:", err)
+				log.WithError(err).Error("Failed to encode action")
 				continue
 			}
 
@@ -62,7 +63,7 @@ func processTraces(traces []*ship.TransactionTraceV0) {
 
 			for _, channel := range channels {
 				if err := redis.RegisterPublish(channel, payload).Err(); err != nil {
-					log.Printf("Failed to post to channel '%s': %s", channel, err)
+					log.WithError(err).Errorf("Failed to post to channel '%s'", channel)
 				}
 			}
 		}
@@ -70,6 +71,6 @@ func processTraces(traces []*ship.TransactionTraceV0) {
 
 	_, err := redis.Send()
 	if err != nil {
-		log.Println("Failed to send redis. command:", err)
+		log.WithError(err).Error("Failed to send redis")
 	}
 }
