@@ -111,7 +111,7 @@ func run() {
 		case <-interrupt:
 			log.Println("Interrupt, closing")
 
-			if shClient.IsOpen() == false {
+			if !shClient.IsOpen() {
 				log.Println("ship client not connected, exiting...")
 				return
 			}
