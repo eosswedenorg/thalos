@@ -24,6 +24,7 @@ type Config struct {
     Name string `json:"name"`
     ShipApi string `json:"ship_api"`
     Api string `json:"api"`
+    Transport string `json:"transport"`
 
     Redis RedisConfig `json:"redis"`
 
@@ -38,6 +39,7 @@ type Config struct {
 func Load(filename string) (Config, error) {
 
     cfg := Config{
+        Transport: "redis-channel",
         StartBlockNum: NULL_BLOCK_NUMBER,
         EndBlockNum: NULL_BLOCK_NUMBER,
         MaxMessagesInFlight: 10,

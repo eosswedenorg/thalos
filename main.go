@@ -13,6 +13,7 @@ import (
     "eosio-ship-trace-reader/config"
     "eosio-ship-trace-reader/redis"
     "eosio-ship-trace-reader/telegram"
+    "eosio-ship-trace-reader/transport"
     eos "github.com/eoscanada/eos-go"
     shipclient "github.com/eosswedenorg-go/eos-ship-client"
 )
@@ -30,6 +31,7 @@ var shClient *shipclient.ShipClient
 var eosClient *eos.API
 var eosClientCtx = context.Background()
 
+var transporter transport.Driver
 
 // Reader states
 const RS_CONNECT = 1
@@ -193,6 +195,13 @@ func main() {
     chainInfo, err = eosClient.GetInfo(eosClientCtx)
     if err != nil {
         log.Println("Failed to get info:", err)
+        return
+    }
+
+    // Create message queue
+    transporter, err = transport.Make(conf.Transport, chainInfo.ChainID.String())
+    if err != nil {
+        log.Println("Failed to create queue:", err)
         return
     }
 
