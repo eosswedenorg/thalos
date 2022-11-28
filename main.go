@@ -81,7 +81,7 @@ func readerLoop() {
 
 				if shErr, ok := err.(shipclient.ShipClientError); ok {
 					// Reconnect
-					if shErr.Type == shipclient.ErrSockRead {
+					if shErr.Type == shipclient.ErrSockRead || shErr.Type == shipclient.ErrNotConnected {
 						state = RS_CONNECT
 					}
 				}
