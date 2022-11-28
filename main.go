@@ -118,7 +118,10 @@ func run() {
 
 			// Cleanly close the connection by sending a close message and then
 			// waiting (with timeout) for the server to close the connection.
-			shClient.SendCloseMessage()
+			err := shClient.SendCloseMessage()
+			if err != nil {
+				log.Println("failed to send close message to ship server", err)
+			}
 
 			select {
 			case <-done:
