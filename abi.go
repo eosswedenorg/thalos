@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"time"
 
@@ -31,13 +30,13 @@ func GetAbi(account eos.AccountName) (*eos.ABI, error) {
 	if err != nil {
 		resp, err := eosClient.GetABI(eosClientCtx, account)
 		if err != nil {
-			return nil, errors.New(fmt.Sprintf("api: %s", err))
+			return nil, fmt.Errorf("api: %s", err)
 		}
 		abi = &resp.ABI
 
 		err = abiCache.Set(key, abi, time.Hour)
 		if err != nil {
-			return nil, errors.New(fmt.Sprintf("cache: %s", err))
+			return nil, fmt.Errorf("cache: %s", err)
 		}
 	}
 	return abi, nil
