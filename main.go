@@ -88,8 +88,6 @@ func readerLoop() {
 			}
 		}
 	}
-
-	shClient.Close()
 }
 
 func run() {
