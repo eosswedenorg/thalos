@@ -30,23 +30,24 @@ func processTraces(traces []*ship.TransactionTraceV0) {
 
 		// Actions
 		for _, actionTraceVar := range trace.ActionTraces {
-			trace := actionTraceVar.Impl.(*ship.ActionTraceV0)
+			act_trace := actionTraceVar.Impl.(*ship.ActionTraceV0)
 
 			act := ActionTrace{
-				Receiver: trace.Receiver,
-				Contract: trace.Act.Account,
-				Action:   trace.Act.Name,
+				TxID:     trace.ID,
+				Receiver: act_trace.Receiver,
+				Contract: act_trace.Act.Account,
+				Action:   act_trace.Act.Name,
 			}
 
-			abi, err := GetAbi(trace.Act.Account)
+			abi, err := GetAbi(act_trace.Act.Account)
 			if err == nil {
-				v, err := DecodeAction(abi, trace.Act.Data, trace.Act.Name)
+				v, err := DecodeAction(abi, act_trace.Act.Data, act_trace.Act.Name)
 				if err != nil {
 					log.WithError(err).Warn("Failed to decode action")
 				}
 				act.Data = v
 			} else {
-				log.WithError(err).Errorf("Failed to get abi for contract %s", trace.Act.Account)
+				log.WithError(err).Errorf("Failed to get abi for contract %s", act_trace.Act.Account)
 			}
 
 			payload, err := json.Marshal(act)
