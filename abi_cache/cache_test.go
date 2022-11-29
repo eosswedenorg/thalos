@@ -10,7 +10,6 @@ import (
 	"github.com/go-redis/redis/v8"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
 var abiString = `
@@ -147,5 +146,5 @@ func TestCacheMiss(t *testing.T) {
 	})
 
 	_, err := c.Get("nonexist")
-	require.Error(t, err)
+	assert.Error(t, err)
 }
