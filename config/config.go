@@ -12,6 +12,7 @@ type RedisConfig struct {
 	Password string `json:"password"`
 	DB       int    `json:"db"`
 	CacheID  string `json:"cache_id"`
+	Prefix   string `json:"prefix"`
 }
 
 type TelegramConfig struct {
@@ -44,6 +45,7 @@ func Load(filename string) (Config, error) {
 			Addr:     "localhost:6379",
 			Password: "",
 			DB:       0,
+			Prefix:   "ship",
 		},
 	}
 
