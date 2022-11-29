@@ -44,6 +44,21 @@ func processBlock(block *ship.GetBlocksResultV0) {
 	if block.ThisBlock.BlockNum%100 == 0 {
 		log.Infof("Current: %d, Head: %d\n", block.ThisBlock.BlockNum, block.Head.BlockNum)
 	}
+
+	if block.ThisBlock.BlockNum%10 == 0 {
+		hb := HearthBeat{
+			BlockNum:                 block.ThisBlock.BlockNum,
+			LastIrreversibleBlockNum: block.LastIrreversible.BlockNum,
+			HeadBlockNum:             block.Head.BlockNum,
+		}
+
+		encodeQueue("hearthbeat", hb)
+
+		_, err := redis.Send()
+		if err != nil {
+			log.WithError(err).Error("Failed to send redis")
+		}
+	}
 }
 
 func processTraces(traces []*ship.TransactionTraceV0) {
