@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/hex"
 	"encoding/json"
 
 	log "github.com/sirupsen/logrus"
@@ -37,6 +38,7 @@ func processTraces(traces []*ship.TransactionTraceV0) {
 				Receiver: act_trace.Receiver,
 				Contract: act_trace.Act.Account,
 				Action:   act_trace.Act.Name,
+				HexData:  hex.EncodeToString(act_trace.Act.Data),
 			}
 
 			abi, err := GetAbi(act_trace.Act.Account)
