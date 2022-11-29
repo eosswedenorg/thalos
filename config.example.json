@@ -13,6 +13,7 @@
     "redis": {
         "addr": "localhost:6379",
         "password": "",
-        "db": 0
+        "db": 0,
+        "prefix": "ship"
     }
 }
