@@ -8,7 +8,6 @@ require (
 	github.com/eosswedenorg-go/pid v1.0.1
 	github.com/go-redis/cache/v8 v8.4.4
 	github.com/go-redis/redis/v8 v8.11.6-0.20220405070650-99c79f7041fc
-	github.com/go-telegram-bot-api/telegram-bot-api/v5 v5.5.1
 	github.com/nikoksr/notify v0.35.0
 	github.com/pborman/getopt/v2 v2.1.0
 	github.com/sirupsen/logrus v1.9.0
