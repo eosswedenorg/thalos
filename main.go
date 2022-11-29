@@ -211,7 +211,7 @@ func main() {
 		return
 	}
 
-	redis.Prefix += chainInfo.ChainID.String() + "."
+	redis.SetPrefix("ship", chainInfo.ChainID.String())
 
 	if conf.StartBlockNum == config.NULL_BLOCK_NUMBER {
 		if conf.IrreversibleOnly {

@@ -14,7 +14,7 @@ var redis_pipe _redis.Pipeliner
 
 var redisCtx = context.Background()
 
-var Prefix = "ship."
+var prefix []string
 
 func Connect(addr string, password string, db int) error {
 	rdb = _redis.NewClient(&_redis.Options{
@@ -32,8 +32,13 @@ func Client() *_redis.Client {
 	return rdb
 }
 
+func SetPrefix(components ...string) {
+	prefix = components
+}
+
 func Key(components ...string) string {
-	return Prefix + strings.Join(components, ".")
+	components = append(prefix, components...)
+	return strings.Join(components, ".")
 }
 
 func Get(key string) *_redis.StringCmd {
