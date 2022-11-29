@@ -10,4 +10,5 @@ type ActionTrace struct {
 	Contract eos.AccountName `json:"contract"`
 	Action   eos.ActionName  `json:"action"`
 	Data     interface{}     `json:"data"`
+	HexData  string          `json:"hex_data"`
 }
