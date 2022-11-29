@@ -81,19 +81,13 @@ func TestGetSet(t *testing.T) {
 	})
 
 	abi, err := eos.NewABI(strings.NewReader(abiString))
-	if err != nil {
-		t.Error("Failed to build ABI", err)
-	}
+	assert.NoError(t, err)
 
 	err = c.Set("testaccount", abi, time.Minute)
-	if err != nil {
-		t.Error("Failed to set cache item", err)
-	}
+	assert.NoError(t, err)
 
 	c_abi, err := c.Get("testaccount")
-	if err != nil {
-		t.Error("Failed to get cache item", err)
-	}
+	assert.NoError(t, err)
 
 	assert.Equal(t, c_abi.Version, "eosio::abi/1.0")
 
