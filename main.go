@@ -11,7 +11,8 @@ import (
 
 	"eosio-ship-trace-reader/internal/config"
 	"eosio-ship-trace-reader/internal/redis"
-	"eosio-ship-trace-reader/internal/telegram"
+	"github.com/nikoksr/notify"
+	"github.com/nikoksr/notify/service/telegram"
 
 	eos "github.com/eoscanada/eos-go"
 	shipclient "github.com/eosswedenorg-go/eos-ship-client"
@@ -53,8 +54,8 @@ func readerLoop() {
 
 				if recon_cnt >= 3 {
 					msg := fmt.Sprintf("Failed to connect to ship at '%s'", conf.ShipApi)
-					if err = telegram.Send(msg); err != nil {
-						log.WithError(err).Error("Failed to send to telegram")
+					if err := notify.Send(context.Background(), conf.Name, msg); err != nil {
+						log.WithError(err).Error("Failed to send notification")
 					}
 					recon_cnt = 0
 				}
@@ -185,12 +186,17 @@ func main() {
 		return
 	}
 
-	// Init telegram
-	err = telegram.Init(conf.Name, conf.Telegram.Id, conf.Telegram.Channel)
+	// Init telegram notification service
+	telegram, err := telegram.New(conf.Telegram.Id)
 	if err != nil {
 		log.WithError(err).Fatal("Failed to initialize telegram")
 		return
 	}
+
+	telegram.AddReceivers(conf.Telegram.Channel)
+
+	// Register services in notification manager
+	notify.UseServices(telegram)
 
 	// Connect to redis
 	err = redis.Connect(conf.Redis.Addr, conf.Redis.Password, conf.Redis.DB)

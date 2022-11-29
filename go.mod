@@ -7,8 +7,9 @@ require (
 	github.com/eosswedenorg-go/eos-ship-client v0.1.3
 	github.com/eosswedenorg-go/pid v1.0.1
 	github.com/go-redis/cache/v8 v8.4.4
-	github.com/go-redis/redis/v8 v8.11.5
+	github.com/go-redis/redis/v8 v8.11.6-0.20220405070650-99c79f7041fc
 	github.com/go-telegram-bot-api/telegram-bot-api/v5 v5.5.1
+	github.com/nikoksr/notify v0.35.0
 	github.com/pborman/getopt/v2 v2.1.0
 	github.com/sirupsen/logrus v1.9.0
 	github.com/stretchr/testify v1.8.1
@@ -20,13 +21,15 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
-	github.com/google/go-cmp v0.5.9 // indirect
+	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/klauspost/compress v1.15.12 // indirect
 	github.com/logrusorgru/aurora v2.0.3+incompatible // indirect
 	github.com/mitchellh/go-testing-interface v1.14.1 // indirect
+	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/streamingfast/logging v0.0.0-20220813175024-b4fbb0e893df // indirect
+	github.com/technoweenie/multipartstreamer v1.0.1 // indirect
 	github.com/tidwall/gjson v1.14.4 // indirect
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.1 // indirect
