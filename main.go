@@ -9,9 +9,9 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"eosio-ship-trace-reader/config"
-	"eosio-ship-trace-reader/redis"
-	"eosio-ship-trace-reader/telegram"
+	"eosio-ship-trace-reader/internal/config"
+	"eosio-ship-trace-reader/internal/redis"
+	"eosio-ship-trace-reader/internal/telegram"
 
 	eos "github.com/eoscanada/eos-go"
 	shipclient "github.com/eosswedenorg-go/eos-ship-client"

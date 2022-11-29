@@ -6,7 +6,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"eosio-ship-trace-reader/redis"
+	"eosio-ship-trace-reader/internal/redis"
 	"github.com/eoscanada/eos-go/ship"
 )
 

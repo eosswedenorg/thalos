@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"eosio-ship-trace-reader/abi_cache"
-	"eosio-ship-trace-reader/redis"
+	"eosio-ship-trace-reader/internal/abi_cache"
+	"eosio-ship-trace-reader/internal/redis"
 
 	eos "github.com/eoscanada/eos-go"
 	redis_cache "github.com/go-redis/cache/v8"
