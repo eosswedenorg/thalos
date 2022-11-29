@@ -78,14 +78,21 @@ func readerLoop() {
 		case RS_READ:
 			err := shClient.Read()
 			if err != nil {
-				log.WithError(err).Error("Failed to read from ship")
-
 				if shErr, ok := err.(shipclient.ShipClientError); ok {
+
+					// Bail out if socket is closed
+					if shErr.Type == shipclient.ErrSockClosed {
+						log.Info("Socket closed, Exiting")
+						return
+					}
+
 					// Reconnect
 					if shErr.Type == shipclient.ErrSockRead || shErr.Type == shipclient.ErrNotConnected {
 						state = RS_CONNECT
 					}
 				}
+
+				log.WithError(err).Error("Failed to read from ship")
 			}
 		}
 	}
