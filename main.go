@@ -15,7 +15,7 @@ import (
 	"github.com/nikoksr/notify/service/telegram"
 
 	eos "github.com/eoscanada/eos-go"
-	shipclient "github.com/eosswedenorg-go/eos-ship-client"
+	shipclient "github.com/eosswedenorg-go/antelope-ship-client"
 	"github.com/eosswedenorg-go/pid"
 	"github.com/pborman/getopt/v2"
 )

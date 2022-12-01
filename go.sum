@@ -23,10 +23,8 @@ github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f h1:lO4WD4F/r
 github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f/go.mod h1:cuUVRXasLTGF7a8hSLbxyZXjz+1KgoB3wDUb6vlszIc=
 github.com/eoscanada/eos-go v0.10.3-0.20221117104514-64cafd714c60 h1:ARNYziHaKCrqe0S6DpQqEPVKGhdEr18iBRlbd/LHlPw=
 github.com/eoscanada/eos-go v0.10.3-0.20221117104514-64cafd714c60/go.mod h1:oZfBd71yux4P7WrWYy/AvtGCjAP38bBP7z/keeu15A0=
-github.com/eosswedenorg-go/eos-ship-client v0.1.3 h1:O651jBliEDGC0VHr6qi1xiAlK4prfLzCBa3NPt4+N2I=
-github.com/eosswedenorg-go/eos-ship-client v0.1.3/go.mod h1:TA/t4SweHjcwEupP6iKHM4OeOxpuNN4ZAlYBGKXIcG8=
-github.com/eosswedenorg-go/eos-ship-client v0.1.4 h1:o++40zGeutaQtoaU4QA6KHhGl1f2buJ+03B8jBTHzSY=
-github.com/eosswedenorg-go/eos-ship-client v0.1.4/go.mod h1:7B/qF1iLqxoooA9/gCAYWzN+y3wt1IlRD/yeUo4pzHk=
+github.com/eosswedenorg-go/antelope-ship-client v0.2.0 h1:alZ5eROs7RNKp0skRFT1QfDt9d1HpUxzkeF2y3z3L1g=
+github.com/eosswedenorg-go/antelope-ship-client v0.2.0/go.mod h1:/DTza5QuczvTtXYxBjHt4GDFHnXS2rBMUVJ/sxRt/jE=
 github.com/eosswedenorg-go/pid v1.0.1 h1:W4AEnnNwb041SpNR1uTZ/KbJ0OTA5eqiqIR1Q5Ah6A0=
 github.com/eosswedenorg-go/pid v1.0.1/go.mod h1:wiOB/JXGt4YA3+T0j0xmCGSc3Jxzb7Ti/Ftli1fgWu4=
 github.com/fsnotify/fsnotify v1.4.7/go.mod h1:jwhsz4b93w/PPRr/qN1Yymfu8t87LnFCMoQvtojpjFo=
