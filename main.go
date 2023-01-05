@@ -36,8 +36,10 @@ var (
 )
 
 // Reader states
-const RS_CONNECT = 1
-const RS_READ = 2
+const (
+	RS_CONNECT = 1
+	RS_READ    = 2
+)
 
 func readerLoop() {
 	state := RS_CONNECT
