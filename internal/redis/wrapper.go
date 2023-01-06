@@ -2,7 +2,6 @@ package redis
 
 import (
 	"context"
-	"strings"
 	"time"
 
 	_redis "github.com/go-redis/redis/v8"
@@ -13,8 +12,6 @@ var rdb *_redis.Client
 var redis_pipe _redis.Pipeliner
 
 var redisCtx = context.Background()
-
-var prefix []string
 
 func Connect(addr string, password string, db int) error {
 	rdb = _redis.NewClient(&_redis.Options{
@@ -30,16 +27,6 @@ func Connect(addr string, password string, db int) error {
 
 func Client() *_redis.Client {
 	return rdb
-}
-
-func SetPrefix(components ...string) {
-	prefix = components
-}
-
-func Key(components ...string) string {
-	namespace := strings.Join(prefix, ".")
-	channel := strings.Join(components, ".")
-	return namespace + "::" + channel
 }
 
 func Get(key string) *_redis.StringCmd {

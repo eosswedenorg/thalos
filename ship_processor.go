@@ -21,18 +21,18 @@ func encodeMessage(v interface{}) ([]byte, bool) {
 	return payload, true
 }
 
-func queueMessage(channel string, payload []byte) bool {
-	err := redis.RegisterPublish(channel, payload).Err()
+func queueMessage(key redis.Key, payload []byte) bool {
+	err := redis.RegisterPublish(key.String(), payload).Err()
 	if err != nil {
-		log.WithError(err).Errorf("Failed to post to channel '%s'", channel)
+		log.WithError(err).Errorf("Failed to post to channel '%s'", key)
 		return false
 	}
 	return true
 }
 
-func encodeQueue(key string, v interface{}) bool {
+func encodeQueue(channel redis.Channel, v interface{}) bool {
 	if payload, ok := encodeMessage(v); ok {
-		channel := redis.Key(key)
+		channel := redis.Key{NS: redisNs, Channel: channel}
 		if queueMessage(channel, payload) {
 			return true
 		}
@@ -52,7 +52,7 @@ func processBlock(block *ship.GetBlocksResultV0) {
 			HeadBlockNum:             block.Head.BlockNum,
 		}
 
-		encodeQueue("heartbeat", hb)
+		encodeQueue(redis.HeartbeatChannel, hb)
 
 		_, err := redis.Send()
 		if err != nil {
@@ -64,7 +64,7 @@ func processBlock(block *ship.GetBlocksResultV0) {
 func processTraces(traces []*ship.TransactionTraceV0) {
 	for _, trace := range traces {
 
-		encodeQueue("transactions", trace)
+		encodeQueue(redis.TransactionChannel, trace)
 
 		// Actions
 		for _, actionTraceVar := range trace.ActionTraces {
@@ -94,11 +94,11 @@ func processTraces(traces []*ship.TransactionTraceV0) {
 				continue
 			}
 
-			channels := []string{
-				redis.Key("actions"),
-				redis.Key("actions", "action:"+string(act.Action)),
-				redis.Key("actions", "contract:"+string(act.Contract)),
-				redis.Key("actions", "contract:"+string(act.Contract), "action:"+string(act.Action)),
+			channels := []redis.Key{
+				{NS: redisNs, Channel: redis.ActionChannel{}},
+				{NS: redisNs, Channel: redis.ActionChannel{Action: string(act.Action)}},
+				{NS: redisNs, Channel: redis.ActionChannel{Contract: string(act.Contract)}},
+				{NS: redisNs, Channel: redis.ActionChannel{Action: string(act.Action), Contract: string(act.Contract)}},
 			}
 
 			for _, channel := range channels {

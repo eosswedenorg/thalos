@@ -35,6 +35,8 @@ var (
 	eosClientCtx = context.Background()
 )
 
+var redisNs redis.Namespace
+
 // Reader states
 const (
 	RS_CONNECT = 1
@@ -226,7 +228,10 @@ func main() {
 		return
 	}
 
-	redis.SetPrefix(conf.Redis.Prefix, chainInfo.ChainID.String())
+	redisNs = redis.Namespace{
+		Prefix:  conf.Redis.Prefix,
+		ChainID: chainInfo.ChainID.String(),
+	}
 
 	if conf.StartBlockNum == config.NULL_BLOCK_NUMBER {
 		if conf.IrreversibleOnly {
