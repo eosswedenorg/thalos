@@ -52,7 +52,7 @@ func processBlock(block *ship.GetBlocksResultV0) {
 			HeadBlockNum:             block.Head.BlockNum,
 		}
 
-		encodeQueue("hearthbeat", hb)
+		encodeQueue("heartbeat", hb)
 
 		_, err := redis.Send()
 		if err != nil {
