@@ -21,7 +21,8 @@ func encodeMessage(v interface{}) ([]byte, bool) {
 	return payload, true
 }
 
-func queueMessage(key redis.Key, payload []byte) bool {
+func queueMessage(channel redis.ChannelInterface, payload []byte) bool {
+	key := redisNs.NewKey(channel)
 	err := redis.RegisterPublish(key.String(), payload).Err()
 	if err != nil {
 		log.WithError(err).Errorf("Failed to post to channel '%s'", key)
@@ -32,7 +33,6 @@ func queueMessage(key redis.Key, payload []byte) bool {
 
 func encodeQueue(channel redis.Channel, v interface{}) bool {
 	if payload, ok := encodeMessage(v); ok {
-		channel := redisNs.NewKey(channel)
 		if queueMessage(channel, payload) {
 			return true
 		}
@@ -102,7 +102,7 @@ func processTraces(traces []*ship.TransactionTraceV0) {
 			}
 
 			for _, channel := range channels {
-				queueMessage(redisNs.NewKey(channel), payload)
+				queueMessage(channel, payload)
 			}
 		}
 	}
