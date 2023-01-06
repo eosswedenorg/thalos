@@ -37,8 +37,9 @@ func SetPrefix(components ...string) {
 }
 
 func Key(components ...string) string {
-	components = append(prefix, components...)
-	return strings.Join(components, ".")
+	namespace := strings.Join(prefix, ".")
+	channel := strings.Join(components, ".")
+	return namespace + "::" + channel
 }
 
 func Get(key string) *_redis.StringCmd {
