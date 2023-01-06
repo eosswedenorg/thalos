@@ -24,6 +24,11 @@ type Namespace struct {
 	ChainID string
 }
 
+// Create a new key with this namespace.
+func (ns Namespace) NewKey(ch ChannelInterface) Key {
+	return Key{NS: ns, Channel: ch}
+}
+
 func (ns Namespace) String() string {
 	// No Chain id, set to "nullChain"
 	if len(ns.ChainID) < 1 {
