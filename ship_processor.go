@@ -94,15 +94,15 @@ func processTraces(traces []*ship.TransactionTraceV0) {
 				continue
 			}
 
-			channels := []redis.Key{
-				redisNs.NewKey(redis.ActionChannel{}),
-				redisNs.NewKey(redis.ActionChannel{Action: string(act.Action)}),
-				redisNs.NewKey(redis.ActionChannel{Contract: string(act.Contract)}),
-				redisNs.NewKey(redis.ActionChannel{Action: string(act.Action), Contract: string(act.Contract)}),
+			channels := []redis.ChannelInterface{
+				redis.ActionChannel{},
+				redis.ActionChannel{Action: string(act.Action)},
+				redis.ActionChannel{Contract: string(act.Contract)},
+				redis.ActionChannel{Action: string(act.Action), Contract: string(act.Contract)},
 			}
 
 			for _, channel := range channels {
-				queueMessage(channel, payload)
+				queueMessage(redisNs.NewKey(channel), payload)
 			}
 		}
 	}
