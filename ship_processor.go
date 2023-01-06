@@ -31,7 +31,7 @@ func queueMessage(channel redis.ChannelInterface, payload []byte) bool {
 	return true
 }
 
-func encodeQueue(channel redis.Channel, v interface{}) bool {
+func encodeQueue(channel redis.ChannelInterface, v interface{}) bool {
 	if payload, ok := encodeMessage(v); ok {
 		if queueMessage(channel, payload) {
 			return true
