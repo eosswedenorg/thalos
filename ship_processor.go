@@ -32,7 +32,7 @@ func queueMessage(key redis.Key, payload []byte) bool {
 
 func encodeQueue(channel redis.Channel, v interface{}) bool {
 	if payload, ok := encodeMessage(v); ok {
-		channel := redis.Key{NS: redisNs, Channel: channel}
+		channel := redisNs.NewKey(channel)
 		if queueMessage(channel, payload) {
 			return true
 		}
@@ -95,10 +95,10 @@ func processTraces(traces []*ship.TransactionTraceV0) {
 			}
 
 			channels := []redis.Key{
-				{NS: redisNs, Channel: redis.ActionChannel{}},
-				{NS: redisNs, Channel: redis.ActionChannel{Action: string(act.Action)}},
-				{NS: redisNs, Channel: redis.ActionChannel{Contract: string(act.Contract)}},
-				{NS: redisNs, Channel: redis.ActionChannel{Action: string(act.Action), Contract: string(act.Contract)}},
+				redisNs.NewKey(redis.ActionChannel{}),
+				redisNs.NewKey(redis.ActionChannel{Action: string(act.Action)}),
+				redisNs.NewKey(redis.ActionChannel{Contract: string(act.Contract)}),
+				redisNs.NewKey(redis.ActionChannel{Action: string(act.Action), Contract: string(act.Contract)}),
 			}
 
 			for _, channel := range channels {
