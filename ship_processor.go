@@ -96,8 +96,9 @@ func processTraces(traces []*ship.TransactionTraceV0) {
 
 			channels := []string{
 				redis.Key("actions"),
-				redis.Key(string(act.Contract), "actions"),
-				redis.Key(string(act.Contract), "actions", string(act.Action)),
+				redis.Key("actions", "action:"+string(act.Action)),
+				redis.Key("actions", "contract:"+string(act.Contract)),
+				redis.Key("actions", "contract:"+string(act.Contract), "action:"+string(act.Action)),
 			}
 
 			for _, channel := range channels {
