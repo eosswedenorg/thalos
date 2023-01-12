@@ -12,10 +12,10 @@ func TestKey_String(t *testing.T) {
 		fields fields
 		want   string
 	}{
-		{"Empty", fields{NS: Namespace{}, Channel: Channel{}}, "ship.0000000000000000000000000000000000000000000000000000000000000000::"},
-		{"Transactions", fields{NS: Namespace{ChainID: "id"}, Channel: Channel{"transactions"}}, "ship.id::transactions"},
-		{"Nested", fields{NS: Namespace{ChainID: "id"}, Channel: Channel{"one.two"}}, "ship.id::one.two"},
-		{"Action", fields{NS: Namespace{ChainID: "id"}, Channel: ActionChannel{Contract: "mycontract"}}, "ship.id::actions.contract:mycontract"},
+		{"Empty", fields{NS: Namespace{}, Channel: Channel{}}, "ship::0000000000000000000000000000000000000000000000000000000000000000::"},
+		{"Transactions", fields{NS: Namespace{ChainID: "id"}, Channel: Channel{"transactions"}}, "ship::id::transactions"},
+		{"Nested", fields{NS: Namespace{ChainID: "id"}, Channel: Channel{"one.two"}}, "ship::id::one.two"},
+		{"Action", fields{NS: Namespace{ChainID: "id"}, Channel: ActionChannel{Contract: "mycontract"}}, "ship::id::actions.contract.mycontract"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

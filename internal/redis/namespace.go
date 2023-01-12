@@ -41,5 +41,5 @@ func (ns Namespace) String() string {
 	}
 
 	// Otherwise. return both.
-	return strings.Join([]string{ns.Prefix, ns.ChainID}, ".")
+	return strings.Join([]string{ns.Prefix, ns.ChainID}, "::")
 }
