@@ -9,7 +9,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"eosio-ship-trace-reader/internal/config"
+	"eosio-ship-trace-reader/config"
 	"eosio-ship-trace-reader/internal/redis"
 	"github.com/nikoksr/notify"
 	"github.com/nikoksr/notify/service/telegram"
