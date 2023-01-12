@@ -18,7 +18,7 @@ func (c *Channel) Append(name string) {
 }
 
 func (c Channel) String() string {
-	return strings.Join(c, ".")
+	return strings.Join(c, "/")
 }
 
 // Define channels without any variables.

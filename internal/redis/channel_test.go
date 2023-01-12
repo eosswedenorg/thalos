@@ -32,7 +32,7 @@ func TestChannel_String(t *testing.T) {
 		want string
 	}{
 		{"Empty", Channel{}, ""},
-		{"Alot", Channel{"one", "two", "three"}, "one.two.three"},
+		{"Alot", Channel{"one", "two", "three"}, "one/two/three"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -54,9 +54,9 @@ func TestActionChannel_String(t *testing.T) {
 		want   string
 	}{
 		{"Empty", fields{}, "actions"},
-		{"Contract", fields{Contract: "mycontract"}, "actions.contract:mycontract"},
-		{"Action", fields{Action: "myaction"}, "actions.action:myaction"},
-		{"ContractAction", fields{Contract: "mycontract", Action: "myaction"}, "actions.contract:mycontract.action:myaction"},
+		{"Contract", fields{Contract: "mycontract"}, "actions/contract/mycontract"},
+		{"Action", fields{Action: "myaction"}, "actions/action/myaction"},
+		{"ContractAction", fields{Contract: "mycontract", Action: "myaction"}, "actions/contract/mycontract/action/myaction"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
