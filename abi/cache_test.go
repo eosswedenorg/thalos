@@ -1,4 +1,4 @@
-package abi_cache
+package abi
 
 import (
 	"strings"
@@ -73,7 +73,7 @@ var abiString = `
 `
 
 func TestGetSet(t *testing.T) {
-	c := New("abi.cache.test", &redis_cache.Options{
+	c := NewCache("abi.cache.test", &redis_cache.Options{
 		Redis: redis.NewClient(&redis.Options{}),
 		// Cache 10k keys for 1 minute.
 		LocalCache: redis_cache.NewTinyLFU(10000, time.Minute),
@@ -139,7 +139,7 @@ func TestGetSet(t *testing.T) {
 }
 
 func TestCacheMiss(t *testing.T) {
-	c := New("abi.cache.test", &redis_cache.Options{
+	c := NewCache("abi.cache.test", &redis_cache.Options{
 		Redis: redis.NewClient(&redis.Options{}),
 		// Cache 10k keys for 1 minute.
 		LocalCache: redis_cache.NewTinyLFU(10000, time.Minute),

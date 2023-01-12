@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"time"
 
-	"eosio-ship-trace-reader/internal/abi_cache"
 	"eosio-ship-trace-reader/internal/redis"
 
 	eos "github.com/eoscanada/eos-go"
@@ -13,14 +12,14 @@ import (
 )
 
 type AbiManager struct {
-	cache *abi_cache.Cache
+	cache *Cache
 	api   *eos.API
 	ctx   context.Context
 }
 
 func NewAbiManager(api *eos.API, id string) *AbiManager {
 	// Init abi cache
-	cache := abi_cache.New("ship.cache."+id+".abi", &redis_cache.Options{
+	cache := NewCache("ship.cache."+id+".abi", &redis_cache.Options{
 		Redis: redis.Client(),
 		// Cache 10k keys for 10 minutes.
 		LocalCache: redis_cache.NewTinyLFU(10000, 10*time.Minute),

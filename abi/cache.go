@@ -1,4 +1,4 @@
-package abi_cache
+package abi
 
 import (
 	"context"
@@ -14,7 +14,7 @@ type Cache struct {
 	prefix string
 }
 
-func New(prefix string, options *redis_cache.Options) *Cache {
+func NewCache(prefix string, options *redis_cache.Options) *Cache {
 	return &Cache{
 		c:      redis_cache.New(options),
 		ctx:    context.Background(),
