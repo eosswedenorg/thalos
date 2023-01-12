@@ -41,15 +41,3 @@ func GetAbi(account eos.AccountName) (*eos.ABI, error) {
 	}
 	return abi, nil
 }
-
-func DecodeAction(abi *eos.ABI, data []byte, actionName eos.ActionName) (interface{}, error) {
-	var v interface{}
-
-	bytes, err := abi.DecodeAction(data, actionName)
-	if err != nil {
-		return v, err
-	}
-
-	err = json.Unmarshal(bytes, &v)
-	return v, err
-}

@@ -7,8 +7,21 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"eosio-ship-trace-reader/internal/redis"
+	"github.com/eoscanada/eos-go"
 	"github.com/eoscanada/eos-go/ship"
 )
+
+func decodeAction(abi *eos.ABI, data []byte, actionName eos.ActionName) (interface{}, error) {
+	var v interface{}
+
+	bytes, err := abi.DecodeAction(data, actionName)
+	if err != nil {
+		return v, err
+	}
+
+	err = json.Unmarshal(bytes, &v)
+	return v, err
+}
 
 func encodeMessage(v interface{}) ([]byte, bool) {
 	payload, err := json.Marshal(v)
@@ -80,7 +93,7 @@ func processTraces(traces []*ship.TransactionTraceV0) {
 
 			abi, err := GetAbi(act_trace.Act.Account)
 			if err == nil {
-				v, err := DecodeAction(abi, act_trace.Act.Data, act_trace.Act.Name)
+				v, err := decodeAction(abi, act_trace.Act.Data, act_trace.Act.Name)
 				if err != nil {
 					log.WithError(err).Warn("Failed to decode action")
 				}
