@@ -22,21 +22,21 @@ func New(prefix string, options *redis_cache.Options) *Cache {
 	}
 }
 
-func (this *Cache) Get(account string) (*eos.ABI, error) {
+func (cache *Cache) Get(account string) (*eos.ABI, error) {
 	var v eos.ABI
-	err := this.c.Get(this.ctx, this.key(account), &v)
+	err := cache.c.Get(cache.ctx, cache.key(account), &v)
 	return &v, err
 }
 
-func (this *Cache) Set(account string, abi *eos.ABI, ttl time.Duration) error {
-	return this.c.Set(&redis_cache.Item{
-		Ctx:   this.ctx,
-		Key:   this.key(account),
+func (cache *Cache) Set(account string, abi *eos.ABI, ttl time.Duration) error {
+	return cache.c.Set(&redis_cache.Item{
+		Ctx:   cache.ctx,
+		Key:   cache.key(account),
 		Value: *abi,
 		TTL:   ttl,
 	})
 }
 
-func (this *Cache) key(account string) string {
-	return this.prefix + "." + account
+func (cache *Cache) key(account string) string {
+	return cache.prefix + "." + account
 }
