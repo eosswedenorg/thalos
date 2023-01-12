@@ -14,6 +14,8 @@ import (
 	"github.com/nikoksr/notify"
 	"github.com/nikoksr/notify/service/telegram"
 
+	"eosio-ship-trace-reader/abi"
+
 	eos "github.com/eoscanada/eos-go"
 	shipclient "github.com/eosswedenorg-go/antelope-ship-client"
 	"github.com/eosswedenorg-go/pid"
@@ -35,7 +37,7 @@ var (
 	eosClientCtx = context.Background()
 )
 
-var abi_mgr *AbiManager
+var abi_mgr *abi.AbiManager
 
 var redisNs redis.Namespace
 
