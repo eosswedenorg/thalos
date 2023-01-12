@@ -13,8 +13,8 @@ type ChannelInterface interface {
 // Standard channel. Just a wrapper around string slice
 type Channel []string
 
-func (c *Channel) Append(name string) {
-	*c = append(*c, name)
+func (c *Channel) Append(name ...string) {
+	*c = append(*c, name...)
 }
 
 func (c Channel) String() string {
