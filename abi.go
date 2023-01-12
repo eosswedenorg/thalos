@@ -1,7 +1,7 @@
 package main
 
 import (
-	"encoding/json"
+	"context"
 	"fmt"
 	"time"
 
@@ -12,29 +12,39 @@ import (
 	redis_cache "github.com/go-redis/cache/v8"
 )
 
-var abiCache *abi_cache.Cache
+type AbiManager struct {
+	cache *abi_cache.Cache
+	api   *eos.API
+	ctx   context.Context
+}
 
-func InitAbiCache(id string) {
+func NewAbiManager(api *eos.API, id string) *AbiManager {
 	// Init abi cache
-	abiCache = abi_cache.New("ship.cache."+id+".abi", &redis_cache.Options{
+	cache := abi_cache.New("ship.cache."+id+".abi", &redis_cache.Options{
 		Redis: redis.Client(),
 		// Cache 10k keys for 10 minutes.
 		LocalCache: redis_cache.NewTinyLFU(10000, 10*time.Minute),
 	})
+
+	return &AbiManager{
+		cache: cache,
+		api:   api,
+		ctx:   context.Background(),
+	}
 }
 
-func GetAbi(account eos.AccountName) (*eos.ABI, error) {
+func (mgr *AbiManager) GetAbi(account eos.AccountName) (*eos.ABI, error) {
 	key := string(account)
 
-	abi, err := abiCache.Get(key)
+	abi, err := mgr.cache.Get(key)
 	if err != nil {
-		resp, err := eosClient.GetABI(eosClientCtx, account)
+		resp, err := mgr.api.GetABI(mgr.ctx, account)
 		if err != nil {
 			return nil, fmt.Errorf("api: %s", err)
 		}
 		abi = &resp.ABI
 
-		err = abiCache.Set(key, abi, time.Hour)
+		err = mgr.cache.Set(key, abi, time.Hour)
 		if err != nil {
 			return nil, fmt.Errorf("cache: %s", err)
 		}

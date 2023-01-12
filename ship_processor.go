@@ -91,7 +91,7 @@ func processTraces(traces []*ship.TransactionTraceV0) {
 				HexData:  hex.EncodeToString(act_trace.Act.Data),
 			}
 
-			abi, err := GetAbi(act_trace.Act.Account)
+			abi, err := abi_mgr.GetAbi(act_trace.Act.Account)
 			if err == nil {
 				v, err := decodeAction(abi, act_trace.Act.Data, act_trace.Act.Name)
 				if err != nil {

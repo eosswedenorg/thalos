@@ -35,6 +35,8 @@ var (
 	eosClientCtx = context.Background()
 )
 
+var abi_mgr *AbiManager
+
 var redisNs redis.Namespace
 
 // Reader states
@@ -216,9 +218,6 @@ func main() {
 		return
 	}
 
-	// Init Abi cache
-	InitAbiCache(conf.Redis.CacheID)
-
 	// Connect client and get chain info.
 	log.Printf("Get chain info from api at: %s", conf.Api)
 	eosClient = eos.New(conf.Api)
@@ -227,6 +226,9 @@ func main() {
 		log.WithError(err).Fatal("Failed to get info")
 		return
 	}
+
+	// Init Abi cache
+	abi_mgr = abi.NewAbiManager(eosClient, conf.Redis.CacheID)
 
 	redisNs = redis.Namespace{
 		Prefix:  conf.Redis.Prefix,
