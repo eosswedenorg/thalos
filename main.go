@@ -7,10 +7,10 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/go-redis/redis/v8"
 	log "github.com/sirupsen/logrus"
 
 	"eosio-ship-trace-reader/config"
-	"eosio-ship-trace-reader/internal/redis"
 	"eosio-ship-trace-reader/transport"
 	"eosio-ship-trace-reader/transport/redis_pubsub"
 
@@ -219,14 +219,20 @@ func main() {
 	notify.UseServices(telegram)
 
 	// Connect to redis
-	err = redis.Connect(conf.Redis.Addr, conf.Redis.Password, conf.Redis.DB)
+	rdb := redis.NewClient(&redis.Options{
+		Addr:     conf.Redis.Addr,
+		Password: conf.Redis.Password,
+		DB:       conf.Redis.DB,
+	})
+
+	err = rdb.Ping(context.Background()).Err()
 	if err != nil {
 		log.WithError(err).Fatal("Failed to connect to redis")
 		return
 	}
 
 	// Setup publisher
-	publisher = redis_pubsub.New(redis.Client())
+	publisher = redis_pubsub.New(rdb)
 
 	// Connect client and get chain info.
 	log.Printf("Get chain info from api at: %s", conf.Api)
@@ -238,7 +244,7 @@ func main() {
 	}
 
 	// Init Abi cache
-	abi_mgr = abi.NewAbiManager(eosClient, conf.Redis.CacheID)
+	abi_mgr = abi.NewAbiManager(rdb, eosClient, conf.Redis.CacheID)
 
 	redisNs = transport.Namespace{
 		Prefix:  conf.Redis.Prefix,
