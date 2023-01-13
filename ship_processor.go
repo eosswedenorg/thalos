@@ -6,7 +6,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"eosio-ship-trace-reader/internal/redis"
+	"eosio-ship-trace-reader/transport"
 	"github.com/eoscanada/eos-go"
 	"github.com/eoscanada/eos-go/ship"
 )
@@ -34,7 +34,7 @@ func encodeMessage(v interface{}) ([]byte, bool) {
 	return payload, true
 }
 
-func queueMessage(channel redis.ChannelInterface, payload []byte) bool {
+func queueMessage(channel transport.ChannelInterface, payload []byte) bool {
 	key := redisNs.NewKey(channel)
 	err := publisher.Publish(key.String(), payload)
 	if err != nil {
@@ -44,7 +44,7 @@ func queueMessage(channel redis.ChannelInterface, payload []byte) bool {
 	return true
 }
 
-func encodeQueue(channel redis.ChannelInterface, v interface{}) bool {
+func encodeQueue(channel transport.ChannelInterface, v interface{}) bool {
 	if payload, ok := encodeMessage(v); ok {
 		if queueMessage(channel, payload) {
 			return true
@@ -65,7 +65,7 @@ func processBlock(block *ship.GetBlocksResultV0) {
 			HeadBlockNum:             block.Head.BlockNum,
 		}
 
-		encodeQueue(redis.HeartbeatChannel, hb)
+		encodeQueue(transport.HeartbeatChannel, hb)
 
 		err := publisher.Flush()
 		if err != nil {
@@ -77,7 +77,7 @@ func processBlock(block *ship.GetBlocksResultV0) {
 func processTraces(traces []*ship.TransactionTraceV0) {
 	for _, trace := range traces {
 
-		encodeQueue(redis.TransactionChannel, trace)
+		encodeQueue(transport.TransactionChannel, trace)
 
 		// Actions
 		for _, actionTraceVar := range trace.ActionTraces {
@@ -107,11 +107,11 @@ func processTraces(traces []*ship.TransactionTraceV0) {
 				continue
 			}
 
-			channels := []redis.ChannelInterface{
-				redis.ActionChannel{},
-				redis.ActionChannel{Action: string(act.Action)},
-				redis.ActionChannel{Contract: string(act.Contract)},
-				redis.ActionChannel{Action: string(act.Action), Contract: string(act.Contract)},
+			channels := []transport.ChannelInterface{
+				transport.ActionChannel{},
+				transport.ActionChannel{Action: string(act.Action)},
+				transport.ActionChannel{Contract: string(act.Contract)},
+				transport.ActionChannel{Action: string(act.Action), Contract: string(act.Contract)},
 			}
 
 			for _, channel := range channels {

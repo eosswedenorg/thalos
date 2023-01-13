@@ -44,7 +44,7 @@ var abi_mgr *abi.AbiManager
 
 var publisher transport.Publisher
 
-var redisNs redis.Namespace
+var redisNs transport.Namespace
 
 // Reader states
 const (
@@ -240,7 +240,7 @@ func main() {
 	// Init Abi cache
 	abi_mgr = abi.NewAbiManager(eosClient, conf.Redis.CacheID)
 
-	redisNs = redis.Namespace{
+	redisNs = transport.Namespace{
 		Prefix:  conf.Redis.Prefix,
 		ChainID: chainInfo.ChainID.String(),
 	}
