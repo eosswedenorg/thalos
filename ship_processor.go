@@ -36,7 +36,7 @@ func encodeMessage(v interface{}) ([]byte, bool) {
 
 func queueMessage(channel redis.ChannelInterface, payload []byte) bool {
 	key := redisNs.NewKey(channel)
-	err := redis.RegisterPublish(key.String(), payload).Err()
+	err := publisher.Publish(key.String(), payload)
 	if err != nil {
 		log.WithError(err).Errorf("Failed to post to channel '%s'", key)
 		return false
@@ -67,9 +67,9 @@ func processBlock(block *ship.GetBlocksResultV0) {
 
 		encodeQueue(redis.HeartbeatChannel, hb)
 
-		_, err := redis.Send()
+		err := publisher.Flush()
 		if err != nil {
-			log.WithError(err).Error("Failed to send redis")
+			log.WithError(err).Error("Failed to send messages")
 		}
 	}
 }
@@ -120,8 +120,8 @@ func processTraces(traces []*ship.TransactionTraceV0) {
 		}
 	}
 
-	_, err := redis.Send()
+	err := publisher.Flush()
 	if err != nil {
-		log.WithError(err).Error("Failed to send redis")
+		log.WithError(err).Error("Failed to send messages")
 	}
 }
