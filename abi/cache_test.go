@@ -7,7 +7,7 @@ import (
 
 	eos "github.com/eoscanada/eos-go"
 	redis_cache "github.com/go-redis/cache/v8"
-	"github.com/go-redis/redis/v8"
+	"github.com/go-redis/redismock/v8"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -73,14 +73,20 @@ var abiString = `
 `
 
 func TestGetSet(t *testing.T) {
+	client, mock := redismock.NewClientMock()
+
 	c := NewCache("abi.cache.test", &redis_cache.Options{
-		Redis: redis.NewClient(&redis.Options{}),
+		Redis: client,
 		// Cache 10k keys for 1 minute.
 		LocalCache: redis_cache.NewTinyLFU(10000, time.Minute),
 	})
 
 	abi, err := eos.NewABI(strings.NewReader(abiString))
 	assert.NoError(t, err)
+
+	bytes, _ := c.c.Marshal(*abi)
+
+	mock.ExpectSet("abi.cache.test.testaccount", bytes, time.Minute).SetVal("OK")
 
 	err = c.Set("testaccount", abi, time.Minute)
 	assert.NoError(t, err)
@@ -139,8 +145,10 @@ func TestGetSet(t *testing.T) {
 }
 
 func TestCacheMiss(t *testing.T) {
+	client, _ := redismock.NewClientMock()
+
 	c := NewCache("abi.cache.test", &redis_cache.Options{
-		Redis: redis.NewClient(&redis.Options{}),
+		Redis: client,
 		// Cache 10k keys for 1 minute.
 		LocalCache: redis_cache.NewTinyLFU(10000, time.Minute),
 	})
