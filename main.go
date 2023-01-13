@@ -11,6 +11,9 @@ import (
 
 	"eosio-ship-trace-reader/config"
 	"eosio-ship-trace-reader/internal/redis"
+	"eosio-ship-trace-reader/transport"
+	"eosio-ship-trace-reader/transport/redis_pubsub"
+
 	"github.com/nikoksr/notify"
 	"github.com/nikoksr/notify/service/telegram"
 
@@ -38,6 +41,8 @@ var (
 )
 
 var abi_mgr *abi.AbiManager
+
+var publisher transport.Publisher
 
 var redisNs redis.Namespace
 
@@ -219,6 +224,9 @@ func main() {
 		log.WithError(err).Fatal("Failed to connect to redis")
 		return
 	}
+
+	// Setup publisher
+	publisher = redis_pubsub.New(redis.Client())
 
 	// Connect client and get chain info.
 	log.Printf("Get chain info from api at: %s", conf.Api)
