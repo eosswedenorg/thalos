@@ -8,6 +8,7 @@ require (
 	github.com/eosswedenorg-go/pid v1.0.1
 	github.com/go-redis/cache/v8 v8.4.4
 	github.com/go-redis/redis/v8 v8.11.6-0.20220405070650-99c79f7041fc
+	github.com/go-redis/redismock/v8 v8.11.5
 	github.com/nikoksr/notify v0.35.0
 	github.com/pborman/getopt/v2 v2.1.0
 	github.com/sirupsen/logrus v1.9.0
@@ -25,6 +26,7 @@ require (
 	github.com/klauspost/compress v1.15.12 // indirect
 	github.com/logrusorgru/aurora v2.0.3+incompatible // indirect
 	github.com/mitchellh/go-testing-interface v1.14.1 // indirect
+	github.com/onsi/gomega v1.24.1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/streamingfast/logging v0.0.0-20220813175024-b4fbb0e893df // indirect
