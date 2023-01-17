@@ -33,12 +33,6 @@ var conf config.Config
 
 var shClient *shipclient.ShipClient
 
-var abi_mgr *abi.AbiManager
-
-var publisher transport.Publisher
-
-var redisNs transport.Namespace
-
 // Reader states
 const (
 	RS_CONNECT = 1
@@ -225,9 +219,6 @@ func main() {
 		return
 	}
 
-	// Setup publisher
-	publisher = redis_pubsub.New(rdb)
-
 	// Connect client and get chain info.
 	log.Printf("Get chain info from api at: %s", conf.Api)
 	eosClient := eos.New(conf.Api)
@@ -235,14 +226,6 @@ func main() {
 	if err != nil {
 		log.WithError(err).Fatal("Failed to get info")
 		return
-	}
-
-	// Init Abi cache
-	abi_mgr = abi.NewAbiManager(rdb, eosClient, conf.Redis.CacheID)
-
-	redisNs = transport.Namespace{
-		Prefix:  conf.Redis.Prefix,
-		ChainID: chainInfo.ChainID.String(),
 	}
 
 	if conf.StartBlockNum == config.NULL_BLOCK_NUMBER {
@@ -253,10 +236,19 @@ func main() {
 		}
 	}
 
+	reader := ShipReader{
+		ns: transport.Namespace{
+			Prefix:  conf.Redis.Prefix,
+			ChainID: chainInfo.ChainID.String(),
+		},
+		publisher: redis_pubsub.New(rdb),
+		abi:       abi.NewAbiManager(rdb, eosClient, conf.Redis.CacheID),
+	}
+
 	// Construct ship client
 	shClient = shipclient.NewClient(conf.StartBlockNum, conf.EndBlockNum, conf.IrreversibleOnly)
-	shClient.BlockHandler = processBlock
-	shClient.TraceHandler = processTraces
+	shClient.BlockHandler = reader.processBlock
+	shClient.TraceHandler = reader.processTraces
 
 	// Run the application
 	run()
