@@ -31,14 +31,7 @@ import (
 
 var conf config.Config
 
-var chainInfo *eos.InfoResp
-
 var shClient *shipclient.ShipClient
-
-var (
-	eosClient    *eos.API
-	eosClientCtx = context.Background()
-)
 
 var abi_mgr *abi.AbiManager
 
@@ -171,6 +164,7 @@ func init() {
 
 func main() {
 	var err error
+	var chainInfo *eos.InfoResp
 
 	showHelp := getopt.BoolLong("help", 'h', "display this help text")
 	showVersion := getopt.BoolLong("version", 'v', "display this help text")
@@ -236,8 +230,8 @@ func main() {
 
 	// Connect client and get chain info.
 	log.Printf("Get chain info from api at: %s", conf.Api)
-	eosClient = eos.New(conf.Api)
-	chainInfo, err = eosClient.GetInfo(eosClientCtx)
+	eosClient := eos.New(conf.Api)
+	chainInfo, err = eosClient.GetInfo(context.Background())
 	if err != nil {
 		log.WithError(err).Fatal("Failed to get info")
 		return
