@@ -2,12 +2,12 @@ package main
 
 import (
 	"encoding/hex"
-	"encoding/json"
 
 	log "github.com/sirupsen/logrus"
 
 	"eosio-ship-trace-reader/abi"
 	"eosio-ship-trace-reader/transport"
+	"eosio-ship-trace-reader/transport/message"
 	"github.com/eoscanada/eos-go/ship"
 )
 
@@ -15,17 +15,6 @@ type ShipReader struct {
 	ns        transport.Namespace
 	abi       *abi.AbiManager
 	publisher transport.Publisher
-}
-
-func encodeMessage(v interface{}) ([]byte, bool) {
-	payload, err := json.Marshal(v)
-	if err != nil {
-		log.WithError(err).
-			WithField("v", v).
-			Warn("Failed to encode message to json")
-		return nil, false
-	}
-	return payload, true
 }
 
 func (reader *ShipReader) queueMessage(channel transport.ChannelInterface, payload []byte) bool {
@@ -39,7 +28,7 @@ func (reader *ShipReader) queueMessage(channel transport.ChannelInterface, paylo
 }
 
 func (reader *ShipReader) encodeQueue(channel transport.ChannelInterface, v interface{}) bool {
-	if payload, ok := encodeMessage(v); ok {
+	if payload, ok := message.Encode(v); ok {
 		if reader.queueMessage(channel, payload) {
 			return true
 		}
@@ -96,7 +85,7 @@ func (reader *ShipReader) processTraces(traces []*ship.TransactionTraceV0) {
 				log.WithError(err).Errorf("Failed to get abi for contract %s", act_trace.Act.Account)
 			}
 
-			payload, ok := encodeMessage(act)
+			payload, ok := message.Encode(act)
 			if !ok {
 				continue
 			}
