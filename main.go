@@ -236,7 +236,7 @@ func main() {
 		}
 	}
 
-	reader := ShipReader{
+	processor := ShipProcessor{
 		ns: transport.Namespace{
 			Prefix:  conf.Redis.Prefix,
 			ChainID: chainInfo.ChainID.String(),
@@ -247,8 +247,8 @@ func main() {
 
 	// Construct ship client
 	shClient = shipclient.NewClient(conf.StartBlockNum, conf.EndBlockNum, conf.IrreversibleOnly)
-	shClient.BlockHandler = reader.processBlock
-	shClient.TraceHandler = reader.processTraces
+	shClient.BlockHandler = processor.processBlock
+	shClient.TraceHandler = processor.processTraces
 
 	// Run the application
 	run()
