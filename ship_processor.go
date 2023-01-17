@@ -8,7 +8,6 @@ import (
 
 	"eosio-ship-trace-reader/abi"
 	"eosio-ship-trace-reader/transport"
-	"github.com/eoscanada/eos-go"
 	"github.com/eoscanada/eos-go/ship"
 )
 
@@ -16,18 +15,6 @@ type ShipReader struct {
 	ns        transport.Namespace
 	abi       *abi.AbiManager
 	publisher transport.Publisher
-}
-
-func decodeAction(abi *eos.ABI, data []byte, actionName eos.ActionName) (interface{}, error) {
-	var v interface{}
-
-	bytes, err := abi.DecodeAction(data, actionName)
-	if err != nil {
-		return v, err
-	}
-
-	err = json.Unmarshal(bytes, &v)
-	return v, err
 }
 
 func encodeMessage(v interface{}) ([]byte, bool) {
@@ -98,9 +85,9 @@ func (reader *ShipReader) processTraces(traces []*ship.TransactionTraceV0) {
 				HexData:  hex.EncodeToString(act_trace.Act.Data),
 			}
 
-			abi, err := reader.abi.GetAbi(act_trace.Act.Account)
+			ABI, err := reader.abi.GetAbi(act_trace.Act.Account)
 			if err == nil {
-				v, err := decodeAction(abi, act_trace.Act.Data, act_trace.Act.Name)
+				v, err := abi.DecodeAction(ABI, act_trace.Act.Data, act_trace.Act.Name)
 				if err != nil {
 					log.WithError(err).Warn("Failed to decode action")
 				}
