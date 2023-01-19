@@ -10,6 +10,7 @@ import (
 	"github.com/go-redis/redis/v8"
 	log "github.com/sirupsen/logrus"
 
+	"eosio-ship-trace-reader/app"
 	"eosio-ship-trace-reader/config"
 	"eosio-ship-trace-reader/transport"
 	"eosio-ship-trace-reader/transport/redis_pubsub"
@@ -236,19 +237,17 @@ func main() {
 		}
 	}
 
-	processor := ShipProcessor{
-		ns: transport.Namespace{
+	shClient = shipclient.NewClient(conf.StartBlockNum, conf.EndBlockNum, conf.IrreversibleOnly)
+
+	app.SpawnProccessor(
+		shClient,
+		transport.Namespace{
 			Prefix:  conf.Redis.Prefix,
 			ChainID: chainInfo.ChainID.String(),
 		},
-		publisher: redis_pubsub.New(rdb),
-		abi:       abi.NewAbiManager(rdb, eosClient, conf.Redis.CacheID),
-	}
-
-	// Construct ship client
-	shClient = shipclient.NewClient(conf.StartBlockNum, conf.EndBlockNum, conf.IrreversibleOnly)
-	shClient.BlockHandler = processor.processBlock
-	shClient.TraceHandler = processor.processTraces
+		redis_pubsub.New(rdb),
+		abi.NewAbiManager(rdb, eosClient, conf.Redis.CacheID),
+	)
 
 	// Run the application
 	run()

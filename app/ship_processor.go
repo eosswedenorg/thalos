@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"encoding/hex"
@@ -9,12 +9,27 @@ import (
 	"eosio-ship-trace-reader/transport"
 	"eosio-ship-trace-reader/transport/message"
 	"github.com/eoscanada/eos-go/ship"
+	shipclient "github.com/eosswedenorg-go/antelope-ship-client"
 )
 
 type ShipProcessor struct {
 	ns        transport.Namespace
 	abi       *abi.AbiManager
 	publisher transport.Publisher
+	shClient  *shipclient.ShipClient
+}
+
+func SpawnProccessor(shClient *shipclient.ShipClient, ns transport.Namespace, publisher transport.Publisher, abi *abi.AbiManager) {
+	processor := &ShipProcessor{
+		ns:        ns,
+		abi:       abi,
+		publisher: publisher,
+		shClient:  shClient,
+	}
+
+	// Attach handlers
+	shClient.BlockHandler = processor.processBlock
+	shClient.TraceHandler = processor.processTraces
 }
 
 func (processor *ShipProcessor) queueMessage(channel transport.ChannelInterface, payload []byte) bool {
