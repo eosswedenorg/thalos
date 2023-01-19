@@ -1,4 +1,4 @@
-package app
+package message
 
 import (
 	eos "github.com/eoscanada/eos-go"

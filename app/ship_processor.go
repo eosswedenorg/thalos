@@ -57,7 +57,7 @@ func (processor *ShipProcessor) processBlock(block *ship.GetBlocksResultV0) {
 	}
 
 	if block.ThisBlock.BlockNum%10 == 0 {
-		hb := HearthBeat{
+		hb := message.HearthBeat{
 			BlockNum:                 block.ThisBlock.BlockNum,
 			LastIrreversibleBlockNum: block.LastIrreversible.BlockNum,
 			HeadBlockNum:             block.Head.BlockNum,
@@ -81,7 +81,7 @@ func (processor *ShipProcessor) processTraces(traces []*ship.TransactionTraceV0)
 		for _, actionTraceVar := range trace.ActionTraces {
 			act_trace := actionTraceVar.Impl.(*ship.ActionTraceV0)
 
-			act := ActionTrace{
+			act := message.ActionTrace{
 				TxID:     trace.ID,
 				Receiver: act_trace.Receiver,
 				Contract: act_trace.Act.Account,
