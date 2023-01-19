@@ -3,6 +3,8 @@ package redis_pubsub
 import (
 	"context"
 
+	"eosio-ship-trace-reader/transport"
+
 	redis "github.com/go-redis/redis/v8"
 )
 
@@ -18,8 +20,8 @@ func New(client *redis.Client) *RedisPubsub {
 	}
 }
 
-func (r *RedisPubsub) Publish(channel string, payload []byte) error {
-	return r.pipeline.Publish(r.ctx, channel, payload).Err()
+func (r *RedisPubsub) Publish(channel transport.ChannelInterface, payload []byte) error {
+	return r.pipeline.Publish(r.ctx, channel.String(), payload).Err()
 }
 
 func (r *RedisPubsub) Flush() error {

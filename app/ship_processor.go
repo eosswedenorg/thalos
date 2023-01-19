@@ -33,10 +33,9 @@ func SpawnProccessor(shClient *shipclient.ShipClient, ns transport.Namespace, pu
 }
 
 func (processor *ShipProcessor) queueMessage(channel transport.ChannelInterface, payload []byte) bool {
-	key := processor.ns.NewKey(channel)
-	err := processor.publisher.Publish(key.String(), payload)
+	err := processor.publisher.Publish(channel, payload)
 	if err != nil {
-		log.WithError(err).Errorf("Failed to post to channel '%s'", key)
+		log.WithError(err).Errorf("Failed to post to channel '%s'", channel)
 		return false
 	}
 	return true
