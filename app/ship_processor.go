@@ -13,15 +13,13 @@ import (
 )
 
 type ShipProcessor struct {
-	ns        transport.Namespace
 	abi       *abi.AbiManager
 	publisher transport.Publisher
 	shClient  *shipclient.ShipClient
 }
 
-func SpawnProccessor(shClient *shipclient.ShipClient, ns transport.Namespace, publisher transport.Publisher, abi *abi.AbiManager) {
+func SpawnProccessor(shClient *shipclient.ShipClient, publisher transport.Publisher, abi *abi.AbiManager) {
 	processor := &ShipProcessor{
-		ns:        ns,
 		abi:       abi,
 		publisher: publisher,
 		shClient:  shClient,

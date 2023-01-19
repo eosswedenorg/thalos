@@ -241,10 +241,6 @@ func main() {
 
 	app.SpawnProccessor(
 		shClient,
-		transport.Namespace{
-			Prefix:  conf.Redis.Prefix,
-			ChainID: chainInfo.ChainID.String(),
-		},
 		redis_pubsub.New(rdb),
 		abi.NewAbiManager(rdb, eosClient, conf.Redis.CacheID),
 	)
