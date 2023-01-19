@@ -12,7 +12,6 @@ import (
 
 	"eosio-ship-trace-reader/app"
 	"eosio-ship-trace-reader/config"
-	"eosio-ship-trace-reader/transport"
 	"eosio-ship-trace-reader/transport/redis_pubsub"
 
 	"github.com/nikoksr/notify"
@@ -241,7 +240,10 @@ func main() {
 
 	app.SpawnProccessor(
 		shClient,
-		redis_pubsub.New(rdb),
+		redis_pubsub.New(rdb, redis_pubsub.Namespace{
+			Prefix:  conf.Redis.Prefix,
+			ChainID: chainInfo.ChainID.String(),
+		}),
 		abi.NewAbiManager(rdb, eosClient, conf.Redis.CacheID),
 	)
 

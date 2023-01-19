@@ -11,17 +11,19 @@ import (
 type RedisPubsub struct {
 	pipeline redis.Pipeliner
 	ctx      context.Context
+	ns       Namespace
 }
 
-func New(client *redis.Client) *RedisPubsub {
+func New(client *redis.Client, ns Namespace) *RedisPubsub {
 	return &RedisPubsub{
 		pipeline: client.Pipeline(),
 		ctx:      client.Context(),
+		ns:       ns,
 	}
 }
 
 func (r *RedisPubsub) Publish(channel transport.ChannelInterface, payload []byte) error {
-	return r.pipeline.Publish(r.ctx, channel.String(), payload).Err()
+	return r.pipeline.Publish(r.ctx, r.ns.NewKey(channel).String(), payload).Err()
 }
 
 func (r *RedisPubsub) Flush() error {

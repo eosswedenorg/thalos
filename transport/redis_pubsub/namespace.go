@@ -1,7 +1,9 @@
-package transport
+package redis_pubsub
 
 import (
 	"strings"
+
+	"eosio-ship-trace-reader/transport"
 )
 
 const (
@@ -25,7 +27,7 @@ type Namespace struct {
 }
 
 // Create a new key with this namespace.
-func (ns Namespace) NewKey(ch ChannelInterface) Key {
+func (ns Namespace) NewKey(ch transport.ChannelInterface) Key {
 	return Key{NS: ns, Channel: ch}
 }
 

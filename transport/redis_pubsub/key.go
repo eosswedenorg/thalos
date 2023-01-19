@@ -1,7 +1,9 @@
-package transport
+package redis_pubsub
 
 import (
 	"fmt"
+
+	"eosio-ship-trace-reader/transport"
 )
 
 // Key consists of a namespace and a channel.
@@ -9,7 +11,7 @@ import (
 
 type Key struct {
 	NS      Namespace
-	Channel ChannelInterface
+	Channel transport.ChannelInterface
 }
 
 func (k Key) String() string {

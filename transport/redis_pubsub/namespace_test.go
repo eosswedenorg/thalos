@@ -1,4 +1,4 @@
-package transport
+package redis_pubsub
 
 import "testing"
 
