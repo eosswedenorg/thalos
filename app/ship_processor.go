@@ -79,10 +79,10 @@ func (processor *ShipProcessor) processTraces(traces []*ship.TransactionTraceV0)
 			act_trace := actionTraceVar.Impl.(*ship.ActionTraceV0)
 
 			act := message.ActionTrace{
-				TxID:     trace.ID,
-				Receiver: act_trace.Receiver,
-				Contract: act_trace.Act.Account,
-				Action:   act_trace.Act.Name,
+				TxID:     trace.ID.String(),
+				Receiver: act_trace.Receiver.String(),
+				Contract: act_trace.Act.Account.String(),
+				Action:   act_trace.Act.Name.String(),
 				HexData:  hex.EncodeToString(act_trace.Act.Data),
 			}
 
