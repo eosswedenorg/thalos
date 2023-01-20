@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/go-redis/redis/v8"
@@ -103,14 +104,14 @@ func run() {
 	go readerLoop()
 
 	// Create interrupt channel.
-	interrupt := make(chan os.Signal, 1)
+	signals := make(chan os.Signal, 1)
 
-	// Register interrupt channel to receive interrupt messages
-	signal.Notify(interrupt, os.Interrupt)
+	// Register signal channel to receive signals from the os.
+	signal.Notify(signals, os.Interrupt, syscall.SIGTERM)
 
 	// Wait for interrupt
-	<-interrupt
-	log.Info("Interrupt, closing")
+	sig := <-signals
+	log.WithField("signal", sig).Info("Signal received")
 
 	if !shClient.IsOpen() {
 		log.Info("ship client not connected, exiting...")
