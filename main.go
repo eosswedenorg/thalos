@@ -99,50 +99,28 @@ func readerLoop() {
 }
 
 func run() {
-	// Create done and interrupt channels.
-	done := make(chan bool)
+	// Spawn reader loop in another thread.
+	go readerLoop()
+
+	// Create interrupt channel.
 	interrupt := make(chan os.Signal, 1)
 
 	// Register interrupt channel to receive interrupt messages
 	signal.Notify(interrupt, os.Interrupt)
 
-	// Spawn message read loop in another thread.
-	go func() {
-		readerLoop()
+	// Wait for interrupt
+	<-interrupt
+	log.Info("Interrupt, closing")
 
-		// Reader exited. signal that we are done.
-		done <- true
-	}()
+	if !shClient.IsOpen() {
+		log.Info("ship client not connected, exiting...")
+		return
+	}
 
-	// Enter event loop in main thread
-	for {
-		select {
-		case <-interrupt:
-			log.Info("Interrupt, closing")
-
-			if !shClient.IsOpen() {
-				log.Info("ship client not connected, exiting...")
-				return
-			}
-
-			// Cleanly close the connection by sending a close message and then
-			// waiting (with timeout) for the server to close the connection.
-			err := shClient.SendCloseMessage()
-			if err != nil {
-				log.WithError(err).Info("failed to send close message to ship server")
-			}
-
-			select {
-			case <-done:
-				log.Info("Closed")
-			case <-time.After(time.Second * 10):
-				log.Info("Timeout")
-			}
-			return
-		case <-done:
-			log.Info("Closed")
-			return
-		}
+	// Cleanly close the connection by sending a close message.
+	err := shClient.SendCloseMessage()
+	if err != nil {
+		log.WithError(err).Info("failed to send close message to ship server")
 	}
 }
 
