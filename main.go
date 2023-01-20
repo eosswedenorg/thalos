@@ -107,7 +107,7 @@ func run() {
 	signals := make(chan os.Signal, 1)
 
 	// Register signal channel to receive signals from the os.
-	signal.Notify(signals, os.Interrupt, syscall.SIGTERM)
+	signal.Notify(signals, syscall.SIGINT, syscall.SIGTERM)
 
 	// Wait for interrupt
 	sig := <-signals
