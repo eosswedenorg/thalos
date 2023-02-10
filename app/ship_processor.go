@@ -2,6 +2,7 @@ package app
 
 import (
 	"encoding/hex"
+	"encoding/json"
 
 	log "github.com/sirupsen/logrus"
 
@@ -12,10 +13,24 @@ import (
 	shipclient "github.com/eosswedenorg-go/antelope-ship-client"
 )
 
+// logDecoratedEncoder decorates a message.Encoder and logs any error.
+func logDecoratedEncoder(encoder message.Encoder) message.Encoder {
+	return func(v interface{}) ([]byte, error) {
+		payload, err := encoder(v)
+		if err != nil {
+			log.WithError(err).
+				WithField("v", v).
+				Warn("Failed to encode message")
+		}
+		return payload, err
+	}
+}
+
 type ShipProcessor struct {
 	abi       *abi.AbiManager
 	publisher transport.Publisher
 	shClient  *shipclient.Client
+	encode    message.Encoder
 }
 
 func SpawnProccessor(shClient *shipclient.Client, publisher transport.Publisher, abi *abi.AbiManager) {
@@ -23,6 +38,7 @@ func SpawnProccessor(shClient *shipclient.Client, publisher transport.Publisher,
 		abi:       abi,
 		publisher: publisher,
 		shClient:  shClient,
+		encode:    logDecoratedEncoder(json.Marshal),
 	}
 
 	// Attach handlers
@@ -40,10 +56,8 @@ func (processor *ShipProcessor) queueMessage(channel transport.ChannelInterface,
 }
 
 func (processor *ShipProcessor) encodeQueue(channel transport.ChannelInterface, v interface{}) bool {
-	if payload, ok := message.Encode(v); ok {
-		if processor.queueMessage(channel, payload) {
-			return true
-		}
+	if payload, err := processor.encode(v); err != nil {
+		return processor.queueMessage(channel, payload)
 	}
 	return false
 }
@@ -97,8 +111,8 @@ func (processor *ShipProcessor) processTraces(traces []*ship.TransactionTraceV0)
 				log.WithError(err).Errorf("Failed to get abi for contract %s", act_trace.Act.Account)
 			}
 
-			payload, ok := message.Encode(act)
-			if !ok {
+			payload, err := processor.encode(act)
+			if err != nil {
 				continue
 			}
 
