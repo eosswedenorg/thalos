@@ -32,7 +32,7 @@ import (
 
 var conf config.Config
 
-var shClient *shipclient.ShipClient
+var shClient *shipclient.Client
 
 // Reader states
 const (
@@ -79,7 +79,7 @@ func readerLoop() {
 		case RS_READ:
 			err := shClient.Read()
 			if err != nil {
-				if shErr, ok := err.(shipclient.ShipClientError); ok {
+				if shErr, ok := err.(shipclient.ClientError); ok {
 
 					// Bail out if socket is closed
 					if shErr.Type == shipclient.ErrSockClosed {
@@ -119,7 +119,7 @@ func run() {
 	}
 
 	// Cleanly close the connection by sending a close message.
-	err := shClient.SendCloseMessage()
+	err := shClient.Shutdown()
 	if err != nil {
 		log.WithError(err).Info("failed to send close message to ship server")
 	}
@@ -198,7 +198,6 @@ func main() {
 		return
 	}
 
-	// Connect client and get chain info.
 	log.Printf("Get chain info from api at: %s", conf.Api)
 	eosClient := eos.New(conf.Api)
 	chainInfo, err = eosClient.GetInfo(context.Background())
@@ -215,7 +214,11 @@ func main() {
 		}
 	}
 
-	shClient = shipclient.NewClient(conf.StartBlockNum, conf.EndBlockNum, conf.IrreversibleOnly)
+	shClient = shipclient.NewClient(func(c *shipclient.Client) {
+		c.StartBlock = conf.StartBlockNum
+		c.EndBlock = conf.EndBlockNum
+		c.IrreversibleOnly = conf.IrreversibleOnly
+	})
 
 	app.SpawnProccessor(
 		shClient,

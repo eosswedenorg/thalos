@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/eoscanada/eos-go v0.10.3-0.20221117104514-64cafd714c60
-	github.com/eosswedenorg-go/antelope-ship-client v0.2.0
+	github.com/eosswedenorg-go/antelope-ship-client v0.2.2
 	github.com/eosswedenorg-go/pid v1.0.1
 	github.com/go-redis/cache/v8 v8.4.4
 	github.com/go-redis/redis/v8 v8.11.6-0.20220405070650-99c79f7041fc
