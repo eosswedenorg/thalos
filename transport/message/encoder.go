@@ -6,6 +6,9 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// Encoder is a function that can encode a object to the encoded format.
+type Encoder func(v any) ([]byte, error)
+
 func Encode(v interface{}) ([]byte, bool) {
 	payload, err := json.Marshal(v)
 	if err != nil {
