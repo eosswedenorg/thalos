@@ -5,7 +5,7 @@ import (
 
 	"eosio-ship-trace-reader/transport"
 
-	redis "github.com/go-redis/redis/v8"
+	"github.com/go-redis/redis/v8"
 )
 
 type RedisPubsub struct {
