@@ -4,7 +4,7 @@ package message
 type Encoder func(any) ([]byte, error)
 
 // Decoder is a function that can decode a format into an object
-type Decoder func(any, []byte) error
+type Decoder func([]byte, any) error
 
 // Codec is a type that can has a matching Encoder and Decoder function.
 type Codec struct {
