@@ -56,7 +56,7 @@ func (processor *ShipProcessor) queueMessage(channel transport.ChannelInterface,
 }
 
 func (processor *ShipProcessor) encodeQueue(channel transport.ChannelInterface, v interface{}) bool {
-	if payload, err := processor.encode(v); err != nil {
+	if payload, err := processor.encode(v); err == nil {
 		return processor.queueMessage(channel, payload)
 	}
 	return false
