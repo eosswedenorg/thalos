@@ -27,7 +27,7 @@ type Namespace struct {
 }
 
 // Create a new key with this namespace.
-func (ns Namespace) NewKey(ch transport.ChannelInterface) Key {
+func (ns Namespace) NewKey(ch transport.Channel) Key {
 	return Key{NS: ns, Channel: ch}
 }
 

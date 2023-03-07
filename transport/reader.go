@@ -7,5 +7,5 @@ package transport
 type Reader interface {
 	// Read a message from a channel.
 	// Read may block until a message is ready or an error occured.
-	Read(channel ChannelInterface) ([]byte, error)
+	Read(channel Channel) ([]byte, error)
 }

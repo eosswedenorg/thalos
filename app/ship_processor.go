@@ -46,7 +46,7 @@ func SpawnProccessor(shClient *shipclient.Client, writer transport.Writer, abi *
 	shClient.TraceHandler = processor.processTraces
 }
 
-func (processor *ShipProcessor) queueMessage(channel transport.ChannelInterface, payload []byte) bool {
+func (processor *ShipProcessor) queueMessage(channel transport.Channel, payload []byte) bool {
 	err := processor.writer.Write(channel, payload)
 	if err != nil {
 		log.WithError(err).Errorf("Failed to post to channel '%s'", channel)
@@ -55,7 +55,7 @@ func (processor *ShipProcessor) queueMessage(channel transport.ChannelInterface,
 	return true
 }
 
-func (processor *ShipProcessor) encodeQueue(channel transport.ChannelInterface, v interface{}) bool {
+func (processor *ShipProcessor) encodeQueue(channel transport.Channel, v interface{}) bool {
 	if payload, err := processor.encode(v); err == nil {
 		return processor.queueMessage(channel, payload)
 	}
@@ -116,11 +116,11 @@ func (processor *ShipProcessor) processTraces(traces []*ship.TransactionTraceV0)
 				continue
 			}
 
-			channels := []transport.ChannelInterface{
-				transport.ActionChannel{},
-				transport.ActionChannel{Action: string(act.Action)},
-				transport.ActionChannel{Contract: string(act.Contract)},
-				transport.ActionChannel{Action: string(act.Action), Contract: string(act.Contract)},
+			channels := []transport.Channel{
+				transport.Action{}.Channel(),
+				transport.Action{Action: act.Action}.Channel(),
+				transport.Action{Contract: act.Contract}.Channel(),
+				transport.Action{Action: act.Action, Contract: act.Contract}.Channel(),
 			}
 
 			for _, channel := range channels {

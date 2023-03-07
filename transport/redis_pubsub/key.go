@@ -11,7 +11,7 @@ import (
 
 type Key struct {
 	NS      Namespace
-	Channel transport.ChannelInterface
+	Channel transport.Channel
 }
 
 func (k Key) String() string {

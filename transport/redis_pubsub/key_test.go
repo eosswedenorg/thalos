@@ -9,7 +9,7 @@ import (
 func TestKey_String(t *testing.T) {
 	type fields struct {
 		NS      Namespace
-		Channel transport.ChannelInterface
+		Channel transport.Channel
 	}
 	tests := []struct {
 		name   string
@@ -19,7 +19,7 @@ func TestKey_String(t *testing.T) {
 		{"Empty", fields{NS: Namespace{}, Channel: transport.Channel{}}, "ship::0000000000000000000000000000000000000000000000000000000000000000::"},
 		{"Transactions", fields{NS: Namespace{ChainID: "id"}, Channel: transport.Channel{"transactions"}}, "ship::id::transactions"},
 		{"Nested", fields{NS: Namespace{ChainID: "id"}, Channel: transport.Channel{"one.two"}}, "ship::id::one.two"},
-		{"Action", fields{NS: Namespace{ChainID: "id"}, Channel: transport.ActionChannel{Contract: "mycontract"}}, "ship::id::actions/contract/mycontract"},
+		{"Action", fields{NS: Namespace{ChainID: "id"}, Channel: transport.Action{Contract: "mycontract"}.Channel()}, "ship::id::actions/contract/mycontract"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

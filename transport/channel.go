@@ -4,12 +4,7 @@ import (
 	"strings"
 )
 
-// Generic interface for all channel types.
-type ChannelInterface interface {
-	String() string
-}
-
-// Standard channel. Just a wrapper around string slice
+// Channel is just a wrapper around string slice
 type Channel []string
 
 func (c *Channel) Append(name ...string) {
@@ -41,23 +36,22 @@ var (
 	HeartbeatChannel   = Channel{"heartbeat"}
 )
 
-// Action channel.
-
-type ActionChannel struct {
+// Action Channel
+type Action struct {
 	Contract string
 	Action   string
 }
 
-func (ac ActionChannel) String() string {
+func (a Action) Channel() Channel {
 	ch := Channel{"actions"}
 
-	if len(ac.Contract) > 0 {
-		ch.Append("contract", ac.Contract)
+	if len(a.Contract) > 0 {
+		ch.Append("contract", a.Contract)
 	}
 
-	if len(ac.Action) > 0 {
-		ch.Append("action", ac.Action)
+	if len(a.Action) > 0 {
+		ch.Append("action", a.Action)
 	}
 
-	return ch.String()
+	return ch
 }
