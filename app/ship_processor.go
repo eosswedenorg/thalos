@@ -94,9 +94,9 @@ func (processor *ShipProcessor) processTraces(traces []*ship.TransactionTraceV0)
 
 			act := message.ActionTrace{
 				TxID:     trace.ID.String(),
-				Receiver: act_trace.Receiver.String(),
+				Name:     act_trace.Act.Name.String(),
 				Contract: act_trace.Act.Account.String(),
-				Action:   act_trace.Act.Name.String(),
+				Receiver: act_trace.Receiver.String(),
 				HexData:  hex.EncodeToString(act_trace.Act.Data),
 			}
 
@@ -118,9 +118,9 @@ func (processor *ShipProcessor) processTraces(traces []*ship.TransactionTraceV0)
 
 			channels := []transport.Channel{
 				transport.Action{}.Channel(),
-				transport.Action{Action: act.Action}.Channel(),
+				transport.Action{Action: act.Name}.Channel(),
 				transport.Action{Contract: act.Contract}.Channel(),
-				transport.Action{Action: act.Action, Contract: act.Contract}.Channel(),
+				transport.Action{Action: act.Name, Contract: act.Contract}.Channel(),
 			}
 
 			for _, channel := range channels {

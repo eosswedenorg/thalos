@@ -7,10 +7,15 @@ type HearthBeat struct {
 }
 
 type ActionTrace struct {
-	TxID     string      `json:"tx_id"`
+	TxID string `json:"tx_id"`
+
+	// Action name
+	Name string `json:"name"`
+
+	// Contract account.
+	Contract string `json:"contract"`
+
 	Receiver string      `json:"receiver"`
-	Contract string      `json:"contract"`
-	Action   string      `json:"action"`
 	Data     interface{} `json:"data"`
 	HexData  string      `json:"hex_data"`
 }
