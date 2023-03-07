@@ -38,8 +38,8 @@ var (
 
 // Action Channel
 type Action struct {
+	Name     string
 	Contract string
-	Action   string
 }
 
 func (a Action) Channel() Channel {
@@ -49,8 +49,8 @@ func (a Action) Channel() Channel {
 		ch.Append("contract", a.Contract)
 	}
 
-	if len(a.Action) > 0 {
-		ch.Append("action", a.Action)
+	if len(a.Name) > 0 {
+		ch.Append("name", a.Name)
 	}
 
 	return ch

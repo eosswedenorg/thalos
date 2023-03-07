@@ -51,8 +51,8 @@ func TestActionChannel_String(t *testing.T) {
 	}{
 		{"Empty", Action{}.Channel(), "actions"},
 		{"Contract", Action{Contract: "mycontract"}.Channel(), "actions/contract/mycontract"},
-		{"Action", Action{Action: "myaction"}.Channel(), "actions/action/myaction"},
-		{"ContractAndAction", Action{Contract: "mycontract", Action: "myaction"}.Channel(), "actions/contract/mycontract/action/myaction"},
+		{"Action", Action{Name: "myaction"}.Channel(), "actions/name/myaction"},
+		{"ContractAndName", Action{Contract: "mycontract", Name: "myaction"}.Channel(), "actions/contract/mycontract/name/myaction"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -118,9 +118,9 @@ func (processor *ShipProcessor) processTraces(traces []*ship.TransactionTraceV0)
 
 			channels := []transport.Channel{
 				transport.Action{}.Channel(),
-				transport.Action{Action: act.Name}.Channel(),
+				transport.Action{Name: act.Name}.Channel(),
 				transport.Action{Contract: act.Contract}.Channel(),
-				transport.Action{Action: act.Name, Contract: act.Contract}.Channel(),
+				transport.Action{Name: act.Name, Contract: act.Contract}.Channel(),
 			}
 
 			for _, channel := range channels {
