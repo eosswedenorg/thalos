@@ -18,8 +18,8 @@ func TestPublisher_Publish(t *testing.T) {
 	mock.ExpectPublish("ship::id::test", []byte("some string")).SetVal(0)
 	mock.ExpectPublish("ship::id::test2", []byte("some other string")).SetVal(0)
 
-	assert.NoError(t, pub.Publish(transport.Channel{"test"}, []byte("some string")))
-	assert.NoError(t, pub.Publish(transport.Channel{"test2"}, []byte("some other string")))
+	assert.NoError(t, pub.Write(transport.Channel{"test"}, []byte("some string")))
+	assert.NoError(t, pub.Write(transport.Channel{"test2"}, []byte("some other string")))
 	assert.NoError(t, pub.Flush())
 
 	assert.NoError(t, mock.ExpectationsWereMet())

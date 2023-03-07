@@ -22,7 +22,7 @@ func NewPublisher(client *redis.Client, ns Namespace) *Publisher {
 	}
 }
 
-func (r *Publisher) Publish(channel transport.ChannelInterface, payload []byte) error {
+func (r *Publisher) Write(channel transport.ChannelInterface, payload []byte) error {
 	return r.pipeline.Publish(r.ctx, r.ns.NewKey(channel).String(), payload).Err()
 }
 

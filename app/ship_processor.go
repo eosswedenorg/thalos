@@ -27,18 +27,18 @@ func logDecoratedEncoder(encoder message.Encoder) message.Encoder {
 }
 
 type ShipProcessor struct {
-	abi       *abi.AbiManager
-	publisher transport.Publisher
-	shClient  *shipclient.Client
-	encode    message.Encoder
+	abi      *abi.AbiManager
+	writer   transport.Writer
+	shClient *shipclient.Client
+	encode   message.Encoder
 }
 
-func SpawnProccessor(shClient *shipclient.Client, publisher transport.Publisher, abi *abi.AbiManager) {
+func SpawnProccessor(shClient *shipclient.Client, writer transport.Writer, abi *abi.AbiManager) {
 	processor := &ShipProcessor{
-		abi:       abi,
-		publisher: publisher,
-		shClient:  shClient,
-		encode:    logDecoratedEncoder(json.Marshal),
+		abi:      abi,
+		writer:   writer,
+		shClient: shClient,
+		encode:   logDecoratedEncoder(json.Marshal),
 	}
 
 	// Attach handlers
@@ -47,7 +47,7 @@ func SpawnProccessor(shClient *shipclient.Client, publisher transport.Publisher,
 }
 
 func (processor *ShipProcessor) queueMessage(channel transport.ChannelInterface, payload []byte) bool {
-	err := processor.publisher.Publish(channel, payload)
+	err := processor.writer.Write(channel, payload)
 	if err != nil {
 		log.WithError(err).Errorf("Failed to post to channel '%s'", channel)
 		return false
@@ -76,7 +76,7 @@ func (processor *ShipProcessor) processBlock(block *ship.GetBlocksResultV0) {
 
 		processor.encodeQueue(transport.HeartbeatChannel, hb)
 
-		err := processor.publisher.Flush()
+		err := processor.writer.Flush()
 		if err != nil {
 			log.WithError(err).Error("Failed to send messages")
 		}
@@ -129,7 +129,7 @@ func (processor *ShipProcessor) processTraces(traces []*ship.TransactionTraceV0)
 		}
 	}
 
-	err := processor.publisher.Flush()
+	err := processor.writer.Flush()
 	if err != nil {
 		log.WithError(err).Error("Failed to send messages")
 	}
