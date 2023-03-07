@@ -20,6 +20,21 @@ func (c Channel) String() string {
 	return strings.Join(c, "/")
 }
 
+// Check if two channels are equal
+func (c Channel) Is(other Channel) bool {
+	if len(c) != len(other) {
+		return false
+	}
+
+	for i, item := range c {
+		if item != other[i] {
+			return false
+		}
+	}
+
+	return true
+}
+
 // Define channels without any variables.
 var (
 	TransactionChannel = Channel{"transaction"}
