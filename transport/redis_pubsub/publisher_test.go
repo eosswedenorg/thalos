@@ -9,18 +9,18 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestRedisPubsub(t *testing.T) {
+func TestPublisher_Publish(t *testing.T) {
 	client, mock := redismock.NewClientMock()
 
-	pubsub := New(client, Namespace{ChainID: "id"})
+	pub := NewPublisher(client, Namespace{ChainID: "id"})
 
 	mock.MatchExpectationsInOrder(true)
 	mock.ExpectPublish("ship::id::test", []byte("some string")).SetVal(0)
 	mock.ExpectPublish("ship::id::test2", []byte("some other string")).SetVal(0)
 
-	assert.NoError(t, pubsub.Publish(transport.Channel{"test"}, []byte("some string")))
-	assert.NoError(t, pubsub.Publish(transport.Channel{"test2"}, []byte("some other string")))
-	assert.NoError(t, pubsub.Flush())
+	assert.NoError(t, pub.Publish(transport.Channel{"test"}, []byte("some string")))
+	assert.NoError(t, pub.Publish(transport.Channel{"test2"}, []byte("some other string")))
+	assert.NoError(t, pub.Flush())
 
 	assert.NoError(t, mock.ExpectationsWereMet())
 }

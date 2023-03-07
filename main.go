@@ -222,7 +222,7 @@ func main() {
 
 	app.SpawnProccessor(
 		shClient,
-		redis_pubsub.New(rdb, redis_pubsub.Namespace{
+		redis_pubsub.NewPublisher(rdb, redis_pubsub.Namespace{
 			Prefix:  conf.Redis.Prefix,
 			ChainID: chainInfo.ChainID.String(),
 		}),

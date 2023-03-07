@@ -8,25 +8,25 @@ import (
 	"github.com/go-redis/redis/v8"
 )
 
-type RedisPubsub struct {
+type Publisher struct {
 	pipeline redis.Pipeliner
 	ctx      context.Context
 	ns       Namespace
 }
 
-func New(client *redis.Client, ns Namespace) *RedisPubsub {
-	return &RedisPubsub{
+func NewPublisher(client *redis.Client, ns Namespace) *Publisher {
+	return &Publisher{
 		pipeline: client.Pipeline(),
 		ctx:      client.Context(),
 		ns:       ns,
 	}
 }
 
-func (r *RedisPubsub) Publish(channel transport.ChannelInterface, payload []byte) error {
+func (r *Publisher) Publish(channel transport.ChannelInterface, payload []byte) error {
 	return r.pipeline.Publish(r.ctx, r.ns.NewKey(channel).String(), payload).Err()
 }
 
-func (r *RedisPubsub) Flush() error {
+func (r *Publisher) Flush() error {
 	_, err := r.pipeline.Exec(r.ctx)
 	return err
 }
