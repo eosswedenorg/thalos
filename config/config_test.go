@@ -3,6 +3,8 @@ package config
 import (
 	"testing"
 
+	"eosio-ship-trace-reader/app/service/redis"
+	"eosio-ship-trace-reader/app/service/telegram"
 	"github.com/stretchr/testify/require"
 )
 
@@ -12,12 +14,7 @@ func TestParse_Default(t *testing.T) {
 		EndBlockNum:         NULL_BLOCK_NUMBER,
 		MaxMessagesInFlight: 10,
 		IrreversibleOnly:    false,
-		Redis: RedisConfig{
-			Addr:     "localhost:6379",
-			Password: "",
-			DB:       0,
-			Prefix:   "ship",
-		},
+		Redis:               redis.DefaultConfig,
 	}
 
 	cfg, err := Parse([]byte(`{}`))
@@ -34,11 +31,11 @@ func TestParse(t *testing.T) {
 		EndBlockNum:         23872222,
 		IrreversibleOnly:    true,
 		MaxMessagesInFlight: 1337,
-		Telegram: TelegramConfig{
+		Telegram: telegram.Config{
 			Id:      "110201543:AAHdqTcvCH1vGWJxfSeofSAs0K5PALDsaw",
 			Channel: -123456789,
 		},
-		Redis: RedisConfig{
+		Redis: redis.Config{
 			Addr:     "localhost:6379",
 			Password: "passwd",
 			DB:       4,

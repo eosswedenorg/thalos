@@ -3,36 +3,25 @@ package config
 import (
 	"encoding/json"
 	"io/ioutil"
+
+	"eosio-ship-trace-reader/app/service/redis"
+	"eosio-ship-trace-reader/app/service/telegram"
 )
 
 const NULL_BLOCK_NUMBER uint32 = 0xffffffff
-
-type RedisConfig struct {
-	Addr     string `json:"addr"`
-	Password string `json:"password"`
-	DB       int    `json:"db"`
-	CacheID  string `json:"cache_id"`
-	Prefix   string `json:"prefix"`
-}
-
-type TelegramConfig struct {
-	Id      string `json:"id"`
-	Channel int64  `json:"channel"`
-}
 
 type Config struct {
 	Name    string `json:"name"`
 	ShipApi string `json:"ship_api"`
 	Api     string `json:"api"`
 
-	Redis RedisConfig `json:"redis"`
-
-	Telegram TelegramConfig `json:"telegram"`
-
 	IrreversibleOnly    bool   `json:"irreversible_only"`
 	MaxMessagesInFlight uint32 `json:"max_messages_in_flight"`
 	StartBlockNum       uint32 `json:"start_block_num"`
 	EndBlockNum         uint32 `json:"end_block_num"`
+
+	Redis    redis.Config    `json:"redis"`
+	Telegram telegram.Config `json:"telegram"`
 }
 
 func Parse(data []byte) (*Config, error) {
@@ -41,12 +30,7 @@ func Parse(data []byte) (*Config, error) {
 		EndBlockNum:         NULL_BLOCK_NUMBER,
 		MaxMessagesInFlight: 10,
 		IrreversibleOnly:    false,
-		Redis: RedisConfig{
-			Addr:     "localhost:6379",
-			Password: "",
-			DB:       0,
-			Prefix:   "ship",
-		},
+		Redis:               redis.DefaultConfig,
 	}
 
 	err := json.Unmarshal(data, &cfg)
