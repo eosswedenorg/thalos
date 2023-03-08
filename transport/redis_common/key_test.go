@@ -1,4 +1,4 @@
-package redis_pubsub
+package redis_common
 
 import (
 	"testing"

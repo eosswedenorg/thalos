@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"eosio-ship-trace-reader/transport"
+	. "eosio-ship-trace-reader/transport/redis_common"
 
 	"github.com/go-redis/redis/v8"
 )
