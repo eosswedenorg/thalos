@@ -3,6 +3,7 @@ module eosio-ship-trace-reader
 go 1.18
 
 require (
+	github.com/alicebob/miniredis/v2 v2.30.0
 	github.com/eoscanada/eos-go v0.10.3-0.20221117104514-64cafd714c60
 	github.com/eosswedenorg-go/antelope-ship-client v0.2.2
 	github.com/eosswedenorg-go/pid v1.0.1
@@ -16,6 +17,7 @@ require (
 )
 
 require (
+	github.com/alicebob/gopher-json v0.0.0-20200520072559-a9ecdc9d1d3a // indirect
 	github.com/blendle/zapdriver v1.3.1 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
@@ -37,6 +39,7 @@ require (
 	github.com/vmihailenco/go-tinylfu v0.2.2 // indirect
 	github.com/vmihailenco/msgpack/v5 v5.3.5 // indirect
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
+	github.com/yuin/gopher-lua v0.0.0-20220504180219-658193537a64 // indirect
 	go.uber.org/atomic v1.10.0 // indirect
 	go.uber.org/goleak v1.2.0 // indirect
 	go.uber.org/multierr v1.8.0 // indirect
