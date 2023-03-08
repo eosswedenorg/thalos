@@ -29,7 +29,7 @@ import (
 //  Global variables
 // ---------------------------
 
-var conf config.Config
+var conf *config.Config
 
 var shClient *shipclient.Client
 

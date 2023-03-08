@@ -35,7 +35,7 @@ type Config struct {
 	EndBlockNum         uint32 `json:"end_block_num"`
 }
 
-func Load(filename string) (Config, error) {
+func Parse(data []byte) (*Config, error) {
 	cfg := Config{
 		StartBlockNum:       NULL_BLOCK_NUMBER,
 		EndBlockNum:         NULL_BLOCK_NUMBER,
@@ -49,15 +49,15 @@ func Load(filename string) (Config, error) {
 		},
 	}
 
+	err := json.Unmarshal(data, &cfg)
+	return &cfg, err
+}
+
+func Load(filename string) (*Config, error) {
 	bytes, err := ioutil.ReadFile(filename)
 	if err != nil {
-		return cfg, err
+		return nil, err
 	}
 
-	err = json.Unmarshal(bytes, &cfg)
-	if err != nil {
-		return cfg, err
-	}
-
-	return cfg, nil
+	return Parse(bytes)
 }
