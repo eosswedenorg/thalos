@@ -3,9 +3,9 @@ package config
 import (
 	"encoding/json"
 	"io/ioutil"
-)
 
-const NULL_BLOCK_NUMBER uint32 = 0xffffffff
+	shipclient "github.com/eosswedenorg-go/antelope-ship-client"
+)
 
 type RedisConfig struct {
 	Addr     string `json:"addr"`
@@ -37,8 +37,8 @@ type Config struct {
 
 func Parse(data []byte) (*Config, error) {
 	cfg := Config{
-		StartBlockNum:       NULL_BLOCK_NUMBER,
-		EndBlockNum:         NULL_BLOCK_NUMBER,
+		StartBlockNum:       shipclient.NULL_BLOCK_NUMBER,
+		EndBlockNum:         shipclient.NULL_BLOCK_NUMBER,
 		MaxMessagesInFlight: 10,
 		IrreversibleOnly:    false,
 		Redis: RedisConfig{

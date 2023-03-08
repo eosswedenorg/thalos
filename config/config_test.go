@@ -4,12 +4,14 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+
+	shipclient "github.com/eosswedenorg-go/antelope-ship-client"
 )
 
 func TestParse_Default(t *testing.T) {
 	expected := Config{
-		StartBlockNum:       NULL_BLOCK_NUMBER,
-		EndBlockNum:         NULL_BLOCK_NUMBER,
+		StartBlockNum:       shipclient.NULL_BLOCK_NUMBER,
+		EndBlockNum:         shipclient.NULL_BLOCK_NUMBER,
 		MaxMessagesInFlight: 10,
 		IrreversibleOnly:    false,
 		Redis: RedisConfig{

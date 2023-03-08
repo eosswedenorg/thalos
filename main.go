@@ -205,7 +205,7 @@ func main() {
 		return
 	}
 
-	if conf.StartBlockNum == config.NULL_BLOCK_NUMBER {
+	if conf.StartBlockNum == shipclient.NULL_BLOCK_NUMBER {
 		if conf.IrreversibleOnly {
 			conf.StartBlockNum = uint32(chainInfo.LastIrreversibleBlockNum)
 		} else {
