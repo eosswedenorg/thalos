@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestPublisher_Publish(t *testing.T) {
+func TestPublisher_Write(t *testing.T) {
 	client, mock := redismock.NewClientMock()
 
 	pub := NewPublisher(client, Namespace{ChainID: "id"})
