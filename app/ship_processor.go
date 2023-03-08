@@ -90,7 +90,27 @@ func (processor *ShipProcessor) processTraces(traces []*ship.TransactionTraceV0)
 
 		// Actions
 		for _, actionTraceVar := range trace.ActionTraces {
-			act_trace := actionTraceVar.Impl.(*ship.ActionTraceV0)
+			var act_trace *ship.ActionTraceV1
+
+			if trace_v0, ok := actionTraceVar.Impl.(*ship.ActionTraceV0); ok {
+				// convert to v1
+				act_trace = &ship.ActionTraceV1{
+					ActionOrdinal:        trace_v0.ActionOrdinal,
+					CreatorActionOrdinal: trace_v0.CreatorActionOrdinal,
+					Receipt:              trace_v0.Receipt,
+					Receiver:             trace_v0.Receiver,
+					Act:                  trace_v0.Act,
+					ContextFree:          trace_v0.ContextFree,
+					Elapsed:              trace_v0.Elapsed,
+					Console:              trace_v0.Console,
+					AccountRamDeltas:     trace_v0.AccountRamDeltas,
+					Except:               trace_v0.Except,
+					ErrorCode:            trace_v0.ErrorCode,
+					ReturnValue:          []byte{},
+				}
+			} else {
+				act_trace = actionTraceVar.Impl.(*ship.ActionTraceV1)
+			}
 
 			act := message.ActionTrace{
 				TxID:     trace.ID.String(),
