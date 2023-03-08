@@ -8,16 +8,18 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/go-redis/redis/v8"
 	log "github.com/sirupsen/logrus"
 
 	"eosio-ship-trace-reader/abi"
 	"eosio-ship-trace-reader/app"
+	notifyservice "eosio-ship-trace-reader/app/service/notifier"
+	"eosio-ship-trace-reader/app/service/redis"
+	shipclientservice "eosio-ship-trace-reader/app/service/shipclient"
+	"eosio-ship-trace-reader/app/service/telegram"
 	"eosio-ship-trace-reader/config"
 	"eosio-ship-trace-reader/transport/redis_pubsub"
 
 	"github.com/nikoksr/notify"
-	"github.com/nikoksr/notify/service/telegram"
 
 	eos "github.com/eoscanada/eos-go"
 	shipclient "github.com/eosswedenorg-go/antelope-ship-client"
@@ -172,26 +174,14 @@ func main() {
 		return
 	}
 
-	// Init telegram notification service
-	telegram, err := telegram.New(conf.Telegram.Id)
+	err = notifyservice.InitNotifier(telegram.Notifier(conf.Telegram))
 	if err != nil {
-		log.WithError(err).Fatal("Failed to initialize telegram")
+		log.WithError(err).Fatal("Failed to initialize notification service")
 		return
 	}
 
-	telegram.AddReceivers(conf.Telegram.Channel)
-
-	// Register services in notification manager
-	notify.UseServices(telegram)
-
 	// Connect to redis
-	rdb := redis.NewClient(&redis.Options{
-		Addr:     conf.Redis.Addr,
-		Password: conf.Redis.Password,
-		DB:       conf.Redis.DB,
-	})
-
-	err = rdb.Ping(context.Background()).Err()
+	rdb, err := redis.NewClient(conf.Redis)
 	if err != nil {
 		log.WithError(err).Fatal("Failed to connect to redis")
 		return
@@ -205,19 +195,11 @@ func main() {
 		return
 	}
 
-	if conf.StartBlockNum == config.NULL_BLOCK_NUMBER {
-		if conf.IrreversibleOnly {
-			conf.StartBlockNum = uint32(chainInfo.LastIrreversibleBlockNum)
-		} else {
-			conf.StartBlockNum = uint32(chainInfo.HeadBlockNum)
-		}
+	shClient, err = shipclientservice.NewClient(conf, chainInfo)
+	if err != nil {
+		log.WithError(err).Fatal("Failed to initialize ship client")
+		return
 	}
-
-	shClient = shipclient.NewClient(func(c *shipclient.Client) {
-		c.StartBlock = conf.StartBlockNum
-		c.EndBlock = conf.EndBlockNum
-		c.IrreversibleOnly = conf.IrreversibleOnly
-	})
 
 	app.SpawnProccessor(
 		shClient,
