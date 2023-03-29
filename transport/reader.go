@@ -10,4 +10,8 @@ type Reader interface {
 	//
 	// This function should be designed to handle concurrent calls. eg. thread safe.
 	Read(channel Channel) ([]byte, error)
+
+	// Close closes the reader
+	// Any blocked Read operations will be unblocked.
+	Close() error
 }
