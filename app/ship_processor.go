@@ -33,7 +33,7 @@ type ShipProcessor struct {
 	encode   message.Encoder
 }
 
-func SpawnProccessor(shClient *shipclient.Client, writer transport.Writer, abi *abi.AbiManager) {
+func SpawnProccessor(shClient *shipclient.Client, writer transport.Writer, abi *abi.AbiManager) *ShipProcessor {
 	processor := &ShipProcessor{
 		abi:      abi,
 		writer:   writer,
@@ -44,6 +44,8 @@ func SpawnProccessor(shClient *shipclient.Client, writer transport.Writer, abi *
 	// Attach handlers
 	shClient.BlockHandler = processor.processBlock
 	shClient.TraceHandler = processor.processTraces
+
+	return processor
 }
 
 func (processor *ShipProcessor) queueMessage(channel transport.Channel, payload []byte) bool {
