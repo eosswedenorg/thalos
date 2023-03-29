@@ -220,7 +220,7 @@ func main() {
 		c.IrreversibleOnly = conf.IrreversibleOnly
 	})
 
-	app.SpawnProccessor(
+	processor := app.SpawnProccessor(
 		shClient,
 		redis_pubsub.NewPublisher(rdb, redis_common.Namespace{
 			Prefix:  conf.Redis.Prefix,
@@ -231,4 +231,7 @@ func main() {
 
 	// Run the application
 	run()
+
+	// Close the processor properly
+	processor.Close()
 }
