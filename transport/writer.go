@@ -10,4 +10,8 @@ type Writer interface {
 	// Flush writes any buffered messages to the channel.
 	// If the implementation does not support buffering. this is a noop.
 	Flush() error
+
+	// Close closes the writer
+	// Any blocked Flush or Write operations will be unblocked.
+	Close() error
 }
