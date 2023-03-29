@@ -96,8 +96,8 @@ func (s *Subscriber) Read(channel transport.Channel) ([]byte, error) {
 	return <-ch, nil
 }
 
-func (s *Subscriber) Close() {
-	s.sub.Close()
+func (s *Subscriber) Close() error {
+	err := s.sub.Close()
 
 	for _, ch := range s.channels {
 		close(ch)
@@ -105,4 +105,6 @@ func (s *Subscriber) Close() {
 	s.mu.Lock()
 	s.channels = make(map[string]chan []byte)
 	s.mu.Unlock()
+
+	return err
 }
