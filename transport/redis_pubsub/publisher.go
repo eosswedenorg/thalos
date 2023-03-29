@@ -31,3 +31,7 @@ func (r *Publisher) Flush() error {
 	_, err := r.pipeline.Exec(r.ctx)
 	return err
 }
+
+func (r *Publisher) Close() error {
+	return r.pipeline.Close()
+}
