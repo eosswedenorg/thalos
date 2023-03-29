@@ -7,5 +7,7 @@ package transport
 type Reader interface {
 	// Read a message from a channel.
 	// Read may block until a message is ready or an error occured.
+	//
+	// This function should be designed to handle concurrent calls. eg. thread safe.
 	Read(channel Channel) ([]byte, error)
 }
