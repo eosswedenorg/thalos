@@ -4,11 +4,12 @@ import (
 	"encoding/hex"
 	"encoding/json"
 
+	"thalos/abi"
+	"thalos/transport"
+	"thalos/transport/message"
+
 	log "github.com/sirupsen/logrus"
 
-	"eosio-ship-trace-reader/abi"
-	"eosio-ship-trace-reader/transport"
-	"eosio-ship-trace-reader/transport/message"
 	"github.com/eoscanada/eos-go/ship"
 	shipclient "github.com/eosswedenorg-go/antelope-ship-client"
 )

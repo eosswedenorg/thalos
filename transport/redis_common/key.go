@@ -3,7 +3,7 @@ package redis_common
 import (
 	"fmt"
 
-	"eosio-ship-trace-reader/transport"
+	"thalos/transport"
 )
 
 // Key consists of a namespace and a channel.

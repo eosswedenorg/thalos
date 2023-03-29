@@ -10,7 +10,7 @@ INSTALL_DIR=$1
 echo "Installing application in: $INSTALL_DIR"
 
 mkdir -p "$INSTALL_DIR"/{bin,logs}
-install -m 750 -t "${INSTALL_DIR}/bin" build/eosio-ship-trace-reader
+install -m 750 -t "${INSTALL_DIR}/bin" build/thalos-server
 
 if [ ! -f "${INSTALL_DIR}/config.json" ]; then
     install -T -m 600 config.example.json "${INSTALL_DIR}/config.json"

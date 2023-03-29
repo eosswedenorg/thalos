@@ -3,7 +3,7 @@ package redis_common
 import (
 	"testing"
 
-	"eosio-ship-trace-reader/transport"
+	"thalos/transport"
 )
 
 func TestKey_String(t *testing.T) {

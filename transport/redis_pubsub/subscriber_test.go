@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
-	"eosio-ship-trace-reader/transport"
-	. "eosio-ship-trace-reader/transport/redis_common"
+	"thalos/transport"
+	. "thalos/transport/redis_common"
 
 	"github.com/alicebob/miniredis/v2"
 	"github.com/go-redis/redis/v8"

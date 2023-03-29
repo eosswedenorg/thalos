@@ -1,4 +1,4 @@
-module eosio-ship-trace-reader
+module thalos
 
 go 1.18
 

@@ -1,6 +1,6 @@
 
 GO=go
-PROGRAM=build/eosio-ship-trace-reader
+PROGRAM=build/thalos-server
 
 .PHONY: $(PROGRAM) test
 

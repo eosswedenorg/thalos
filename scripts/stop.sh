@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PIDFILE="$(pwd)/eosio-ship-trace-reader.pid"
+PIDFILE="$(pwd)/thalos.pid"
 
 if [ -f "$PIDFILE" ]; then
     pid=$(cat "$PIDFILE")

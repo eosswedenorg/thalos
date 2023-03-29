@@ -5,8 +5,8 @@ import (
 	"sync"
 	"time"
 
-	"eosio-ship-trace-reader/transport"
-	. "eosio-ship-trace-reader/transport/redis_common"
+	"thalos/transport"
+	. "thalos/transport/redis_common"
 
 	"github.com/go-redis/redis/v8"
 )

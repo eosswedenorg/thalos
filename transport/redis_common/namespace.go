@@ -3,7 +3,7 @@ package redis_common
 import (
 	"strings"
 
-	"eosio-ship-trace-reader/transport"
+	"thalos/transport"
 )
 
 const (

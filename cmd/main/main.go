@@ -11,11 +11,11 @@ import (
 	"github.com/go-redis/redis/v8"
 	log "github.com/sirupsen/logrus"
 
-	"eosio-ship-trace-reader/abi"
-	"eosio-ship-trace-reader/app"
-	"eosio-ship-trace-reader/config"
-	"eosio-ship-trace-reader/transport/redis_common"
-	"eosio-ship-trace-reader/transport/redis_pubsub"
+	"thalos/abi"
+	"thalos/app"
+	"thalos/config"
+	"thalos/transport/redis_common"
+	"thalos/transport/redis_pubsub"
 
 	"github.com/nikoksr/notify"
 	"github.com/nikoksr/notify/service/telegram"
