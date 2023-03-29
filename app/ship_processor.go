@@ -156,3 +156,7 @@ func (processor *ShipProcessor) processTraces(traces []*ship.TransactionTraceV0)
 		log.WithError(err).Error("Failed to send messages")
 	}
 }
+
+func (processor *ShipProcessor) Close() error {
+	return processor.writer.Close()
+}
