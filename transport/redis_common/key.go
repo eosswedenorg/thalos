@@ -15,5 +15,5 @@ type Key struct {
 }
 
 func (k Key) String() string {
-	return fmt.Sprintf("%s::%s", k.NS, k.Channel)
+	return fmt.Sprintf("%s::%s", k.NS, k.Channel.Format("/"))
 }
