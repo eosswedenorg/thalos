@@ -90,20 +90,20 @@ func TestChannel_String(t *testing.T) {
 	}
 }
 
-func TestActionChannel_String(t *testing.T) {
+func TestAction_Channel(t *testing.T) {
 	tests := []struct {
-		name string
-		ch   Channel
-		want string
+		name   string
+		action Action
+		want   Channel
 	}{
-		{"Empty", Action{}.Channel(), "actions"},
-		{"Contract", Action{Contract: "mycontract"}.Channel(), "actions/contract/mycontract"},
-		{"Action", Action{Name: "myaction"}.Channel(), "actions/name/myaction"},
-		{"ContractAndName", Action{Contract: "mycontract", Name: "myaction"}.Channel(), "actions/contract/mycontract/name/myaction"},
+		{"Empty", Action{}, Channel{"actions"}},
+		{"Contract", Action{Contract: "mycontract"}, Channel{"actions", "contract", "mycontract"}},
+		{"Action", Action{Name: "myaction"}, Channel{"actions", "name", "myaction"}},
+		{"ContractAndName", Action{Contract: "mycontract", Name: "myaction"}, Channel{"actions", "contract", "mycontract", "name", "myaction"}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.ch.String(); got != tt.want {
+			if got := tt.action.Channel(); !got.Is(tt.want) {
 				t.Errorf("ActionChannel.String() = %v, want %v", got, tt.want)
 			}
 		})
