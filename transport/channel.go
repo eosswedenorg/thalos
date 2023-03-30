@@ -11,8 +11,12 @@ func (c *Channel) Append(name ...string) {
 	*c = append(*c, name...)
 }
 
+func (c Channel) Format(delimiter string) string {
+	return strings.Join(c, delimiter)
+}
+
 func (c Channel) String() string {
-	return strings.Join(c, "/")
+	return c.Format("/")
 }
 
 // Check if two channels are equal

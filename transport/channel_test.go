@@ -52,6 +52,26 @@ func TestChannel_Is(t *testing.T) {
 	}
 }
 
+func TestChannel_Format(t *testing.T) {
+	tests := []struct {
+		name  string
+		c     Channel
+		delim string
+		want  string
+	}{
+		{"Empty", Channel{}, ":", ""},
+		{"Alot#1", Channel{"one", "two", "three"}, "-", "one-two-three"},
+		{"Alot#2", Channel{"first", "second"}, ":", "first:second"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.c.Format(tt.delim); got != tt.want {
+				t.Errorf("Channel.Format() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
 func TestChannel_String(t *testing.T) {
 	tests := []struct {
 		name string
