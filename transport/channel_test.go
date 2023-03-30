@@ -25,6 +25,33 @@ func TestChannel_Append(t *testing.T) {
 	}
 }
 
+func TestChannel_Is(t *testing.T) {
+	tests := []struct {
+		name string
+		a    Channel
+		b    Channel
+		want bool
+	}{
+		{"Empty valid", Channel{}, Channel{}, true},
+		{"Valid #1", Channel{"one"}, Channel{"one"}, true},
+		{"Valid #2", Channel{"one", "two"}, Channel{"one", "two"}, true},
+		{"Invalid #1", Channel{"one"}, Channel{"one", "two"}, false},
+		{"Invalid #2", Channel{"one", "three"}, Channel{"one", "two"}, false},
+		{"Invalid #3", Channel{"two", "one"}, Channel{"one", "two"}, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.a.Is(tt.b); got != tt.want {
+				t.Errorf("a.Is(b) = %v, want %v", got, tt.want)
+			}
+
+			if got := tt.b.Is(tt.a); got != tt.want {
+				t.Errorf("b.Is(a) = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
 func TestChannel_String(t *testing.T) {
 	tests := []struct {
 		name string
