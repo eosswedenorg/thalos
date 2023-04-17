@@ -48,13 +48,13 @@ func readerLoop() {
 		switch state {
 		case RS_CONNECT:
 			recon_cnt++
-			log.Infof("Connecting to ship at: %s (Try %d)", conf.ShipApi, recon_cnt)
-			err := shClient.Connect(conf.ShipApi)
+			log.Infof("Connecting to ship at: %s (Try %d)", conf.Ship.Url, recon_cnt)
+			err := shClient.Connect(conf.Ship.Url)
 			if err != nil {
 				log.Println(err)
 
 				if recon_cnt >= 3 {
-					msg := fmt.Sprintf("Failed to connect to ship at '%s'", conf.ShipApi)
+					msg := fmt.Sprintf("Failed to connect to ship at '%s'", conf.Ship.Url)
 					if err := notify.Send(context.Background(), conf.Name, msg); err != nil {
 						log.WithError(err).Error("Failed to send notification")
 					}
@@ -206,18 +206,18 @@ func main() {
 		return
 	}
 
-	if conf.StartBlockNum == shipclient.NULL_BLOCK_NUMBER {
-		if conf.IrreversibleOnly {
-			conf.StartBlockNum = uint32(chainInfo.LastIrreversibleBlockNum)
+	if conf.Ship.StartBlockNum == shipclient.NULL_BLOCK_NUMBER {
+		if conf.Ship.IrreversibleOnly {
+			conf.Ship.StartBlockNum = uint32(chainInfo.LastIrreversibleBlockNum)
 		} else {
-			conf.StartBlockNum = uint32(chainInfo.HeadBlockNum)
+			conf.Ship.StartBlockNum = uint32(chainInfo.HeadBlockNum)
 		}
 	}
 
 	shClient = shipclient.NewClient(func(c *shipclient.Client) {
-		c.StartBlock = conf.StartBlockNum
-		c.EndBlock = conf.EndBlockNum
-		c.IrreversibleOnly = conf.IrreversibleOnly
+		c.StartBlock = conf.Ship.StartBlockNum
+		c.EndBlock = conf.Ship.EndBlockNum
+		c.IrreversibleOnly = conf.Ship.IrreversibleOnly
 	})
 
 	processor := app.SpawnProccessor(

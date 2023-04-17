@@ -20,27 +20,32 @@ type TelegramConfig struct {
 	Channel int64  `json:"channel"`
 }
 
-type Config struct {
-	Name    string `json:"name"`
-	ShipApi string `json:"ship_api"`
-	Api     string `json:"api"`
-
-	Redis RedisConfig `json:"redis"`
-
-	Telegram TelegramConfig `json:"telegram"`
-
+type ShipConfig struct {
+	Url                 string `json:"url"`
 	IrreversibleOnly    bool   `json:"irreversible_only"`
 	MaxMessagesInFlight uint32 `json:"max_messages_in_flight"`
 	StartBlockNum       uint32 `json:"start_block_num"`
 	EndBlockNum         uint32 `json:"end_block_num"`
 }
 
+type Config struct {
+	Name string     `json:"name"`
+	Ship ShipConfig `json:"ship"`
+	Api  string     `json:"api"`
+
+	Redis RedisConfig `json:"redis"`
+
+	Telegram TelegramConfig `json:"telegram"`
+}
+
 func Parse(data []byte) (*Config, error) {
 	cfg := Config{
-		StartBlockNum:       shipclient.NULL_BLOCK_NUMBER,
-		EndBlockNum:         shipclient.NULL_BLOCK_NUMBER,
-		MaxMessagesInFlight: 10,
-		IrreversibleOnly:    false,
+		Ship: ShipConfig{
+			StartBlockNum:       shipclient.NULL_BLOCK_NUMBER,
+			EndBlockNum:         shipclient.NULL_BLOCK_NUMBER,
+			MaxMessagesInFlight: 10,
+			IrreversibleOnly:    false,
+		},
 		Redis: RedisConfig{
 			Addr:     "localhost:6379",
 			Password: "",
@@ -51,6 +56,20 @@ func Parse(data []byte) (*Config, error) {
 
 	err := json.Unmarshal(data, &cfg)
 	return &cfg, err
+}
+
+func (ship *ShipConfig) UnmarshalJSON(data []byte) error {
+	var err error
+
+	if err = json.Unmarshal(data, &ship.Url); err != nil {
+		//
+		type ShipConfigRaw ShipConfig
+		raw := ShipConfigRaw(*ship)
+		if err = json.Unmarshal(data, &raw); err == nil {
+			*ship = ShipConfig(raw)
+		}
+	}
+	return err
 }
 
 func Load(filename string) (*Config, error) {
