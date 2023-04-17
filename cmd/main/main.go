@@ -34,51 +34,39 @@ var conf *config.Config
 
 var shClient *shipclient.Stream
 
-// Reader states
-const (
-	RS_CONNECT = 1
-	RS_READ    = 2
-)
+var running bool = false
 
 func readerLoop() {
-	state := RS_CONNECT
-	var recon_cnt uint = 0
+	running = true
+	recon_cnt := 0
 
-	for {
-		switch state {
-		case RS_CONNECT:
-			recon_cnt++
-			log.Infof("Connecting to ship at: %s (Try %d)", conf.Ship.Url, recon_cnt)
-			err := shClient.Connect(conf.Ship.Url)
-			if err != nil {
-				log.Println(err)
+	for running {
+		recon_cnt++
+		log.Infof("Connecting to ship at: %s (Try %d)", conf.Ship.Url, recon_cnt)
+		if err := shClient.Connect(conf.Ship.Url); err != nil {
+			log.WithError(err).Error("Failed to connect")
 
-				if recon_cnt >= 3 {
-					msg := fmt.Sprintf("Failed to connect to ship at '%s'", conf.Ship.Url)
-					if err := notify.Send(context.Background(), conf.Name, msg); err != nil {
-						log.WithError(err).Error("Failed to send notification")
-					}
-					recon_cnt = 0
+			if recon_cnt >= 3 {
+				msg := fmt.Sprintf("Failed to connect to ship at '%s'", conf.Ship.Url)
+				if err := notify.Send(context.Background(), conf.Name, msg); err != nil {
+					log.WithError(err).Error("Failed to send notification")
 				}
-
-				log.Info("Trying again in 5 seconds ....")
-				time.Sleep(5 * time.Second)
-				break
+				recon_cnt = 0
 			}
 
-			err = shClient.SendBlocksRequest()
-			if err != nil {
-				log.Println(err)
-				break
-			}
-
-			// Connected
-			log.Infof("Connected, Start: %d, End: %d", shClient.StartBlock, shClient.EndBlock)
-			state = RS_READ
-			recon_cnt = 0
-		case RS_READ:
-			log.WithError(shClient.Run()).Error("Failed to read from ship")
+			log.Info("Trying again in 5 seconds ....")
+			time.Sleep(5 * time.Second)
+			continue
 		}
+
+		if err := shClient.SendBlocksRequest(); err != nil {
+			log.WithError(err).Error("Failed to send block request")
+			continue
+		}
+
+		recon_cnt = 0
+		log.Infof("Connected, Start: %d, End: %d", shClient.StartBlock, shClient.EndBlock)
+		log.WithError(shClient.Run()).Error("Failed to read from ship")
 	}
 }
 
@@ -101,6 +89,8 @@ func run() {
 	if err != nil {
 		log.WithError(err).Info("failed to send close message to ship server")
 	}
+
+	running = false
 }
 
 func init() {
