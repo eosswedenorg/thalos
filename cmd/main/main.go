@@ -32,7 +32,7 @@ import (
 
 var conf *config.Config
 
-var shClient *shipclient.Client
+var shClient *shipclient.Stream
 
 // Reader states
 const (
@@ -77,24 +77,7 @@ func readerLoop() {
 			state = RS_READ
 			recon_cnt = 0
 		case RS_READ:
-			err := shClient.Read()
-			if err != nil {
-				if shErr, ok := err.(shipclient.ClientError); ok {
-
-					// Bail out if socket is closed
-					if shErr.Type == shipclient.ErrSockClosed {
-						log.Info("Socket closed, Exiting")
-						return
-					}
-
-					// Reconnect
-					if shErr.Type == shipclient.ErrSockRead || shErr.Type == shipclient.ErrNotConnected {
-						state = RS_CONNECT
-					}
-				}
-
-				log.WithError(err).Error("Failed to read from ship")
-			}
+			log.WithError(shClient.Run()).Error("Failed to read from ship")
 		}
 	}
 }
@@ -112,11 +95,6 @@ func run() {
 	// Wait for interrupt
 	sig := <-signals
 	log.WithField("signal", sig).Info("Signal received")
-
-	if !shClient.IsOpen() {
-		log.Info("ship client not connected, exiting...")
-		return
-	}
 
 	// Cleanly close the connection by sending a close message.
 	err := shClient.Shutdown()
@@ -214,10 +192,10 @@ func main() {
 		}
 	}
 
-	shClient = shipclient.NewClient(func(c *shipclient.Client) {
-		c.StartBlock = conf.Ship.StartBlockNum
-		c.EndBlock = conf.Ship.EndBlockNum
-		c.IrreversibleOnly = conf.Ship.IrreversibleOnly
+	shClient = shipclient.NewStream(func(s *shipclient.Stream) {
+		s.StartBlock = conf.Ship.StartBlockNum
+		s.EndBlock = conf.Ship.EndBlockNum
+		s.IrreversibleOnly = conf.Ship.IrreversibleOnly
 	})
 
 	processor := app.SpawnProccessor(

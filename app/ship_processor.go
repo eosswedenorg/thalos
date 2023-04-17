@@ -28,23 +28,23 @@ func logDecoratedEncoder(encoder message.Encoder) message.Encoder {
 }
 
 type ShipProcessor struct {
-	abi      *abi.AbiManager
-	writer   transport.Writer
-	shClient *shipclient.Client
-	encode   message.Encoder
+	abi        *abi.AbiManager
+	writer     transport.Writer
+	shipStream *shipclient.Stream
+	encode     message.Encoder
 }
 
-func SpawnProccessor(shClient *shipclient.Client, writer transport.Writer, abi *abi.AbiManager) *ShipProcessor {
+func SpawnProccessor(shipStream *shipclient.Stream, writer transport.Writer, abi *abi.AbiManager) *ShipProcessor {
 	processor := &ShipProcessor{
-		abi:      abi,
-		writer:   writer,
-		shClient: shClient,
-		encode:   logDecoratedEncoder(json.Marshal),
+		abi:        abi,
+		writer:     writer,
+		shipStream: shipStream,
+		encode:     logDecoratedEncoder(json.Marshal),
 	}
 
 	// Attach handlers
-	shClient.BlockHandler = processor.processBlock
-	shClient.TraceHandler = processor.processTraces
+	shipStream.BlockHandler = processor.processBlock
+	shipStream.TraceHandler = processor.processTraces
 
 	return processor
 }
