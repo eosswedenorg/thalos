@@ -67,7 +67,7 @@ func (processor *ShipProcessor) encodeQueue(channel transport.Channel, v interfa
 
 func (processor *ShipProcessor) processBlock(block *ship.GetBlocksResultV0) {
 	if block.ThisBlock.BlockNum%100 == 0 {
-		log.Infof("Current: %d, Head: %d\n", block.ThisBlock.BlockNum, block.Head.BlockNum)
+		log.Infof("Current: %d, Head: %d", block.ThisBlock.BlockNum, block.Head.BlockNum)
 	}
 
 	if block.ThisBlock.BlockNum%10 == 0 {
