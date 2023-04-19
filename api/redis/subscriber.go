@@ -1,4 +1,4 @@
-package redis_pubsub
+package redis
 
 import (
 	"context"
@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"thalos/api"
-	. "thalos/api/redis_common"
 
 	"github.com/go-redis/redis/v8"
 )

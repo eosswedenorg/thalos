@@ -1,4 +1,4 @@
-package redis_common
+package redis
 
 import (
 	"fmt"

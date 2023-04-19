@@ -12,10 +12,9 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"thalos/abi"
+	api_redis "thalos/api/redis"
 	"thalos/app"
 	"thalos/config"
-	"thalos/transport/redis_common"
-	"thalos/transport/redis_pubsub"
 
 	"github.com/nikoksr/notify"
 	"github.com/nikoksr/notify/service/telegram"
@@ -190,7 +189,7 @@ func main() {
 
 	processor := app.SpawnProccessor(
 		shClient,
-		redis_pubsub.NewPublisher(rdb, redis_common.Namespace{
+		api_redis.NewPublisher(rdb, api_redis.Namespace{
 			Prefix:  conf.Redis.Prefix,
 			ChainID: chainInfo.ChainID.String(),
 		}),

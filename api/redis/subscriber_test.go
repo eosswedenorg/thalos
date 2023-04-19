@@ -1,11 +1,10 @@
-package redis_pubsub
+package redis
 
 import (
 	"testing"
 	"time"
 
 	"thalos/api"
-	. "thalos/api/redis_common"
 
 	"github.com/alicebob/miniredis/v2"
 	"github.com/go-redis/redis/v8"
