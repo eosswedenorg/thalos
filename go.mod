@@ -3,21 +3,20 @@ module github.com/eosswedenorg/thalos
 go 1.18
 
 require (
-	github.com/alicebob/miniredis/v2 v2.30.0
 	github.com/eoscanada/eos-go v0.10.3-0.20221117104514-64cafd714c60
 	github.com/eosswedenorg-go/antelope-ship-client v0.2.3
 	github.com/eosswedenorg-go/pid v1.0.1
+	github.com/eosswedenorg/thalos/api v0.0.0-00010101000000-000000000000
 	github.com/go-redis/cache/v8 v8.4.4
 	github.com/go-redis/redis/v8 v8.11.6-0.20220405070650-99c79f7041fc
 	github.com/go-redis/redismock/v8 v8.11.5
 	github.com/nikoksr/notify v0.35.0
 	github.com/pborman/getopt/v2 v2.1.0
 	github.com/sirupsen/logrus v1.9.0
-	github.com/stretchr/testify v1.8.1
+	github.com/stretchr/testify v1.8.2
 )
 
 require (
-	github.com/alicebob/gopher-json v0.0.0-20200520072559-a9ecdc9d1d3a // indirect
 	github.com/blendle/zapdriver v1.3.1 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
@@ -39,7 +38,6 @@ require (
 	github.com/vmihailenco/go-tinylfu v0.2.2 // indirect
 	github.com/vmihailenco/msgpack/v5 v5.3.5 // indirect
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
-	github.com/yuin/gopher-lua v0.0.0-20220504180219-658193537a64 // indirect
 	go.uber.org/atomic v1.10.0 // indirect
 	go.uber.org/goleak v1.2.0 // indirect
 	go.uber.org/multierr v1.8.0 // indirect
@@ -51,3 +49,5 @@ require (
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
+
+replace github.com/eosswedenorg/thalos/api => ./api
