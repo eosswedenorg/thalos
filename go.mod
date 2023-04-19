@@ -1,4 +1,4 @@
-module thalos
+module github.com/eosswedenorg/thalos
 
 go 1.18
 

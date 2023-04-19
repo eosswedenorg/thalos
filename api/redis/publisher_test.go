@@ -3,7 +3,7 @@ package redis
 import (
 	"testing"
 
-	"thalos/api"
+	"github.com/eosswedenorg/thalos/api"
 
 	"github.com/go-redis/redismock/v8"
 	"github.com/stretchr/testify/assert"

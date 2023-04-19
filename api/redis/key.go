@@ -3,7 +3,7 @@ package redis
 import (
 	"fmt"
 
-	"thalos/api"
+	"github.com/eosswedenorg/thalos/api"
 )
 
 // Key consists of a namespace and a channel.

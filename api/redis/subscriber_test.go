@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"thalos/api"
+	"github.com/eosswedenorg/thalos/api"
 
 	"github.com/alicebob/miniredis/v2"
 	"github.com/go-redis/redis/v8"

@@ -5,7 +5,7 @@ import (
 	"sync"
 	"time"
 
-	"thalos/api"
+	"github.com/eosswedenorg/thalos/api"
 
 	"github.com/go-redis/redis/v8"
 )

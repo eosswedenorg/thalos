@@ -3,7 +3,7 @@ package redis
 import (
 	"testing"
 
-	"thalos/api"
+	"github.com/eosswedenorg/thalos/api"
 )
 
 func TestKey_String(t *testing.T) {

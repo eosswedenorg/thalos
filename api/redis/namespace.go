@@ -3,7 +3,7 @@ package redis
 import (
 	"strings"
 
-	"thalos/api"
+	"github.com/eosswedenorg/thalos/api"
 )
 
 const (

@@ -8,13 +8,13 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/eosswedenorg/thalos/abi"
+	api_redis "github.com/eosswedenorg/thalos/api/redis"
+	"github.com/eosswedenorg/thalos/app"
+	"github.com/eosswedenorg/thalos/config"
+
 	"github.com/go-redis/redis/v8"
 	log "github.com/sirupsen/logrus"
-
-	"thalos/abi"
-	api_redis "thalos/api/redis"
-	"thalos/app"
-	"thalos/config"
 
 	"github.com/nikoksr/notify"
 	"github.com/nikoksr/notify/service/telegram"
