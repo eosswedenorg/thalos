@@ -3,8 +3,8 @@ package redis_pubsub
 import (
 	"context"
 
-	"thalos/transport"
-	. "thalos/transport/redis_common"
+	"thalos/api"
+	. "thalos/api/redis_common"
 
 	"github.com/go-redis/redis/v8"
 )
@@ -23,7 +23,7 @@ func NewPublisher(client *redis.Client, ns Namespace) *Publisher {
 	}
 }
 
-func (r *Publisher) Write(channel transport.Channel, payload []byte) error {
+func (r *Publisher) Write(channel api.Channel, payload []byte) error {
 	return r.pipeline.Publish(r.ctx, r.ns.NewKey(channel).String(), payload).Err()
 }
 

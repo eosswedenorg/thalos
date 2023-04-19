@@ -1,4 +1,4 @@
-package transport
+package api
 
 // Writer interface defines the required methods
 // to send messages over an channel.

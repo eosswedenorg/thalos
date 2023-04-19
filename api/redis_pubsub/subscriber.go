@@ -5,8 +5,8 @@ import (
 	"sync"
 	"time"
 
-	"thalos/transport"
-	. "thalos/transport/redis_common"
+	"thalos/api"
+	. "thalos/api/redis_common"
 
 	"github.com/go-redis/redis/v8"
 )
@@ -71,7 +71,7 @@ func (s *Subscriber) worker() {
 	}
 }
 
-func (s *Subscriber) Read(channel transport.Channel) ([]byte, error) {
+func (s *Subscriber) Read(channel api.Channel) ([]byte, error) {
 	var err error
 
 	key := s.ns.NewKey(channel).String()

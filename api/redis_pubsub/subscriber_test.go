@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
-	"thalos/transport"
-	. "thalos/transport/redis_common"
+	"thalos/api"
+	. "thalos/api/redis_common"
 
 	"github.com/alicebob/miniredis/v2"
 	"github.com/go-redis/redis/v8"
@@ -50,7 +50,7 @@ func TestSubscriber_Read(t *testing.T) {
 
 	// Redis pubsub does not guarentee that messages are sent in the correct order.
 	for range expectedMessages {
-		msg, err := s.Read(transport.Channel{"test"})
+		msg, err := s.Read(api.Channel{"test"})
 		assert.NoError(t, err)
 
 		assert.Contains(t, expectedMessages, string(msg))

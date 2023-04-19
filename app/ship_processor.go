@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 
 	"thalos/abi"
-	"thalos/transport"
-	"thalos/transport/message"
+	"thalos/api"
+	"thalos/api/message"
 
 	log "github.com/sirupsen/logrus"
 
@@ -29,12 +29,12 @@ func logDecoratedEncoder(encoder message.Encoder) message.Encoder {
 
 type ShipProcessor struct {
 	abi        *abi.AbiManager
-	writer     transport.Writer
+	writer     api.Writer
 	shipStream *shipclient.Stream
 	encode     message.Encoder
 }
 
-func SpawnProccessor(shipStream *shipclient.Stream, writer transport.Writer, abi *abi.AbiManager) *ShipProcessor {
+func SpawnProccessor(shipStream *shipclient.Stream, writer api.Writer, abi *abi.AbiManager) *ShipProcessor {
 	processor := &ShipProcessor{
 		abi:        abi,
 		writer:     writer,
@@ -49,7 +49,7 @@ func SpawnProccessor(shipStream *shipclient.Stream, writer transport.Writer, abi
 	return processor
 }
 
-func (processor *ShipProcessor) queueMessage(channel transport.Channel, payload []byte) bool {
+func (processor *ShipProcessor) queueMessage(channel api.Channel, payload []byte) bool {
 	err := processor.writer.Write(channel, payload)
 	if err != nil {
 		log.WithError(err).Errorf("Failed to post to channel '%s'", channel)
@@ -58,7 +58,7 @@ func (processor *ShipProcessor) queueMessage(channel transport.Channel, payload 
 	return true
 }
 
-func (processor *ShipProcessor) encodeQueue(channel transport.Channel, v interface{}) bool {
+func (processor *ShipProcessor) encodeQueue(channel api.Channel, v interface{}) bool {
 	if payload, err := processor.encode(v); err == nil {
 		return processor.queueMessage(channel, payload)
 	}
@@ -77,7 +77,7 @@ func (processor *ShipProcessor) processBlock(block *ship.GetBlocksResultV0) {
 			HeadBlockNum:             block.Head.BlockNum,
 		}
 
-		processor.encodeQueue(transport.HeartbeatChannel, hb)
+		processor.encodeQueue(api.HeartbeatChannel, hb)
 
 		err := processor.writer.Flush()
 		if err != nil {
@@ -89,7 +89,7 @@ func (processor *ShipProcessor) processBlock(block *ship.GetBlocksResultV0) {
 func (processor *ShipProcessor) processTraces(traces []*ship.TransactionTraceV0) {
 	for _, trace := range traces {
 
-		processor.encodeQueue(transport.TransactionChannel, trace)
+		processor.encodeQueue(api.TransactionChannel, trace)
 
 		// Actions
 		for _, actionTraceVar := range trace.ActionTraces {
@@ -139,11 +139,11 @@ func (processor *ShipProcessor) processTraces(traces []*ship.TransactionTraceV0)
 				continue
 			}
 
-			channels := []transport.Channel{
-				transport.Action{}.Channel(),
-				transport.Action{Name: act.Name}.Channel(),
-				transport.Action{Contract: act.Contract}.Channel(),
-				transport.Action{Name: act.Name, Contract: act.Contract}.Channel(),
+			channels := []api.Channel{
+				api.Action{}.Channel(),
+				api.Action{Name: act.Name}.Channel(),
+				api.Action{Contract: act.Contract}.Channel(),
+				api.Action{Name: act.Name, Contract: act.Contract}.Channel(),
 			}
 
 			for _, channel := range channels {

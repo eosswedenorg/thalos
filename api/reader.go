@@ -1,4 +1,4 @@
-package transport
+package api
 
 // Reader interface defines the required method
 // to read a message from an channel.

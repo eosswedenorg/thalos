@@ -3,7 +3,7 @@ package redis_common
 import (
 	"strings"
 
-	"thalos/transport"
+	"thalos/api"
 )
 
 const (
@@ -27,7 +27,7 @@ type Namespace struct {
 }
 
 // Create a new key with this namespace.
-func (ns Namespace) NewKey(ch transport.Channel) Key {
+func (ns Namespace) NewKey(ch api.Channel) Key {
 	return Key{NS: ns, Channel: ch}
 }
 

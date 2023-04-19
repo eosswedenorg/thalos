@@ -3,7 +3,7 @@ package redis_common
 import (
 	"fmt"
 
-	"thalos/transport"
+	"thalos/api"
 )
 
 // Key consists of a namespace and a channel.
@@ -11,7 +11,7 @@ import (
 
 type Key struct {
 	NS      Namespace
-	Channel transport.Channel
+	Channel api.Channel
 }
 
 func (k Key) String() string {
