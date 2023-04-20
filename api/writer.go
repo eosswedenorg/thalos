@@ -2,6 +2,8 @@ package api
 
 // Writer interface defines the required methods
 // to send messages over an channel.
+//
+// This is a low-level interface typically implemented by backend drivers
 type Writer interface {
 	// Write writes a message over a channel.
 	// The message may or may not be buffered depending on the implementation.
