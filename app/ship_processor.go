@@ -4,9 +4,9 @@ import (
 	"encoding/hex"
 	"encoding/json"
 
-	"github.com/eosswedenorg/thalos/abi"
 	"github.com/eosswedenorg/thalos/api"
 	"github.com/eosswedenorg/thalos/api/message"
+	"github.com/eosswedenorg/thalos/app/abi"
 
 	log "github.com/sirupsen/logrus"
 

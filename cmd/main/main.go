@@ -8,9 +8,9 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/eosswedenorg/thalos/abi"
 	api_redis "github.com/eosswedenorg/thalos/api/redis"
 	"github.com/eosswedenorg/thalos/app"
+	"github.com/eosswedenorg/thalos/app/abi"
 	"github.com/eosswedenorg/thalos/config"
 
 	"github.com/go-redis/redis/v8"
