@@ -71,7 +71,7 @@ func (processor *ShipProcessor) processBlock(block *ship.GetBlocksResultV0) {
 	}
 
 	if block.ThisBlock.BlockNum%10 == 0 {
-		hb := message.HearthBeat{
+		hb := message.HeartBeat{
 			BlockNum:                 block.ThisBlock.BlockNum,
 			LastIrreversibleBlockNum: block.LastIrreversible.BlockNum,
 			HeadBlockNum:             block.Head.BlockNum,

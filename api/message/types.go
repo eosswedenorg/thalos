@@ -1,6 +1,6 @@
 package message
 
-type HearthBeat struct {
+type HeartBeat struct {
 	BlockNum                 uint32 `json:"blocknum"`
 	HeadBlockNum             uint32 `json:"head_blocknum"`
 	LastIrreversibleBlockNum uint32 `json:"last_irreversible_blocknum"`

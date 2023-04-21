@@ -8,9 +8,9 @@ All messages are encoded in `json` format
 
 ## Types
 
-### HearthBeat
+### HeartBeat
 
-Heartbeat messages are posted to the hearthbeat channel periodically.
+Heartbeat messages are posted to the heartbeat channel periodically.
 
 | Field                      | Datatype | Description                                 |
 | -------------------------- | -------- | ------------------------------------------- |
