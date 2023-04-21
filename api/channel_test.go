@@ -93,13 +93,13 @@ func TestChannel_String(t *testing.T) {
 func TestAction_Channel(t *testing.T) {
 	tests := []struct {
 		name   string
-		action Action
+		action ActionChannel
 		want   Channel
 	}{
-		{"Empty", Action{}, Channel{"actions"}},
-		{"Contract", Action{Contract: "mycontract"}, Channel{"actions", "contract", "mycontract"}},
-		{"Action", Action{Name: "myaction"}, Channel{"actions", "name", "myaction"}},
-		{"ContractAndName", Action{Contract: "mycontract", Name: "myaction"}, Channel{"actions", "contract", "mycontract", "name", "myaction"}},
+		{"Empty", ActionChannel{}, Channel{"actions"}},
+		{"Contract", ActionChannel{Contract: "mycontract"}, Channel{"actions", "contract", "mycontract"}},
+		{"Action", ActionChannel{Name: "myaction"}, Channel{"actions", "name", "myaction"}},
+		{"ContractAndName", ActionChannel{Contract: "mycontract", Name: "myaction"}, Channel{"actions", "contract", "mycontract", "name", "myaction"}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

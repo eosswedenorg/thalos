@@ -41,12 +41,12 @@ var (
 )
 
 // Action Channel
-type Action struct {
+type ActionChannel struct {
 	Name     string
 	Contract string
 }
 
-func (a Action) Channel() Channel {
+func (a ActionChannel) Channel() Channel {
 	ch := Channel{"actions"}
 
 	if len(a.Contract) > 0 {
