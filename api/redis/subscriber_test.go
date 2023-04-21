@@ -18,7 +18,6 @@ func TestSubscriber_Construct(t *testing.T) {
 
 	s := NewSubscriber(client, ns)
 
-	assert.Equal(t, s.client, client)
 	assert.Equal(t, s.ctx, client.Context())
 	assert.NotNil(t, s.sub)
 	assert.Equal(t, s.ns, ns)

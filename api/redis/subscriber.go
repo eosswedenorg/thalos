@@ -11,7 +11,6 @@ import (
 )
 
 type Subscriber struct {
-	client   *redis.Client
 	sub      *redis.PubSub
 	ctx      context.Context
 	mu       sync.RWMutex
@@ -30,7 +29,6 @@ func WithTimeout(value time.Duration) SubscriberOption {
 
 func NewSubscriber(client *redis.Client, ns Namespace, options ...SubscriberOption) *Subscriber {
 	sub := &Subscriber{
-		client:   client,
 		ctx:      client.Context(),
 		sub:      client.PSubscribe(client.Context()),
 		channels: make(map[string]chan []byte),
