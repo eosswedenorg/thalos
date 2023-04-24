@@ -110,7 +110,7 @@ func main() {
 
 	showHelp := getopt.BoolLong("help", 'h', "display this help text")
 	showVersion := getopt.BoolLong("version", 'v', "display this help text")
-	configFile := getopt.StringLong("config", 'c', "./config.json", "Config file to read", "file")
+	configFile := getopt.StringLong("config", 'c', "./config.yml", "Config file to read", "file")
 	pidFile := getopt.StringLong("pid", 'p', "", "Where to write process id", "file")
 
 	getopt.Parse()

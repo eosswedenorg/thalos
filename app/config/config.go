@@ -1,42 +1,43 @@
 package config
 
 import (
-	"encoding/json"
 	"io/ioutil"
+
+	"gopkg.in/yaml.v3"
 
 	shipclient "github.com/eosswedenorg-go/antelope-ship-client"
 )
 
 type RedisConfig struct {
-	Addr     string `json:"addr"`
-	Password string `json:"password"`
-	DB       int    `json:"db"`
-	CacheID  string `json:"cache_id"`
-	Prefix   string `json:"prefix"`
+	Addr     string `yaml:"addr"`
+	Password string `yaml:"password"`
+	DB       int    `yaml:"db"`
+	CacheID  string `yaml:"cache_id"`
+	Prefix   string `yaml:"prefix"`
 }
 
 type TelegramConfig struct {
-	Id      string `json:"id"`
-	Channel int64  `json:"channel"`
+	Id      string `yaml:"id"`
+	Channel int64  `yaml:"channel"`
 }
 
 type ShipConfig struct {
-	Url                 string `json:"url"`
-	IrreversibleOnly    bool   `json:"irreversible_only"`
-	MaxMessagesInFlight uint32 `json:"max_messages_in_flight"`
-	StartBlockNum       uint32 `json:"start_block_num"`
-	EndBlockNum         uint32 `json:"end_block_num"`
+	Url                 string `yaml:"url"`
+	IrreversibleOnly    bool   `yaml:"irreversible_only"`
+	MaxMessagesInFlight uint32 `yaml:"max_messages_in_flight"`
+	StartBlockNum       uint32 `yaml:"start_block_num"`
+	EndBlockNum         uint32 `yaml:"end_block_num"`
 }
 
 type Config struct {
-	Name string     `json:"name"`
-	Ship ShipConfig `json:"ship"`
-	Api  string     `json:"api"`
+	Name string     `yaml:"name"`
+	Ship ShipConfig `yaml:"ship"`
+	Api  string     `yaml:"api"`
 
-	Redis        RedisConfig `json:"redis"`
-	MessageCodec string      `json:"message_codec"`
+	Redis        RedisConfig `yaml:"redis"`
+	MessageCodec string      `yaml:"message_codec"`
 
-	Telegram TelegramConfig `json:"telegram"`
+	Telegram TelegramConfig `yaml:"telegram"`
 }
 
 func Parse(data []byte) (*Config, error) {
@@ -56,21 +57,23 @@ func Parse(data []byte) (*Config, error) {
 		},
 	}
 
-	err := json.Unmarshal(data, &cfg)
+	err := yaml.Unmarshal(data, &cfg)
 	return &cfg, err
 }
 
-func (ship *ShipConfig) UnmarshalJSON(data []byte) error {
+func (ship *ShipConfig) UnmarshalYAML(value *yaml.Node) error {
 	var err error
 
-	if err = json.Unmarshal(data, &ship.Url); err != nil {
-		//
+	if value.Kind == yaml.ScalarNode {
+		ship.Url = value.Value
+	} else {
 		type ShipConfigRaw ShipConfig
 		raw := ShipConfigRaw(*ship)
-		if err = json.Unmarshal(data, &raw); err == nil {
+		if err = value.Decode(&raw); err == nil {
 			*ship = ShipConfig(raw)
 		}
 	}
+
 	return err
 }
 

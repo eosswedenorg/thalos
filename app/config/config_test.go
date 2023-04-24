@@ -27,7 +27,7 @@ func TestParse_Default(t *testing.T) {
 		},
 	}
 
-	cfg, err := Parse([]byte(`{}`))
+	cfg, err := Parse([]byte(``))
 	require.NoError(t, err)
 	require.Equal(t, cfg, &expected)
 }
@@ -56,28 +56,25 @@ func TestParse(t *testing.T) {
 		},
 	}
 
-	cfg, err := Parse([]byte(`{
-		"name": "ship-reader-1",
-		"api": "http://127.0.0.1:8080",
-		"message_codec": "mojibake",
-		"ship": {
-			"url": "127.0.0.1:8089",
-			"irreversible_only": true,
-			"max_messages_in_flight": 1337,
-			"start_block_num": 23671836,
-			"end_block_num": 23872222
-		},
-		"telegram": {
-			"id": "110201543:AAHdqTcvCH1vGWJxfSeofSAs0K5PALDsaw",
-			"channel": -123456789
-		},
-		"redis": {
-			"addr": "localhost:6379",
-			"password": "passwd",
-			"db": 4,
-			"prefix": "some::ship"
-		}
-	}`))
+	cfg, err := Parse([]byte(`
+name: "ship-reader-1"
+api: "http://127.0.0.1:8080"
+message_codec: "mojibake"
+ship:
+  url: "127.0.0.1:8089"
+  irreversible_only: true
+  max_messages_in_flight: 1337
+  start_block_num: 23671836
+  end_block_num: 23872222
+telegram:
+  id: "110201543:AAHdqTcvCH1vGWJxfSeofSAs0K5PALDsaw"
+  channel: -123456789
+redis:
+  addr: "localhost:6379"
+  password: "passwd"
+  db: 4
+  prefix: "some::ship"
+`))
 
 	require.NoError(t, err)
 	require.Equal(t, cfg, &expected)
@@ -107,21 +104,19 @@ func TestParseShorthandShipUrl(t *testing.T) {
 		},
 	}
 
-	cfg, err := Parse([]byte(`{
-		"name": "ship-reader-1",
-		"api": "http://127.0.0.1:8080",
-		"ship": "127.0.0.1:8089",
-		"telegram": {
-			"id": "110201543:AAHdqTcvCH1vGWJxfSeofSAs0K5PALDsaw",
-			"channel": -123456789
-		},
-		"redis": {
-			"addr": "localhost:6379",
-			"password": "passwd",
-			"db": 4,
-			"prefix": "some::ship"
-		}
-	}`))
+	cfg, err := Parse([]byte(`
+name: "ship-reader-1"
+api: "http://127.0.0.1:8080"
+ship: "127.0.0.1:8089"
+telegram:
+  id: "110201543:AAHdqTcvCH1vGWJxfSeofSAs0K5PALDsaw"
+  channel: -123456789
+redis:
+  addr: "localhost:6379"
+  password: "passwd"
+  db: 4
+  prefix: "some::ship"
+`))
 
 	require.NoError(t, err)
 	require.Equal(t, cfg, &expected)
