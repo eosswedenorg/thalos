@@ -10,6 +10,8 @@ import (
 
 func TestParse_Default(t *testing.T) {
 	expected := Config{
+		MessageCodec: "json",
+
 		Ship: ShipConfig{
 			StartBlockNum:       shipclient.NULL_BLOCK_NUMBER,
 			EndBlockNum:         shipclient.NULL_BLOCK_NUMBER,
@@ -32,8 +34,9 @@ func TestParse_Default(t *testing.T) {
 
 func TestParse(t *testing.T) {
 	expected := Config{
-		Name: "ship-reader-1",
-		Api:  "http://127.0.0.1:8080",
+		Name:         "ship-reader-1",
+		Api:          "http://127.0.0.1:8080",
+		MessageCodec: "mojibake",
 		Ship: ShipConfig{
 			Url:                 "127.0.0.1:8089",
 			StartBlockNum:       23671836,
@@ -56,6 +59,7 @@ func TestParse(t *testing.T) {
 	cfg, err := Parse([]byte(`{
 		"name": "ship-reader-1",
 		"api": "http://127.0.0.1:8080",
+		"message_codec": "mojibake",
 		"ship": {
 			"url": "127.0.0.1:8089",
 			"irreversible_only": true,
@@ -81,8 +85,9 @@ func TestParse(t *testing.T) {
 
 func TestParseShorthandShipUrl(t *testing.T) {
 	expected := Config{
-		Name: "ship-reader-1",
-		Api:  "http://127.0.0.1:8080",
+		Name:         "ship-reader-1",
+		Api:          "http://127.0.0.1:8080",
+		MessageCodec: "json",
 		Ship: ShipConfig{
 			Url:                 "127.0.0.1:8089",
 			StartBlockNum:       shipclient.NULL_BLOCK_NUMBER,

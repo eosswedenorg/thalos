@@ -33,13 +33,15 @@ type Config struct {
 	Ship ShipConfig `json:"ship"`
 	Api  string     `json:"api"`
 
-	Redis RedisConfig `json:"redis"`
+	Redis        RedisConfig `json:"redis"`
+	MessageCodec string      `json:"message_codec"`
 
 	Telegram TelegramConfig `json:"telegram"`
 }
 
 func Parse(data []byte) (*Config, error) {
 	cfg := Config{
+		MessageCodec: "json",
 		Ship: ShipConfig{
 			StartBlockNum:       shipclient.NULL_BLOCK_NUMBER,
 			EndBlockNum:         shipclient.NULL_BLOCK_NUMBER,
