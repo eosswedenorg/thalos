@@ -2,7 +2,6 @@ package app
 
 import (
 	"encoding/hex"
-	"encoding/json"
 
 	"github.com/eosswedenorg/thalos/api"
 	"github.com/eosswedenorg/thalos/api/message"
@@ -34,12 +33,12 @@ type ShipProcessor struct {
 	encode     message.Encoder
 }
 
-func SpawnProccessor(shipStream *shipclient.Stream, writer api.Writer, abi *abi.AbiManager) *ShipProcessor {
+func SpawnProccessor(shipStream *shipclient.Stream, writer api.Writer, abi *abi.AbiManager, codec message.Codec) *ShipProcessor {
 	processor := &ShipProcessor{
 		abi:        abi,
 		writer:     writer,
 		shipStream: shipStream,
-		encode:     logDecoratedEncoder(json.Marshal),
+		encode:     logDecoratedEncoder(codec.Encoder),
 	}
 
 	// Attach handlers
