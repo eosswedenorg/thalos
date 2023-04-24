@@ -8,6 +8,8 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/eosswedenorg/thalos/api/message"
+	_ "github.com/eosswedenorg/thalos/api/message/json"
 	api_redis "github.com/eosswedenorg/thalos/api/redis"
 	"github.com/eosswedenorg/thalos/app"
 	"github.com/eosswedenorg/thalos/app/abi"
@@ -187,6 +189,13 @@ func main() {
 		s.IrreversibleOnly = conf.Ship.IrreversibleOnly
 	})
 
+	// Get codec
+	codec, err := message.GetCodec(conf.MessageCodec)
+	if err != nil {
+		log.WithError(err).Fatal("Failed to load codec")
+		return
+	}
+
 	processor := app.SpawnProccessor(
 		shClient,
 		api_redis.NewPublisher(rdb, api_redis.Namespace{
@@ -194,6 +203,7 @@ func main() {
 			ChainID: chainInfo.ChainID.String(),
 		}),
 		abi.NewAbiManager(rdb, eosClient, conf.Redis.CacheID),
+		codec,
 	)
 
 	// Run the application
