@@ -10,6 +10,7 @@ import (
 
 	"github.com/eosswedenorg/thalos/api/message"
 	_ "github.com/eosswedenorg/thalos/api/message/json"
+	_ "github.com/eosswedenorg/thalos/api/message/msgpack"
 	api_redis "github.com/eosswedenorg/thalos/api/redis"
 	"github.com/eosswedenorg/thalos/app"
 	"github.com/eosswedenorg/thalos/app/abi"

@@ -31,6 +31,8 @@ require (
 	github.com/onsi/gomega v1.27.6 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/shamaton/msgpack/v2 v2.1.0 // indirect
+	github.com/shamaton/msgpackgen v0.3.0 // indirect
 	github.com/streamingfast/logging v0.0.0-20221209193439-bff11742bf4c // indirect
 	github.com/technoweenie/multipartstreamer v1.0.1 // indirect
 	github.com/tidwall/gjson v1.14.4 // indirect
