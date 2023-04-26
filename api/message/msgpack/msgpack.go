@@ -57,6 +57,36 @@ func ___encodeAsArray(i interface{}) ([]byte, error) {
 			return nil, fmt.Errorf("%s size / offset different %d : %d", "github.com/eosswedenorg/thalos/api/message.HeartBeat", size, offset)
 		}
 		return b, err
+	case message.ActionTrace:
+		encoder := enc.NewEncoder()
+		size, err := ___calcArraySizeActionTrace_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(v, encoder)
+		if err != nil {
+			return nil, err
+		}
+		encoder.MakeBytes(size)
+		b, offset, err := ___encodeArrayActionTrace_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(v, encoder, 0)
+		if err != nil {
+			return nil, err
+		}
+		if size != offset {
+			return nil, fmt.Errorf("%s size / offset different %d : %d", "github.com/eosswedenorg/thalos/api/message.ActionTrace", size, offset)
+		}
+		return b, err
+	case *message.ActionTrace:
+		encoder := enc.NewEncoder()
+		size, err := ___calcArraySizeActionTrace_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(*v, encoder)
+		if err != nil {
+			return nil, err
+		}
+		encoder.MakeBytes(size)
+		b, offset, err := ___encodeArrayActionTrace_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(*v, encoder, 0)
+		if err != nil {
+			return nil, err
+		}
+		if size != offset {
+			return nil, fmt.Errorf("%s size / offset different %d : %d", "github.com/eosswedenorg/thalos/api/message.ActionTrace", size, offset)
+		}
+		return b, err
 	}
 	return nil, nil
 }
@@ -94,6 +124,36 @@ func ___encodeAsMap(i interface{}) ([]byte, error) {
 			return nil, fmt.Errorf("%s size / offset different %d : %d", "github.com/eosswedenorg/thalos/api/message.HeartBeat", size, offset)
 		}
 		return b, err
+	case message.ActionTrace:
+		encoder := enc.NewEncoder()
+		size, err := ___calcMapSizeActionTrace_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(v, encoder)
+		if err != nil {
+			return nil, err
+		}
+		encoder.MakeBytes(size)
+		b, offset, err := ___encodeMapActionTrace_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(v, encoder, 0)
+		if err != nil {
+			return nil, err
+		}
+		if size != offset {
+			return nil, fmt.Errorf("%s size / offset different %d : %d", "github.com/eosswedenorg/thalos/api/message.ActionTrace", size, offset)
+		}
+		return b, err
+	case *message.ActionTrace:
+		encoder := enc.NewEncoder()
+		size, err := ___calcMapSizeActionTrace_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(*v, encoder)
+		if err != nil {
+			return nil, err
+		}
+		encoder.MakeBytes(size)
+		b, offset, err := ___encodeMapActionTrace_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(*v, encoder, 0)
+		if err != nil {
+			return nil, err
+		}
+		if size != offset {
+			return nil, fmt.Errorf("%s size / offset different %d : %d", "github.com/eosswedenorg/thalos/api/message.ActionTrace", size, offset)
+		}
+		return b, err
 	}
 	return nil, nil
 }
@@ -124,6 +184,20 @@ func ___decodeAsArray(data []byte, i interface{}) (bool, error) {
 			return true, fmt.Errorf("read length is different [%d] [%d] ", offset, decoder.Len())
 		}
 		return true, err
+	case *message.ActionTrace:
+		decoder := dec.NewDecoder(data)
+		offset, err := ___decodeArrayActionTrace_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(v, decoder, 0)
+		if err == nil && offset != decoder.Len() {
+			return true, fmt.Errorf("read length is different [%d] [%d] ", offset, decoder.Len())
+		}
+		return true, err
+	case **message.ActionTrace:
+		decoder := dec.NewDecoder(data)
+		offset, err := ___decodeArrayActionTrace_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(*v, decoder, 0)
+		if err == nil && offset != decoder.Len() {
+			return true, fmt.Errorf("read length is different [%d] [%d] ", offset, decoder.Len())
+		}
+		return true, err
 	}
 	return false, nil
 }
@@ -141,6 +215,20 @@ func ___decodeAsMap(data []byte, i interface{}) (bool, error) {
 	case **message.HeartBeat:
 		decoder := dec.NewDecoder(data)
 		offset, err := ___decodeMapHeartBeat_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(*v, decoder, 0)
+		if err == nil && offset != decoder.Len() {
+			return true, fmt.Errorf("read length is different [%d] [%d] ", offset, decoder.Len())
+		}
+		return true, err
+	case *message.ActionTrace:
+		decoder := dec.NewDecoder(data)
+		offset, err := ___decodeMapActionTrace_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(v, decoder, 0)
+		if err == nil && offset != decoder.Len() {
+			return true, fmt.Errorf("read length is different [%d] [%d] ", offset, decoder.Len())
+		}
+		return true, err
+	case **message.ActionTrace:
+		decoder := dec.NewDecoder(data)
+		offset, err := ___decodeMapActionTrace_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(*v, decoder, 0)
 		if err == nil && offset != decoder.Len() {
 			return true, fmt.Errorf("read length is different [%d] [%d] ", offset, decoder.Len())
 		}
@@ -165,9 +253,9 @@ func ___calcMapSizeHeartBeat_27424f445a2085e7723342fb0df638c626b43c59240988bc64f
 	size += encoder.CalcStructHeaderFix(3)
 	size += encoder.CalcStringFix(8)
 	size += encoder.CalcUint32(v.BlockNum)
-	size += encoder.CalcStringFix(12)
+	size += encoder.CalcStringFix(13)
 	size += encoder.CalcUint32(v.HeadBlockNum)
-	size += encoder.CalcStringFix(24)
+	size += encoder.CalcStringFix(26)
 	size += encoder.CalcUint32(v.LastIrreversibleBlockNum)
 	return size, nil
 }
@@ -186,11 +274,11 @@ func ___encodeArrayHeartBeat_27424f445a2085e7723342fb0df638c626b43c59240988bc64f
 func ___encodeMapHeartBeat_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(v message.HeartBeat, encoder *enc.Encoder, offset int) ([]byte, int, error) {
 	var err error
 	offset = encoder.WriteStructHeaderFixAsMap(3, offset)
-	offset = encoder.WriteStringFix("BlockNum", 8, offset)
+	offset = encoder.WriteStringFix("blocknum", 8, offset)
 	offset = encoder.WriteUint32(v.BlockNum, offset)
-	offset = encoder.WriteStringFix("HeadBlockNum", 12, offset)
+	offset = encoder.WriteStringFix("head_blocknum", 13, offset)
 	offset = encoder.WriteUint32(v.HeadBlockNum, offset)
-	offset = encoder.WriteStringFix("LastIrreversibleBlockNum", 24, offset)
+	offset = encoder.WriteStringFix("last_irreversible_blocknum", 26, offset)
 	offset = encoder.WriteUint32(v.LastIrreversibleBlockNum, offset)
 	return encoder.EncodedBytes(), offset, err
 }
@@ -231,9 +319,9 @@ func ___decodeArrayHeartBeat_27424f445a2085e7723342fb0df638c626b43c59240988bc64f
 // decode to github.com/eosswedenorg/thalos/api/message.HeartBeat
 func ___decodeMapHeartBeat_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(v *message.HeartBeat, decoder *dec.Decoder, offset int) (int, error) {
 	keys := [][]byte{
-		{uint8(0x42), uint8(0x6c), uint8(0x6f), uint8(0x63), uint8(0x6b), uint8(0x4e), uint8(0x75), uint8(0x6d)},                                                                                                                                                                                                                 // BlockNum
-		{uint8(0x48), uint8(0x65), uint8(0x61), uint8(0x64), uint8(0x42), uint8(0x6c), uint8(0x6f), uint8(0x63), uint8(0x6b), uint8(0x4e), uint8(0x75), uint8(0x6d)},                                                                                                                                                             // HeadBlockNum
-		{uint8(0x4c), uint8(0x61), uint8(0x73), uint8(0x74), uint8(0x49), uint8(0x72), uint8(0x72), uint8(0x65), uint8(0x76), uint8(0x65), uint8(0x72), uint8(0x73), uint8(0x69), uint8(0x62), uint8(0x6c), uint8(0x65), uint8(0x42), uint8(0x6c), uint8(0x6f), uint8(0x63), uint8(0x6b), uint8(0x4e), uint8(0x75), uint8(0x6d)}, // LastIrreversibleBlockNum
+		{uint8(0x62), uint8(0x6c), uint8(0x6f), uint8(0x63), uint8(0x6b), uint8(0x6e), uint8(0x75), uint8(0x6d)},                                                                  // blocknum
+		{uint8(0x68), uint8(0x65), uint8(0x61), uint8(0x64), uint8(0x5f), uint8(0x62), uint8(0x6c), uint8(0x6f), uint8(0x63), uint8(0x6b), uint8(0x6e), uint8(0x75), uint8(0x6d)}, // head_blocknum
+		{uint8(0x6c), uint8(0x61), uint8(0x73), uint8(0x74), uint8(0x5f), uint8(0x69), uint8(0x72), uint8(0x72), uint8(0x65), uint8(0x76), uint8(0x65), uint8(0x72), uint8(0x73), uint8(0x69), uint8(0x62), uint8(0x6c), uint8(0x65), uint8(0x5f), uint8(0x62), uint8(0x6c), uint8(0x6f), uint8(0x63), uint8(0x6b), uint8(0x6e), uint8(0x75), uint8(0x6d)}, // last_irreversible_blocknum
 	}
 	offset, err := decoder.CheckStructHeader(3, offset)
 	if err != nil {
@@ -291,6 +379,292 @@ func ___decodeMapHeartBeat_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d
 					return 0, err
 				}
 				v.LastIrreversibleBlockNum = vv
+			}
+			count++
+		default:
+			return 0, fmt.Errorf("unknown key[%s] found", string(dataKey))
+		}
+	}
+	return offset, err
+}
+
+// calculate size from github.com/eosswedenorg/thalos/api/message.ActionTrace
+func ___calcArraySizeActionTrace_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(v message.ActionTrace, encoder *enc.Encoder) (int, error) {
+	size := 0
+	size += encoder.CalcStructHeaderFix(6)
+	size += encoder.CalcString(v.TxID)
+	size += encoder.CalcString(v.Name)
+	size += encoder.CalcString(v.Contract)
+	size += encoder.CalcString(v.Receiver)
+	if v.Data != nil {
+		s, err := encoder.CalcSliceLength(len(v.Data), true)
+		if err != nil {
+			return 0, err
+		}
+		size += s
+		for _, vv := range v.Data {
+			size += encoder.CalcByte(vv)
+		}
+	} else {
+		size += encoder.CalcNil()
+	}
+	size += encoder.CalcString(v.HexData)
+	return size, nil
+}
+
+// calculate size from github.com/eosswedenorg/thalos/api/message.ActionTrace
+func ___calcMapSizeActionTrace_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(v message.ActionTrace, encoder *enc.Encoder) (int, error) {
+	size := 0
+	size += encoder.CalcStructHeaderFix(6)
+	size += encoder.CalcStringFix(5)
+	size += encoder.CalcString(v.TxID)
+	size += encoder.CalcStringFix(4)
+	size += encoder.CalcString(v.Name)
+	size += encoder.CalcStringFix(8)
+	size += encoder.CalcString(v.Contract)
+	size += encoder.CalcStringFix(8)
+	size += encoder.CalcString(v.Receiver)
+	size += encoder.CalcStringFix(4)
+	if v.Data != nil {
+		s, err := encoder.CalcSliceLength(len(v.Data), true)
+		if err != nil {
+			return 0, err
+		}
+		size += s
+		for _, vv := range v.Data {
+			size += encoder.CalcByte(vv)
+		}
+	} else {
+		size += encoder.CalcNil()
+	}
+	size += encoder.CalcStringFix(8)
+	size += encoder.CalcString(v.HexData)
+	return size, nil
+}
+
+// encode from github.com/eosswedenorg/thalos/api/message.ActionTrace
+func ___encodeArrayActionTrace_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(v message.ActionTrace, encoder *enc.Encoder, offset int) ([]byte, int, error) {
+	var err error
+	offset = encoder.WriteStructHeaderFixAsArray(6, offset)
+	offset = encoder.WriteString(v.TxID, offset)
+	offset = encoder.WriteString(v.Name, offset)
+	offset = encoder.WriteString(v.Contract, offset)
+	offset = encoder.WriteString(v.Receiver, offset)
+	if v.Data != nil {
+		offset = encoder.WriteSliceLength(len(v.Data), offset, true)
+		for _, vv := range v.Data {
+			offset = encoder.WriteByte(vv, offset)
+		}
+	} else {
+		offset = encoder.WriteNil(offset)
+	}
+	offset = encoder.WriteString(v.HexData, offset)
+	return encoder.EncodedBytes(), offset, err
+}
+
+// encode from github.com/eosswedenorg/thalos/api/message.ActionTrace
+func ___encodeMapActionTrace_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(v message.ActionTrace, encoder *enc.Encoder, offset int) ([]byte, int, error) {
+	var err error
+	offset = encoder.WriteStructHeaderFixAsMap(6, offset)
+	offset = encoder.WriteStringFix("tx_id", 5, offset)
+	offset = encoder.WriteString(v.TxID, offset)
+	offset = encoder.WriteStringFix("name", 4, offset)
+	offset = encoder.WriteString(v.Name, offset)
+	offset = encoder.WriteStringFix("contract", 8, offset)
+	offset = encoder.WriteString(v.Contract, offset)
+	offset = encoder.WriteStringFix("receiver", 8, offset)
+	offset = encoder.WriteString(v.Receiver, offset)
+	offset = encoder.WriteStringFix("data", 4, offset)
+	if v.Data != nil {
+		offset = encoder.WriteSliceLength(len(v.Data), offset, true)
+		for _, vv := range v.Data {
+			offset = encoder.WriteByte(vv, offset)
+		}
+	} else {
+		offset = encoder.WriteNil(offset)
+	}
+	offset = encoder.WriteStringFix("hex_data", 8, offset)
+	offset = encoder.WriteString(v.HexData, offset)
+	return encoder.EncodedBytes(), offset, err
+}
+
+// decode to github.com/eosswedenorg/thalos/api/message.ActionTrace
+func ___decodeArrayActionTrace_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(v *message.ActionTrace, decoder *dec.Decoder, offset int) (int, error) {
+	offset, err := decoder.CheckStructHeader(6, offset)
+	if err != nil {
+		return 0, err
+	}
+	{
+		var vv string
+		vv, offset, err = decoder.AsString(offset)
+		if err != nil {
+			return 0, err
+		}
+		v.TxID = vv
+	}
+	{
+		var vv string
+		vv, offset, err = decoder.AsString(offset)
+		if err != nil {
+			return 0, err
+		}
+		v.Name = vv
+	}
+	{
+		var vv string
+		vv, offset, err = decoder.AsString(offset)
+		if err != nil {
+			return 0, err
+		}
+		v.Contract = vv
+	}
+	{
+		var vv string
+		vv, offset, err = decoder.AsString(offset)
+		if err != nil {
+			return 0, err
+		}
+		v.Receiver = vv
+	}
+	if !decoder.IsCodeNil(offset) {
+		var vv []byte
+		var vvl int
+		vvl, offset, err = decoder.SliceLength(offset)
+		if err != nil {
+			return 0, err
+		}
+		vv = make([]byte, vvl)
+		for vvi := range vv {
+			var vvv byte
+			vvv, offset, err = decoder.AsByte(offset)
+			if err != nil {
+				return 0, err
+			}
+			vv[vvi] = vvv
+		}
+		v.Data = vv
+	} else {
+		offset++
+	}
+	{
+		var vv string
+		vv, offset, err = decoder.AsString(offset)
+		if err != nil {
+			return 0, err
+		}
+		v.HexData = vv
+	}
+	return offset, err
+}
+
+// decode to github.com/eosswedenorg/thalos/api/message.ActionTrace
+func ___decodeMapActionTrace_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(v *message.ActionTrace, decoder *dec.Decoder, offset int) (int, error) {
+	keys := [][]byte{
+		{uint8(0x74), uint8(0x78), uint8(0x5f), uint8(0x69), uint8(0x64)},                                        // tx_id
+		{uint8(0x6e), uint8(0x61), uint8(0x6d), uint8(0x65)},                                                     // name
+		{uint8(0x63), uint8(0x6f), uint8(0x6e), uint8(0x74), uint8(0x72), uint8(0x61), uint8(0x63), uint8(0x74)}, // contract
+		{uint8(0x72), uint8(0x65), uint8(0x63), uint8(0x65), uint8(0x69), uint8(0x76), uint8(0x65), uint8(0x72)}, // receiver
+		{uint8(0x64), uint8(0x61), uint8(0x74), uint8(0x61)},                                                     // data
+		{uint8(0x68), uint8(0x65), uint8(0x78), uint8(0x5f), uint8(0x64), uint8(0x61), uint8(0x74), uint8(0x61)}, // hex_data
+	}
+	offset, err := decoder.CheckStructHeader(6, offset)
+	if err != nil {
+		return 0, err
+	}
+	count := 0
+	for count < 6 {
+		var dataKey []byte
+		dataKey, offset, err = decoder.AsStringBytes(offset)
+		if err != nil {
+			return 0, err
+		}
+		fieldIndex := -1
+		for i, key := range keys {
+			if len(dataKey) != len(key) {
+				continue
+			}
+			fieldIndex = i
+			for dataKeyIndex := range dataKey {
+				if dataKey[dataKeyIndex] != key[dataKeyIndex] {
+					fieldIndex = -1
+					break
+				}
+			}
+			if fieldIndex >= 0 {
+				break
+			}
+		}
+		switch fieldIndex {
+		case 0:
+			{
+				var vv string
+				vv, offset, err = decoder.AsString(offset)
+				if err != nil {
+					return 0, err
+				}
+				v.TxID = vv
+			}
+			count++
+		case 1:
+			{
+				var vv string
+				vv, offset, err = decoder.AsString(offset)
+				if err != nil {
+					return 0, err
+				}
+				v.Name = vv
+			}
+			count++
+		case 2:
+			{
+				var vv string
+				vv, offset, err = decoder.AsString(offset)
+				if err != nil {
+					return 0, err
+				}
+				v.Contract = vv
+			}
+			count++
+		case 3:
+			{
+				var vv string
+				vv, offset, err = decoder.AsString(offset)
+				if err != nil {
+					return 0, err
+				}
+				v.Receiver = vv
+			}
+			count++
+		case 4:
+			if !decoder.IsCodeNil(offset) {
+				var vv []byte
+				var vvl int
+				vvl, offset, err = decoder.SliceLength(offset)
+				if err != nil {
+					return 0, err
+				}
+				vv = make([]byte, vvl)
+				for vvi := range vv {
+					var vvv byte
+					vvv, offset, err = decoder.AsByte(offset)
+					if err != nil {
+						return 0, err
+					}
+					vv[vvi] = vvv
+				}
+				v.Data = vv
+			} else {
+				offset++
+			}
+			count++
+		case 5:
+			{
+				var vv string
+				vv, offset, err = decoder.AsString(offset)
+				if err != nil {
+					return 0, err
+				}
+				v.HexData = vv
 			}
 			count++
 		default:
