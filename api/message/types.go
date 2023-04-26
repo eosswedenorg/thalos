@@ -8,6 +8,11 @@ type HeartBeat struct {
 	LastIrreversibleBlockNum uint32 `json:"last_irreversible_blocknum" msgpack:"last_irreversible_blocknum"`
 }
 
+type PermissionLevel struct {
+	Actor      string `json:"actor" msgpack:"actor"`
+	Permission string `json:"permission" msgpack:"permission"`
+}
+
 type ActionTrace struct {
 	TxID string `json:"tx_id" msgpack:"tx_id"`
 
@@ -20,6 +25,8 @@ type ActionTrace struct {
 	Receiver string `json:"receiver" msgpack:"receiver"`
 	Data     []byte `json:"data" msgpack:"data"`
 	HexData  string `json:"hex_data" msgpack:"hex_data"`
+
+	Authorization []PermissionLevel `json:"authorization" msgpack:"authorization"`
 }
 
 func (act ActionTrace) GetData() (map[string]interface{}, error) {

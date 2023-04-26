@@ -36,13 +36,16 @@ func TestMsgpack_EncodeActionTrace(t *testing.T) {
 		Receiver: "eosio",
 		Data:     dataJson,
 		HexData:  "d0fa1b2ab8a6fd0d1b0173df91aa9ffd277642d05780cf750",
+		Authorization: []message.PermissionLevel{
+			{Actor: "mygame", Permission: "active"},
+		},
 	}
 
 	data, err := msgpack.Marshal(msg)
 	assert.NoError(t, err)
 
 	expected := []byte{
-		0x86, 0xa5, 0x74, 0x78, 0x5f, 0x69, 0x64, 0xd9,
+		0x87, 0xa5, 0x74, 0x78, 0x5f, 0x69, 0x64, 0xd9,
 		0x40, 0x65, 0x64, 0x63, 0x30, 0x36, 0x64, 0x63,
 		0x65, 0x36, 0x33, 0x32, 0x30, 0x34, 0x35, 0x39,
 		0x66, 0x64, 0x36, 0x34, 0x34, 0x37, 0x35, 0x36,
@@ -84,7 +87,13 @@ func TestMsgpack_EncodeActionTrace(t *testing.T) {
 		0x33, 0x64, 0x66, 0x39, 0x31, 0x61, 0x61, 0x39,
 		0x66, 0x66, 0x64, 0x32, 0x37, 0x37, 0x36, 0x34,
 		0x32, 0x64, 0x30, 0x35, 0x37, 0x38, 0x30, 0x63,
-		0x66, 0x37, 0x35, 0x30,
+		0x66, 0x37, 0x35, 0x30, 0xad, 0x61, 0x75, 0x74,
+		0x68, 0x6f, 0x72, 0x69, 0x7a, 0x61, 0x74, 0x69,
+		0x6f, 0x6e, 0x91, 0x82, 0xa5, 0x61, 0x63, 0x74,
+		0x6f, 0x72, 0xa6, 0x6d, 0x79, 0x67, 0x61, 0x6d,
+		0x65, 0xaa, 0x70, 0x65, 0x72, 0x6d, 0x69, 0x73,
+		0x73, 0x69, 0x6f, 0x6e, 0xa6, 0x61, 0x63, 0x74,
+		0x69, 0x76, 0x65,
 	}
 
 	assert.Equal(t, expected, data)
@@ -93,7 +102,7 @@ func TestMsgpack_EncodeActionTrace(t *testing.T) {
 func TestMsgpack_Decode(t *testing.T) {
 	RegisterGeneratedResolver()
 
-	data := []byte("\x86\xa5tx_id\xd9@edc06dce6320459fd644756972048da453b2816b0a434c37ddffde36778dcab3\xa4name\xa4drop\xa8contract\xa6mygame\xa8receiver\xa8account1\xa4dataċ{\"dropped_from_id\":674562,\"item\":{\"dur\":145,\"id\":49623,\"name\":\"Shadowmourne\",\"qual\":\"legendary\",\"sta\":198,\"str\":223},\"receiver\":\"account1\"}\xa8hex_data\xda\x01\x167b2264726f707065645f66726f6d5f6964223a3637343536322c226974656d223a7b22647572223a3134352c226964223a34393632332c226e616d65223a22536861646f776d6f75726e65222c227175616c223a226c6567656e64617279222c22737461223a3139382c22737472223a3232337d2c227265636569766572223a226163636f756e7431227d")
+	data := []byte("\x87\xa5tx_id\xd9@edc06dce6320459fd644756972048da453b2816b0a434c37ddffde36778dcab3\xa4name\xa4drop\xa8contract\xa6mygame\xa8receiver\xa8account1\xa4dataċ{\"dropped_from_id\":674562,\"item\":{\"dur\":145,\"id\":49623,\"name\":\"Shadowmourne\",\"qual\":\"legendary\",\"sta\":198,\"str\":223},\"receiver\":\"account1\"}\xa8hex_data\xda\x01\x167b2264726f707065645f66726f6d5f6964223a3637343536322c226974656d223a7b22647572223a3134352c226964223a34393632332c226e616d65223a22536861646f776d6f75726e65222c227175616c223a226c6567656e64617279222c22737461223a3139382c22737472223a3232337d2c227265636569766572223a226163636f756e7431227d\xadauthorization\x91\x82\xa5actor\xa6mygame\xaapermission\xa6active")
 
 	dataJson, err := json.Marshal(map[string]interface{}{
 		"item": map[string]interface{}{
@@ -117,6 +126,9 @@ func TestMsgpack_Decode(t *testing.T) {
 		Receiver: "account1",
 		Data:     dataJson,
 		HexData:  hex.EncodeToString(dataJson),
+		Authorization: []message.PermissionLevel{
+			{Actor: "mygame", Permission: "active"},
+		},
 	}
 
 	res := message.ActionTrace{}
