@@ -36,7 +36,7 @@ func (c Channel) Is(other Channel) bool {
 
 // Define channels without any variables.
 var (
-	TransactionChannel = Channel{"transaction"}
+	TransactionChannel = Channel{"transactions"}
 	HeartbeatChannel   = Channel{"heartbeat"}
 )
 
