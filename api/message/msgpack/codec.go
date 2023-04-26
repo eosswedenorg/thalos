@@ -6,7 +6,7 @@ import (
 	"github.com/eosswedenorg/thalos/api/message"
 )
 
-//go:generate go run github.com/shamaton/msgpackgen -v -input-file ../types.go -output-file msgpack.go
+//go:generate msgpackgen -v -input-file ../types.go -output-file msgpack.go
 
 func init() {
 	RegisterGeneratedResolver()
