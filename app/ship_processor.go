@@ -122,6 +122,13 @@ func (processor *ShipProcessor) processTraces(traces []*ship.TransactionTraceV0)
 				HexData:  hex.EncodeToString(act_trace.Act.Data),
 			}
 
+			for _, auth := range act_trace.Act.Authorization {
+				act.Authorization = append(act.Authorization, message.PermissionLevel{
+					Actor:      auth.Actor.String(),
+					Permission: auth.Permission.String(),
+				})
+			}
+
 			ABI, err := processor.abi.GetAbi(act_trace.Act.Account)
 			if err == nil {
 				data, err := ABI.DecodeAction(act_trace.Act.Data, act_trace.Act.Name)
