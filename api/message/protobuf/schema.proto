@@ -1,0 +1,20 @@
+syntax = "proto3";
+package protobuf;
+
+option go_package = "message/protobuf";
+
+message Heartbeat {
+	uint32 block_num = 1;
+	uint32 head_blocknum = 2;
+	uint32 last_irreversible_blocknum = 3;
+}
+
+message ActionTrace {
+	string tx_id = 1;
+	string name = 2;
+	string contract = 3;
+	string receiver = 4;
+	// NOTE: Data is json encoded.
+	bytes data = 5;
+	string hex_data = 6;
+}
