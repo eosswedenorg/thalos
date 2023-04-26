@@ -1,5 +1,7 @@
 package message
 
+import "encoding/json"
+
 type HeartBeat struct {
 	BlockNum                 uint32 `json:"blocknum" msgpack:"blocknum"`
 	HeadBlockNum             uint32 `json:"head_blocknum" msgpack:"head_blocknum"`
@@ -15,7 +17,12 @@ type ActionTrace struct {
 	// Contract account.
 	Contract string `json:"contract" msgpack:"contract"`
 
-	Receiver string      `json:"receiver" msgpack:"receiver"`
-	Data     interface{} `json:"data" msgpack:"data"`
-	HexData  string      `json:"hex_data" msgpack:"hex_data"`
+	Receiver string `json:"receiver" msgpack:"receiver"`
+	Data     []byte `json:"data" msgpack:"data"`
+	HexData  string `json:"hex_data" msgpack:"hex_data"`
+}
+
+func (act ActionTrace) GetData() (map[string]interface{}, error) {
+	data := map[string]interface{}{}
+	return data, json.Unmarshal(act.Data, &data)
 }

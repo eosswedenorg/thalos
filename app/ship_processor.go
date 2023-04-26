@@ -124,11 +124,11 @@ func (processor *ShipProcessor) processTraces(traces []*ship.TransactionTraceV0)
 
 			ABI, err := processor.abi.GetAbi(act_trace.Act.Account)
 			if err == nil {
-				v, err := abi.DecodeAction(ABI, act_trace.Act.Data, act_trace.Act.Name)
+				data, err := ABI.DecodeAction(act_trace.Act.Data, act_trace.Act.Name)
 				if err != nil {
 					log.WithError(err).Warn("Failed to decode action")
 				}
-				act.Data = v
+				act.Data = data
 			} else {
 				log.WithError(err).Errorf("Failed to get abi for contract %s", act_trace.Act.Account)
 			}
