@@ -1,0 +1,17 @@
+Source: thalos-server
+Section: utils
+Build-Depends:
+ debhelper (>= 11)
+Standards-Version: 4.5.0
+Vcs-Git: https://github.com/eosswedenorg/thalos.git
+Vcs-Browser: https://github.com/eosswedenorg/thalos
+Priority: optional
+Maintainer: Henrik Hautakoski <henrik@eossweden.org>
+
+Package: thalos-server
+Section: utils
+Priority: optional
+Architecture: amd64
+Depends: redis-server, ${shlibs:Depends}, ${misc:Depends}
+Homepage: https://github.com/eosswedenorg/thalos
+Description: Stream blockchain data from an Antelope SHIP node with ease.

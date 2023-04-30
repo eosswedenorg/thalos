@@ -1,0 +1,11 @@
+#!/usr/bin/make -f
+
+include /usr/share/dpkg/default.mk
+
+%:
+	dh $@ -P debian/pkgroot
+
+override_dh_auto_build:
+	dh_auto_build -- GOOS=linux GOBUILDFLAGS="-v --buildmode=pie -ldflags=\"-v -s -w -X main.VersionString=$(DEB_VERSION)\""
+override_dh_auto_install:
+	dh_auto_install -- PREFIX=/usr CFGDIR=/etc

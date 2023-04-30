@@ -1,0 +1,7 @@
+.debhelper/*
+*.debhelper
+*.log
+*-stamp
+*.substvars
+files
+pkgroot/*
