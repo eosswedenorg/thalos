@@ -27,6 +27,10 @@ type ActionTrace struct {
 	HexData  string `json:"hex_data" msgpack:"hex_data"`
 
 	Authorization []PermissionLevel `json:"authorization" msgpack:"authorization"`
+
+	Except string `json:"except" msgpack:"except"`
+	Error  uint64 `json:"error" msgpack:"error"`
+	Return []byte `json:"return" msgpack:"return"`
 }
 
 func (act ActionTrace) GetData() (map[string]interface{}, error) {
