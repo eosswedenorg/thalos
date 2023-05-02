@@ -113,6 +113,7 @@ func main() {
 	showVersion := getopt.BoolLong("version", 'v', "display this help text")
 	configFile := getopt.StringLong("config", 'c', "./config.yml", "Config file to read", "file")
 	pidFile := getopt.StringLong("pid", 'p', "", "Where to write process id", "file")
+	logFile := getopt.StringLong("log", 'l', "", "Path to log file", "file")
 
 	getopt.Parse()
 
@@ -124,6 +125,15 @@ func main() {
 	if *showVersion {
 		fmt.Println("v0.0.0")
 		return
+	}
+
+	if len(*logFile) > 0 {
+		logfd, err := os.OpenFile(*logFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0o644)
+		if err != nil {
+			log.WithError(err).Fatal("failed open logfile")
+		}
+		log.Info("Logging to file: ", *logFile)
+		log.SetOutput(logfd)
 	}
 
 	// Write PID file
