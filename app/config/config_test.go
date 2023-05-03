@@ -2,7 +2,9 @@ package config
 
 import (
 	"testing"
+	"time"
 
+	"github.com/eosswedenorg/thalos/app/log"
 	"github.com/stretchr/testify/require"
 
 	shipclient "github.com/eosswedenorg-go/antelope-ship-client"
@@ -11,6 +13,11 @@ import (
 func TestParse_Default(t *testing.T) {
 	expected := Config{
 		MessageCodec: "json",
+
+		Log: log.Config{
+			MaxFileSize: 10 * 1000 * 1000, // 10 mb
+			MaxTime:     time.Hour * 24,
+		},
 
 		Ship: ShipConfig{
 			StartBlockNum:       shipclient.NULL_BLOCK_NUMBER,
@@ -37,6 +44,12 @@ func TestParse(t *testing.T) {
 		Name:         "ship-reader-1",
 		Api:          "http://127.0.0.1:8080",
 		MessageCodec: "mojibake",
+		Log: log.Config{
+			Filename:    "some_file.log",
+			Directory:   "/path/to/whatever",
+			MaxFileSize: 200,
+			MaxTime:     30 * time.Minute,
+		},
 		Ship: ShipConfig{
 			Url:                 "127.0.0.1:8089",
 			StartBlockNum:       23671836,
@@ -60,6 +73,11 @@ func TestParse(t *testing.T) {
 name: "ship-reader-1"
 api: "http://127.0.0.1:8080"
 message_codec: "mojibake"
+log:
+  filename: some_file.log
+  directory: /path/to/whatever
+  maxtime: 30m
+  maxfilesize: 200b
 ship:
   url: "127.0.0.1:8089"
   irreversible_only: true
@@ -85,6 +103,10 @@ func TestParseShorthandShipUrl(t *testing.T) {
 		Name:         "ship-reader-1",
 		Api:          "http://127.0.0.1:8080",
 		MessageCodec: "json",
+		Log: log.Config{
+			MaxFileSize: 10 * 1000 * 1000, // 10 mb
+			MaxTime:     time.Hour * 24,
+		},
 		Ship: ShipConfig{
 			Url:                 "127.0.0.1:8089",
 			StartBlockNum:       shipclient.NULL_BLOCK_NUMBER,
