@@ -1,11 +1,20 @@
 
 GO=go
-PROGRAM=build/thalos-server
+PROGRAM=thalos-server
+PREFIX=/usr/local
+BINDIR=$(PREFIX)/bin
+CFGDIR=$(PREFIX)/etc
 
-.PHONY: $(PROGRAM) test
+.PHONY: build test
 
-$(PROGRAM) :
+build: build/$(PROGRAM)
+
+build/$(PROGRAM) :
 	$(GO) build -o $@ cmd/main/main.go
+
+install: build
+	install -D build/$(PROGRAM) $(DESTDIR)$(BINDIR)/$(PROGRAM)
+	install -m 644 -D config.example.yml $(DESTDIR)$(CFGDIR)/thalos/config.yml
 
 test:
 	$(GO) test -v ./...

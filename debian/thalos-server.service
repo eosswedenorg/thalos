@@ -1,0 +1,12 @@
+[Unit]
+Description=Stream blockchain data from an Antelope SHIP node with ease.
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/thalos-server -c /etc/thalos/config.yml
+ExecReload=kill -HUP $MAINPID
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
