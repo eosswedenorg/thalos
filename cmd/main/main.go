@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"path"
 	"syscall"
 	"time"
 
@@ -15,6 +16,7 @@ import (
 	"github.com/eosswedenorg/thalos/app"
 	"github.com/eosswedenorg/thalos/app/abi"
 	"github.com/eosswedenorg/thalos/app/config"
+	. "github.com/eosswedenorg/thalos/app/log"
 
 	"github.com/go-redis/redis/v8"
 	log "github.com/sirupsen/logrus"
@@ -127,15 +129,6 @@ func main() {
 		return
 	}
 
-	if len(*logFile) > 0 {
-		logfd, err := os.OpenFile(*logFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0o644)
-		if err != nil {
-			log.WithError(err).Fatal("failed open logfile")
-		}
-		log.Info("Logging to file: ", *logFile)
-		log.SetOutput(logfd)
-	}
-
 	// Write PID file
 	if len(*pidFile) > 0 {
 		log.Infof("Writing pid to: %s", *pidFile)
@@ -151,6 +144,27 @@ func main() {
 	if err != nil {
 		log.WithError(err).Fatal("failed to read config file")
 		return
+	}
+
+	// If log file is given on the commandline, override config values.
+	if len(*logFile) > 0 {
+		conf.Log.Directory = path.Dir(*logFile)
+		conf.Log.Filename = path.Base(*logFile)
+	}
+
+	if len(conf.Log.Filename) > 0 {
+		writer, err := NewRotatingFileFromConfig(conf.Log)
+		if err != nil {
+			log.WithError(err).Fatal("Failed to open log")
+			return
+		}
+		log.WithFields(log.Fields{
+			"maxfilesize": conf.Log.MaxFileSize,
+			"maxage":      conf.Log.MaxTime,
+			"directory":   conf.Log.GetDirectory(),
+			"filename":    conf.Log.GetFilename(),
+		}).Info("Logging to file: ", conf.Log.GetFilePath())
+		log.SetOutput(writer)
 	}
 
 	// Init telegram notification service
