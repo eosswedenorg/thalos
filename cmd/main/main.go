@@ -9,6 +9,9 @@ import (
 	"syscall"
 	"time"
 
+	eos "github.com/eoscanada/eos-go"
+	shipclient "github.com/eosswedenorg-go/antelope-ship-client"
+	"github.com/eosswedenorg-go/pid"
 	"github.com/eosswedenorg/thalos/api/message"
 	_ "github.com/eosswedenorg/thalos/api/message/json"
 	_ "github.com/eosswedenorg/thalos/api/message/msgpack"
@@ -17,17 +20,11 @@ import (
 	"github.com/eosswedenorg/thalos/app/abi"
 	"github.com/eosswedenorg/thalos/app/config"
 	. "github.com/eosswedenorg/thalos/app/log"
-
 	"github.com/go-redis/redis/v8"
-	log "github.com/sirupsen/logrus"
-
 	"github.com/nikoksr/notify"
 	"github.com/nikoksr/notify/service/telegram"
-
-	eos "github.com/eoscanada/eos-go"
-	shipclient "github.com/eosswedenorg-go/antelope-ship-client"
-	"github.com/eosswedenorg-go/pid"
 	"github.com/pborman/getopt/v2"
+	log "github.com/sirupsen/logrus"
 )
 
 // ---------------------------
