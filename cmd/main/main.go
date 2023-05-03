@@ -5,9 +5,13 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"path"
 	"syscall"
 	"time"
 
+	eos "github.com/eoscanada/eos-go"
+	shipclient "github.com/eosswedenorg-go/antelope-ship-client"
+	"github.com/eosswedenorg-go/pid"
 	"github.com/eosswedenorg/thalos/api/message"
 	_ "github.com/eosswedenorg/thalos/api/message/json"
 	_ "github.com/eosswedenorg/thalos/api/message/msgpack"
@@ -15,17 +19,12 @@ import (
 	"github.com/eosswedenorg/thalos/app"
 	"github.com/eosswedenorg/thalos/app/abi"
 	"github.com/eosswedenorg/thalos/app/config"
-
+	. "github.com/eosswedenorg/thalos/app/log"
 	"github.com/go-redis/redis/v8"
-	log "github.com/sirupsen/logrus"
-
 	"github.com/nikoksr/notify"
 	"github.com/nikoksr/notify/service/telegram"
-
-	eos "github.com/eoscanada/eos-go"
-	shipclient "github.com/eosswedenorg-go/antelope-ship-client"
-	"github.com/eosswedenorg-go/pid"
 	"github.com/pborman/getopt/v2"
+	log "github.com/sirupsen/logrus"
 )
 
 // ---------------------------
@@ -113,6 +112,7 @@ func main() {
 	showVersion := getopt.BoolLong("version", 'v', "display this help text")
 	configFile := getopt.StringLong("config", 'c', "./config.yml", "Config file to read", "file")
 	pidFile := getopt.StringLong("pid", 'p', "", "Where to write process id", "file")
+	logFile := getopt.StringLong("log", 'l', "", "Path to log file", "file")
 
 	getopt.Parse()
 
@@ -141,6 +141,27 @@ func main() {
 	if err != nil {
 		log.WithError(err).Fatal("failed to read config file")
 		return
+	}
+
+	// If log file is given on the commandline, override config values.
+	if len(*logFile) > 0 {
+		conf.Log.Directory = path.Dir(*logFile)
+		conf.Log.Filename = path.Base(*logFile)
+	}
+
+	if len(conf.Log.Filename) > 0 {
+		writer, err := NewRotatingFileFromConfig(conf.Log)
+		if err != nil {
+			log.WithError(err).Fatal("Failed to open log")
+			return
+		}
+		log.WithFields(log.Fields{
+			"maxfilesize": conf.Log.MaxFileSize,
+			"maxage":      conf.Log.MaxTime,
+			"directory":   conf.Log.GetDirectory(),
+			"filename":    conf.Log.GetFilename(),
+		}).Info("Logging to file: ", conf.Log.GetFilePath())
+		log.SetOutput(writer)
 	}
 
 	// Init telegram notification service

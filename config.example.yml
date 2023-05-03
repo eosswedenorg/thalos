@@ -2,6 +2,13 @@ name: "ship-reader-1"
 api: "http://127.0.0.1:8080"
 message_codec: "json"
 
+log:
+  filename: thalos.log
+  directory: logs
+  time_format: 2006-01-02_150405
+  max_filesize: 200mb
+  max_time: 24h
+
 ship:
   url: "ws://127.0.0.1:8089"
   irreversible_only: false

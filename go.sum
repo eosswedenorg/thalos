@@ -18,6 +18,8 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f h1:lO4WD4F/rVNCu3HqELle0jiPLLBs70cWOduZpkS1E78=
 github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f/go.mod h1:cuUVRXasLTGF7a8hSLbxyZXjz+1KgoB3wDUb6vlszIc=
+github.com/docker/go-units v0.5.0 h1:69rxXcBk27SvSaaxTtLh/8llcHD8vYHT7WSdRZ/jvr4=
+github.com/docker/go-units v0.5.0/go.mod h1:fgPhTUdO+D/Jk86RDLlptpiXQzgHJF7gydDDbaIK4Dk=
 github.com/eoscanada/eos-go v0.10.3-0.20230413154640-bb75101dc2f6 h1:93LUOgAmRkmz8DF2V62GBAFm+7JgWA15zI1uYukBeRk=
 github.com/eoscanada/eos-go v0.10.3-0.20230413154640-bb75101dc2f6/go.mod h1:L3avCf8OkDrjlUeNy9DdoV67TCmDNj2dSlc5Xp3DNNk=
 github.com/eosswedenorg-go/antelope-ship-client v0.2.3 h1:08HOQj3YtlEYVsm0RoNZ27JsZWikrUISKAUli6H1Qac=
