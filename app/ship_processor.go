@@ -164,9 +164,6 @@ func (processor *ShipProcessor) processBlock(block *ship.GetBlocksResultV0) {
 	}
 }
 
-func (processor *ShipProcessor) processTraces([]*ship.TransactionTraceV0) {
-}
-
 func (processor *ShipProcessor) Close() error {
 	return processor.writer.Close()
 }
