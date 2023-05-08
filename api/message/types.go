@@ -1,6 +1,9 @@
 package message
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"time"
+)
 
 type HeartBeat struct {
 	BlockNum                 uint32 `json:"blocknum" msgpack:"blocknum"`
@@ -15,6 +18,10 @@ type PermissionLevel struct {
 
 type ActionTrace struct {
 	TxID string `json:"tx_id" msgpack:"tx_id"`
+
+	BlockNum uint32 `json:"blocknum" msgpack:"blocknum"`
+
+	Timestamp time.Time `json:"blocktimestamp" msgpack:"blocktimestamp"`
 
 	// Action name
 	Name string `json:"name" msgpack:"name"`

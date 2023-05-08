@@ -8,6 +8,7 @@ import (
 	msgpack "github.com/shamaton/msgpackgen/msgpack"
 	dec "github.com/shamaton/msgpackgen/msgpack/dec"
 	enc "github.com/shamaton/msgpackgen/msgpack/enc"
+	"time"
 )
 
 // RegisterGeneratedResolver registers generated resolver.
@@ -55,6 +56,36 @@ func ___encodeAsArray(i interface{}) ([]byte, error) {
 		}
 		if size != offset {
 			return nil, fmt.Errorf("%s size / offset different %d : %d", "github.com/eosswedenorg/thalos/api/message.HeartBeat", size, offset)
+		}
+		return b, err
+	case message.PermissionLevel:
+		encoder := enc.NewEncoder()
+		size, err := ___calcArraySizePermissionLevel_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(v, encoder)
+		if err != nil {
+			return nil, err
+		}
+		encoder.MakeBytes(size)
+		b, offset, err := ___encodeArrayPermissionLevel_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(v, encoder, 0)
+		if err != nil {
+			return nil, err
+		}
+		if size != offset {
+			return nil, fmt.Errorf("%s size / offset different %d : %d", "github.com/eosswedenorg/thalos/api/message.PermissionLevel", size, offset)
+		}
+		return b, err
+	case *message.PermissionLevel:
+		encoder := enc.NewEncoder()
+		size, err := ___calcArraySizePermissionLevel_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(*v, encoder)
+		if err != nil {
+			return nil, err
+		}
+		encoder.MakeBytes(size)
+		b, offset, err := ___encodeArrayPermissionLevel_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(*v, encoder, 0)
+		if err != nil {
+			return nil, err
+		}
+		if size != offset {
+			return nil, fmt.Errorf("%s size / offset different %d : %d", "github.com/eosswedenorg/thalos/api/message.PermissionLevel", size, offset)
 		}
 		return b, err
 	case message.ActionTrace:
@@ -124,6 +155,36 @@ func ___encodeAsMap(i interface{}) ([]byte, error) {
 			return nil, fmt.Errorf("%s size / offset different %d : %d", "github.com/eosswedenorg/thalos/api/message.HeartBeat", size, offset)
 		}
 		return b, err
+	case message.PermissionLevel:
+		encoder := enc.NewEncoder()
+		size, err := ___calcMapSizePermissionLevel_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(v, encoder)
+		if err != nil {
+			return nil, err
+		}
+		encoder.MakeBytes(size)
+		b, offset, err := ___encodeMapPermissionLevel_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(v, encoder, 0)
+		if err != nil {
+			return nil, err
+		}
+		if size != offset {
+			return nil, fmt.Errorf("%s size / offset different %d : %d", "github.com/eosswedenorg/thalos/api/message.PermissionLevel", size, offset)
+		}
+		return b, err
+	case *message.PermissionLevel:
+		encoder := enc.NewEncoder()
+		size, err := ___calcMapSizePermissionLevel_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(*v, encoder)
+		if err != nil {
+			return nil, err
+		}
+		encoder.MakeBytes(size)
+		b, offset, err := ___encodeMapPermissionLevel_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(*v, encoder, 0)
+		if err != nil {
+			return nil, err
+		}
+		if size != offset {
+			return nil, fmt.Errorf("%s size / offset different %d : %d", "github.com/eosswedenorg/thalos/api/message.PermissionLevel", size, offset)
+		}
+		return b, err
 	case message.ActionTrace:
 		encoder := enc.NewEncoder()
 		size, err := ___calcMapSizeActionTrace_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(v, encoder)
@@ -184,6 +245,20 @@ func ___decodeAsArray(data []byte, i interface{}) (bool, error) {
 			return true, fmt.Errorf("read length is different [%d] [%d] ", offset, decoder.Len())
 		}
 		return true, err
+	case *message.PermissionLevel:
+		decoder := dec.NewDecoder(data)
+		offset, err := ___decodeArrayPermissionLevel_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(v, decoder, 0)
+		if err == nil && offset != decoder.Len() {
+			return true, fmt.Errorf("read length is different [%d] [%d] ", offset, decoder.Len())
+		}
+		return true, err
+	case **message.PermissionLevel:
+		decoder := dec.NewDecoder(data)
+		offset, err := ___decodeArrayPermissionLevel_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(*v, decoder, 0)
+		if err == nil && offset != decoder.Len() {
+			return true, fmt.Errorf("read length is different [%d] [%d] ", offset, decoder.Len())
+		}
+		return true, err
 	case *message.ActionTrace:
 		decoder := dec.NewDecoder(data)
 		offset, err := ___decodeArrayActionTrace_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(v, decoder, 0)
@@ -215,6 +290,20 @@ func ___decodeAsMap(data []byte, i interface{}) (bool, error) {
 	case **message.HeartBeat:
 		decoder := dec.NewDecoder(data)
 		offset, err := ___decodeMapHeartBeat_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(*v, decoder, 0)
+		if err == nil && offset != decoder.Len() {
+			return true, fmt.Errorf("read length is different [%d] [%d] ", offset, decoder.Len())
+		}
+		return true, err
+	case *message.PermissionLevel:
+		decoder := dec.NewDecoder(data)
+		offset, err := ___decodeMapPermissionLevel_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(v, decoder, 0)
+		if err == nil && offset != decoder.Len() {
+			return true, fmt.Errorf("read length is different [%d] [%d] ", offset, decoder.Len())
+		}
+		return true, err
+	case **message.PermissionLevel:
+		decoder := dec.NewDecoder(data)
+		offset, err := ___decodeMapPermissionLevel_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(*v, decoder, 0)
 		if err == nil && offset != decoder.Len() {
 			return true, fmt.Errorf("read length is different [%d] [%d] ", offset, decoder.Len())
 		}
@@ -388,11 +477,139 @@ func ___decodeMapHeartBeat_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d
 	return offset, err
 }
 
+// calculate size from github.com/eosswedenorg/thalos/api/message.PermissionLevel
+func ___calcArraySizePermissionLevel_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(v message.PermissionLevel, encoder *enc.Encoder) (int, error) {
+	size := 0
+	size += encoder.CalcStructHeaderFix(2)
+	size += encoder.CalcString(v.Actor)
+	size += encoder.CalcString(v.Permission)
+	return size, nil
+}
+
+// calculate size from github.com/eosswedenorg/thalos/api/message.PermissionLevel
+func ___calcMapSizePermissionLevel_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(v message.PermissionLevel, encoder *enc.Encoder) (int, error) {
+	size := 0
+	size += encoder.CalcStructHeaderFix(2)
+	size += encoder.CalcStringFix(5)
+	size += encoder.CalcString(v.Actor)
+	size += encoder.CalcStringFix(10)
+	size += encoder.CalcString(v.Permission)
+	return size, nil
+}
+
+// encode from github.com/eosswedenorg/thalos/api/message.PermissionLevel
+func ___encodeArrayPermissionLevel_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(v message.PermissionLevel, encoder *enc.Encoder, offset int) ([]byte, int, error) {
+	var err error
+	offset = encoder.WriteStructHeaderFixAsArray(2, offset)
+	offset = encoder.WriteString(v.Actor, offset)
+	offset = encoder.WriteString(v.Permission, offset)
+	return encoder.EncodedBytes(), offset, err
+}
+
+// encode from github.com/eosswedenorg/thalos/api/message.PermissionLevel
+func ___encodeMapPermissionLevel_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(v message.PermissionLevel, encoder *enc.Encoder, offset int) ([]byte, int, error) {
+	var err error
+	offset = encoder.WriteStructHeaderFixAsMap(2, offset)
+	offset = encoder.WriteStringFix("actor", 5, offset)
+	offset = encoder.WriteString(v.Actor, offset)
+	offset = encoder.WriteStringFix("permission", 10, offset)
+	offset = encoder.WriteString(v.Permission, offset)
+	return encoder.EncodedBytes(), offset, err
+}
+
+// decode to github.com/eosswedenorg/thalos/api/message.PermissionLevel
+func ___decodeArrayPermissionLevel_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(v *message.PermissionLevel, decoder *dec.Decoder, offset int) (int, error) {
+	offset, err := decoder.CheckStructHeader(2, offset)
+	if err != nil {
+		return 0, err
+	}
+	{
+		var vv string
+		vv, offset, err = decoder.AsString(offset)
+		if err != nil {
+			return 0, err
+		}
+		v.Actor = vv
+	}
+	{
+		var vv string
+		vv, offset, err = decoder.AsString(offset)
+		if err != nil {
+			return 0, err
+		}
+		v.Permission = vv
+	}
+	return offset, err
+}
+
+// decode to github.com/eosswedenorg/thalos/api/message.PermissionLevel
+func ___decodeMapPermissionLevel_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(v *message.PermissionLevel, decoder *dec.Decoder, offset int) (int, error) {
+	keys := [][]byte{
+		{uint8(0x61), uint8(0x63), uint8(0x74), uint8(0x6f), uint8(0x72)},                                                                  // actor
+		{uint8(0x70), uint8(0x65), uint8(0x72), uint8(0x6d), uint8(0x69), uint8(0x73), uint8(0x73), uint8(0x69), uint8(0x6f), uint8(0x6e)}, // permission
+	}
+	offset, err := decoder.CheckStructHeader(2, offset)
+	if err != nil {
+		return 0, err
+	}
+	count := 0
+	for count < 2 {
+		var dataKey []byte
+		dataKey, offset, err = decoder.AsStringBytes(offset)
+		if err != nil {
+			return 0, err
+		}
+		fieldIndex := -1
+		for i, key := range keys {
+			if len(dataKey) != len(key) {
+				continue
+			}
+			fieldIndex = i
+			for dataKeyIndex := range dataKey {
+				if dataKey[dataKeyIndex] != key[dataKeyIndex] {
+					fieldIndex = -1
+					break
+				}
+			}
+			if fieldIndex >= 0 {
+				break
+			}
+		}
+		switch fieldIndex {
+		case 0:
+			{
+				var vv string
+				vv, offset, err = decoder.AsString(offset)
+				if err != nil {
+					return 0, err
+				}
+				v.Actor = vv
+			}
+			count++
+		case 1:
+			{
+				var vv string
+				vv, offset, err = decoder.AsString(offset)
+				if err != nil {
+					return 0, err
+				}
+				v.Permission = vv
+			}
+			count++
+		default:
+			return 0, fmt.Errorf("unknown key[%s] found", string(dataKey))
+		}
+	}
+	return offset, err
+}
+
 // calculate size from github.com/eosswedenorg/thalos/api/message.ActionTrace
 func ___calcArraySizeActionTrace_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(v message.ActionTrace, encoder *enc.Encoder) (int, error) {
 	size := 0
-	size += encoder.CalcStructHeaderFix(6)
+	size += encoder.CalcStructHeaderFix(12)
 	size += encoder.CalcString(v.TxID)
+	size += encoder.CalcUint32(v.BlockNum)
+	size += encoder.CalcTime(v.Timestamp)
 	size += encoder.CalcString(v.Name)
 	size += encoder.CalcString(v.Contract)
 	size += encoder.CalcString(v.Receiver)
@@ -409,15 +626,49 @@ func ___calcArraySizeActionTrace_27424f445a2085e7723342fb0df638c626b43c59240988b
 		size += encoder.CalcNil()
 	}
 	size += encoder.CalcString(v.HexData)
+	if v.Authorization != nil {
+		s, err := encoder.CalcSliceLength(len(v.Authorization), false)
+		if err != nil {
+			return 0, err
+		}
+		size += s
+		for _, vv := range v.Authorization {
+			size_vv, err := ___calcArraySizePermissionLevel_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(vv, encoder)
+			if err != nil {
+				return 0, err
+			}
+			size += size_vv
+		}
+	} else {
+		size += encoder.CalcNil()
+	}
+	size += encoder.CalcString(v.Except)
+	size += encoder.CalcUint64(v.Error)
+	if v.Return != nil {
+		s, err := encoder.CalcSliceLength(len(v.Return), true)
+		if err != nil {
+			return 0, err
+		}
+		size += s
+		for _, vv := range v.Return {
+			size += encoder.CalcByte(vv)
+		}
+	} else {
+		size += encoder.CalcNil()
+	}
 	return size, nil
 }
 
 // calculate size from github.com/eosswedenorg/thalos/api/message.ActionTrace
 func ___calcMapSizeActionTrace_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(v message.ActionTrace, encoder *enc.Encoder) (int, error) {
 	size := 0
-	size += encoder.CalcStructHeaderFix(6)
+	size += encoder.CalcStructHeaderFix(12)
 	size += encoder.CalcStringFix(5)
 	size += encoder.CalcString(v.TxID)
+	size += encoder.CalcStringFix(8)
+	size += encoder.CalcUint32(v.BlockNum)
+	size += encoder.CalcStringFix(14)
+	size += encoder.CalcTime(v.Timestamp)
 	size += encoder.CalcStringFix(4)
 	size += encoder.CalcString(v.Name)
 	size += encoder.CalcStringFix(8)
@@ -439,14 +690,50 @@ func ___calcMapSizeActionTrace_27424f445a2085e7723342fb0df638c626b43c59240988bc6
 	}
 	size += encoder.CalcStringFix(8)
 	size += encoder.CalcString(v.HexData)
+	size += encoder.CalcStringFix(13)
+	if v.Authorization != nil {
+		s, err := encoder.CalcSliceLength(len(v.Authorization), false)
+		if err != nil {
+			return 0, err
+		}
+		size += s
+		for _, vv := range v.Authorization {
+			size_vv, err := ___calcMapSizePermissionLevel_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(vv, encoder)
+			if err != nil {
+				return 0, err
+			}
+			size += size_vv
+		}
+	} else {
+		size += encoder.CalcNil()
+	}
+	size += encoder.CalcStringFix(6)
+	size += encoder.CalcString(v.Except)
+	size += encoder.CalcStringFix(5)
+	size += encoder.CalcUint64(v.Error)
+	size += encoder.CalcStringFix(6)
+	if v.Return != nil {
+		s, err := encoder.CalcSliceLength(len(v.Return), true)
+		if err != nil {
+			return 0, err
+		}
+		size += s
+		for _, vv := range v.Return {
+			size += encoder.CalcByte(vv)
+		}
+	} else {
+		size += encoder.CalcNil()
+	}
 	return size, nil
 }
 
 // encode from github.com/eosswedenorg/thalos/api/message.ActionTrace
 func ___encodeArrayActionTrace_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(v message.ActionTrace, encoder *enc.Encoder, offset int) ([]byte, int, error) {
 	var err error
-	offset = encoder.WriteStructHeaderFixAsArray(6, offset)
+	offset = encoder.WriteStructHeaderFixAsArray(12, offset)
 	offset = encoder.WriteString(v.TxID, offset)
+	offset = encoder.WriteUint32(v.BlockNum, offset)
+	offset = encoder.WriteTime(v.Timestamp, offset)
 	offset = encoder.WriteString(v.Name, offset)
 	offset = encoder.WriteString(v.Contract, offset)
 	offset = encoder.WriteString(v.Receiver, offset)
@@ -459,15 +746,40 @@ func ___encodeArrayActionTrace_27424f445a2085e7723342fb0df638c626b43c59240988bc6
 		offset = encoder.WriteNil(offset)
 	}
 	offset = encoder.WriteString(v.HexData, offset)
+	if v.Authorization != nil {
+		offset = encoder.WriteSliceLength(len(v.Authorization), offset, false)
+		for _, vv := range v.Authorization {
+			_, offset, err = ___encodeArrayPermissionLevel_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(vv, encoder, offset)
+			if err != nil {
+				return nil, 0, err
+			}
+		}
+	} else {
+		offset = encoder.WriteNil(offset)
+	}
+	offset = encoder.WriteString(v.Except, offset)
+	offset = encoder.WriteUint64(v.Error, offset)
+	if v.Return != nil {
+		offset = encoder.WriteSliceLength(len(v.Return), offset, true)
+		for _, vv := range v.Return {
+			offset = encoder.WriteByte(vv, offset)
+		}
+	} else {
+		offset = encoder.WriteNil(offset)
+	}
 	return encoder.EncodedBytes(), offset, err
 }
 
 // encode from github.com/eosswedenorg/thalos/api/message.ActionTrace
 func ___encodeMapActionTrace_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(v message.ActionTrace, encoder *enc.Encoder, offset int) ([]byte, int, error) {
 	var err error
-	offset = encoder.WriteStructHeaderFixAsMap(6, offset)
+	offset = encoder.WriteStructHeaderFixAsMap(12, offset)
 	offset = encoder.WriteStringFix("tx_id", 5, offset)
 	offset = encoder.WriteString(v.TxID, offset)
+	offset = encoder.WriteStringFix("blocknum", 8, offset)
+	offset = encoder.WriteUint32(v.BlockNum, offset)
+	offset = encoder.WriteStringFix("blocktimestamp", 14, offset)
+	offset = encoder.WriteTime(v.Timestamp, offset)
 	offset = encoder.WriteStringFix("name", 4, offset)
 	offset = encoder.WriteString(v.Name, offset)
 	offset = encoder.WriteStringFix("contract", 8, offset)
@@ -485,12 +797,37 @@ func ___encodeMapActionTrace_27424f445a2085e7723342fb0df638c626b43c59240988bc64f
 	}
 	offset = encoder.WriteStringFix("hex_data", 8, offset)
 	offset = encoder.WriteString(v.HexData, offset)
+	offset = encoder.WriteStringFix("authorization", 13, offset)
+	if v.Authorization != nil {
+		offset = encoder.WriteSliceLength(len(v.Authorization), offset, false)
+		for _, vv := range v.Authorization {
+			_, offset, err = ___encodeMapPermissionLevel_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(vv, encoder, offset)
+			if err != nil {
+				return nil, 0, err
+			}
+		}
+	} else {
+		offset = encoder.WriteNil(offset)
+	}
+	offset = encoder.WriteStringFix("except", 6, offset)
+	offset = encoder.WriteString(v.Except, offset)
+	offset = encoder.WriteStringFix("error", 5, offset)
+	offset = encoder.WriteUint64(v.Error, offset)
+	offset = encoder.WriteStringFix("return", 6, offset)
+	if v.Return != nil {
+		offset = encoder.WriteSliceLength(len(v.Return), offset, true)
+		for _, vv := range v.Return {
+			offset = encoder.WriteByte(vv, offset)
+		}
+	} else {
+		offset = encoder.WriteNil(offset)
+	}
 	return encoder.EncodedBytes(), offset, err
 }
 
 // decode to github.com/eosswedenorg/thalos/api/message.ActionTrace
 func ___decodeArrayActionTrace_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(v *message.ActionTrace, decoder *dec.Decoder, offset int) (int, error) {
-	offset, err := decoder.CheckStructHeader(6, offset)
+	offset, err := decoder.CheckStructHeader(12, offset)
 	if err != nil {
 		return 0, err
 	}
@@ -501,6 +838,22 @@ func ___decodeArrayActionTrace_27424f445a2085e7723342fb0df638c626b43c59240988bc6
 			return 0, err
 		}
 		v.TxID = vv
+	}
+	{
+		var vv uint32
+		vv, offset, err = decoder.AsUint32(offset)
+		if err != nil {
+			return 0, err
+		}
+		v.BlockNum = vv
+	}
+	{
+		var vv time.Time
+		vv, offset, err = decoder.AsDateTime(offset)
+		if err != nil {
+			return 0, err
+		}
+		v.Timestamp = vv
 	}
 	{
 		var vv string
@@ -554,25 +907,87 @@ func ___decodeArrayActionTrace_27424f445a2085e7723342fb0df638c626b43c59240988bc6
 		}
 		v.HexData = vv
 	}
+	if !decoder.IsCodeNil(offset) {
+		var vv []message.PermissionLevel
+		var vvl int
+		vvl, offset, err = decoder.SliceLength(offset)
+		if err != nil {
+			return 0, err
+		}
+		vv = make([]message.PermissionLevel, vvl)
+		for vvi := range vv {
+			var vvv message.PermissionLevel
+			offset, err = ___decodeArrayPermissionLevel_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(&vvv, decoder, offset)
+			if err != nil {
+				return 0, err
+			}
+			vv[vvi] = vvv
+		}
+		v.Authorization = vv
+	} else {
+		offset++
+	}
+	{
+		var vv string
+		vv, offset, err = decoder.AsString(offset)
+		if err != nil {
+			return 0, err
+		}
+		v.Except = vv
+	}
+	{
+		var vv uint64
+		vv, offset, err = decoder.AsUint64(offset)
+		if err != nil {
+			return 0, err
+		}
+		v.Error = vv
+	}
+	if !decoder.IsCodeNil(offset) {
+		var vv []byte
+		var vvl int
+		vvl, offset, err = decoder.SliceLength(offset)
+		if err != nil {
+			return 0, err
+		}
+		vv = make([]byte, vvl)
+		for vvi := range vv {
+			var vvv byte
+			vvv, offset, err = decoder.AsByte(offset)
+			if err != nil {
+				return 0, err
+			}
+			vv[vvi] = vvv
+		}
+		v.Return = vv
+	} else {
+		offset++
+	}
 	return offset, err
 }
 
 // decode to github.com/eosswedenorg/thalos/api/message.ActionTrace
 func ___decodeMapActionTrace_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(v *message.ActionTrace, decoder *dec.Decoder, offset int) (int, error) {
 	keys := [][]byte{
-		{uint8(0x74), uint8(0x78), uint8(0x5f), uint8(0x69), uint8(0x64)},                                        // tx_id
-		{uint8(0x6e), uint8(0x61), uint8(0x6d), uint8(0x65)},                                                     // name
-		{uint8(0x63), uint8(0x6f), uint8(0x6e), uint8(0x74), uint8(0x72), uint8(0x61), uint8(0x63), uint8(0x74)}, // contract
-		{uint8(0x72), uint8(0x65), uint8(0x63), uint8(0x65), uint8(0x69), uint8(0x76), uint8(0x65), uint8(0x72)}, // receiver
-		{uint8(0x64), uint8(0x61), uint8(0x74), uint8(0x61)},                                                     // data
-		{uint8(0x68), uint8(0x65), uint8(0x78), uint8(0x5f), uint8(0x64), uint8(0x61), uint8(0x74), uint8(0x61)}, // hex_data
+		{uint8(0x74), uint8(0x78), uint8(0x5f), uint8(0x69), uint8(0x64)},                                                                                                                      // tx_id
+		{uint8(0x62), uint8(0x6c), uint8(0x6f), uint8(0x63), uint8(0x6b), uint8(0x6e), uint8(0x75), uint8(0x6d)},                                                                               // blocknum
+		{uint8(0x62), uint8(0x6c), uint8(0x6f), uint8(0x63), uint8(0x6b), uint8(0x74), uint8(0x69), uint8(0x6d), uint8(0x65), uint8(0x73), uint8(0x74), uint8(0x61), uint8(0x6d), uint8(0x70)}, // blocktimestamp
+		{uint8(0x6e), uint8(0x61), uint8(0x6d), uint8(0x65)},                                                                                                                                   // name
+		{uint8(0x63), uint8(0x6f), uint8(0x6e), uint8(0x74), uint8(0x72), uint8(0x61), uint8(0x63), uint8(0x74)},                                                                               // contract
+		{uint8(0x72), uint8(0x65), uint8(0x63), uint8(0x65), uint8(0x69), uint8(0x76), uint8(0x65), uint8(0x72)},                                                                               // receiver
+		{uint8(0x64), uint8(0x61), uint8(0x74), uint8(0x61)},                                                                                                                                   // data
+		{uint8(0x68), uint8(0x65), uint8(0x78), uint8(0x5f), uint8(0x64), uint8(0x61), uint8(0x74), uint8(0x61)},                                                                               // hex_data
+		{uint8(0x61), uint8(0x75), uint8(0x74), uint8(0x68), uint8(0x6f), uint8(0x72), uint8(0x69), uint8(0x7a), uint8(0x61), uint8(0x74), uint8(0x69), uint8(0x6f), uint8(0x6e)},              // authorization
+		{uint8(0x65), uint8(0x78), uint8(0x63), uint8(0x65), uint8(0x70), uint8(0x74)},                                                                                                         // except
+		{uint8(0x65), uint8(0x72), uint8(0x72), uint8(0x6f), uint8(0x72)},                                                                                                                      // error
+		{uint8(0x72), uint8(0x65), uint8(0x74), uint8(0x75), uint8(0x72), uint8(0x6e)},                                                                                                         // return
 	}
-	offset, err := decoder.CheckStructHeader(6, offset)
+	offset, err := decoder.CheckStructHeader(12, offset)
 	if err != nil {
 		return 0, err
 	}
 	count := 0
-	for count < 6 {
+	for count < 12 {
 		var dataKey []byte
 		dataKey, offset, err = decoder.AsStringBytes(offset)
 		if err != nil {
@@ -607,22 +1022,22 @@ func ___decodeMapActionTrace_27424f445a2085e7723342fb0df638c626b43c59240988bc64f
 			count++
 		case 1:
 			{
-				var vv string
-				vv, offset, err = decoder.AsString(offset)
+				var vv uint32
+				vv, offset, err = decoder.AsUint32(offset)
 				if err != nil {
 					return 0, err
 				}
-				v.Name = vv
+				v.BlockNum = vv
 			}
 			count++
 		case 2:
 			{
-				var vv string
-				vv, offset, err = decoder.AsString(offset)
+				var vv time.Time
+				vv, offset, err = decoder.AsDateTime(offset)
 				if err != nil {
 					return 0, err
 				}
-				v.Contract = vv
+				v.Timestamp = vv
 			}
 			count++
 		case 3:
@@ -632,10 +1047,30 @@ func ___decodeMapActionTrace_27424f445a2085e7723342fb0df638c626b43c59240988bc64f
 				if err != nil {
 					return 0, err
 				}
-				v.Receiver = vv
+				v.Name = vv
 			}
 			count++
 		case 4:
+			{
+				var vv string
+				vv, offset, err = decoder.AsString(offset)
+				if err != nil {
+					return 0, err
+				}
+				v.Contract = vv
+			}
+			count++
+		case 5:
+			{
+				var vv string
+				vv, offset, err = decoder.AsString(offset)
+				if err != nil {
+					return 0, err
+				}
+				v.Receiver = vv
+			}
+			count++
+		case 6:
 			if !decoder.IsCodeNil(offset) {
 				var vv []byte
 				var vvl int
@@ -657,7 +1092,7 @@ func ___decodeMapActionTrace_27424f445a2085e7723342fb0df638c626b43c59240988bc64f
 				offset++
 			}
 			count++
-		case 5:
+		case 7:
 			{
 				var vv string
 				vv, offset, err = decoder.AsString(offset)
@@ -665,6 +1100,70 @@ func ___decodeMapActionTrace_27424f445a2085e7723342fb0df638c626b43c59240988bc64f
 					return 0, err
 				}
 				v.HexData = vv
+			}
+			count++
+		case 8:
+			if !decoder.IsCodeNil(offset) {
+				var vv []message.PermissionLevel
+				var vvl int
+				vvl, offset, err = decoder.SliceLength(offset)
+				if err != nil {
+					return 0, err
+				}
+				vv = make([]message.PermissionLevel, vvl)
+				for vvi := range vv {
+					var vvv message.PermissionLevel
+					offset, err = ___decodeMapPermissionLevel_27424f445a2085e7723342fb0df638c626b43c59240988bc64f2d60167ee4080(&vvv, decoder, offset)
+					if err != nil {
+						return 0, err
+					}
+					vv[vvi] = vvv
+				}
+				v.Authorization = vv
+			} else {
+				offset++
+			}
+			count++
+		case 9:
+			{
+				var vv string
+				vv, offset, err = decoder.AsString(offset)
+				if err != nil {
+					return 0, err
+				}
+				v.Except = vv
+			}
+			count++
+		case 10:
+			{
+				var vv uint64
+				vv, offset, err = decoder.AsUint64(offset)
+				if err != nil {
+					return 0, err
+				}
+				v.Error = vv
+			}
+			count++
+		case 11:
+			if !decoder.IsCodeNil(offset) {
+				var vv []byte
+				var vvl int
+				vvl, offset, err = decoder.SliceLength(offset)
+				if err != nil {
+					return 0, err
+				}
+				vv = make([]byte, vvl)
+				for vvi := range vv {
+					var vvv byte
+					vvv, offset, err = decoder.AsByte(offset)
+					if err != nil {
+						return 0, err
+					}
+					vv[vvi] = vvv
+				}
+				v.Return = vv
+			} else {
+				offset++
 			}
 			count++
 		default:
