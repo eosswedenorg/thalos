@@ -31,7 +31,6 @@ type ActionTrace struct {
 
 	Receiver string `json:"receiver" msgpack:"receiver"`
 	Data     []byte `json:"data" msgpack:"data"`
-	HexData  string `json:"hex_data" msgpack:"hex_data"`
 
 	Authorization []PermissionLevel `json:"authorization" msgpack:"authorization"`
 

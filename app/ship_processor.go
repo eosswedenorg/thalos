@@ -1,8 +1,6 @@
 package app
 
 import (
-	"encoding/hex"
-
 	"github.com/eosswedenorg/thalos/api"
 	"github.com/eosswedenorg/thalos/api/message"
 	"github.com/eosswedenorg/thalos/app/abi"
@@ -118,7 +116,6 @@ func (processor *ShipProcessor) processBlock(block *ship.GetBlocksResultV0) {
 					Name:      act_trace.Act.Name.String(),
 					Contract:  act_trace.Act.Account.String(),
 					Receiver:  act_trace.Receiver.String(),
-					HexData:   hex.EncodeToString(act_trace.Act.Data),
 				}
 
 				for _, auth := range act_trace.Act.Authorization {
