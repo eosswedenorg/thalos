@@ -1,12 +1,15 @@
 package app
 
 import (
+	"encoding/json"
+
 	"github.com/eosswedenorg/thalos/api"
 	"github.com/eosswedenorg/thalos/api/message"
 	"github.com/eosswedenorg/thalos/app/abi"
 
 	log "github.com/sirupsen/logrus"
 
+	"github.com/eoscanada/eos-go"
 	"github.com/eoscanada/eos-go/ship"
 	shipclient "github.com/eosswedenorg-go/antelope-ship-client"
 )
@@ -62,6 +65,14 @@ func (processor *ShipProcessor) encodeQueue(channel api.Channel, v interface{}) 
 		return processor.queueMessage(channel, payload)
 	}
 	return false
+}
+
+func decode(abi *eos.ABI, act *ship.Action, v any) error {
+	jsondata, err := abi.DecodeAction(act.Data, act.Name)
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(jsondata, v)
 }
 
 func (processor *ShipProcessor) processBlock(block *ship.GetBlocksResultV0) {
@@ -127,11 +138,9 @@ func (processor *ShipProcessor) processBlock(block *ship.GetBlocksResultV0) {
 
 				ABI, err := processor.abi.GetAbi(act_trace.Act.Account)
 				if err == nil {
-					data, err := ABI.DecodeAction(act_trace.Act.Data, act_trace.Act.Name)
-					if err != nil {
+					if err = decode(ABI, act_trace.Act, &act.Data); err != nil {
 						log.WithError(err).Warn("Failed to decode action")
 					}
-					act.Data = data
 				} else {
 					log.WithError(err).Errorf("Failed to get abi for contract %s", act_trace.Act.Account)
 				}
