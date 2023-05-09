@@ -3,8 +3,8 @@ package json
 import (
 	"time"
 
+	jsontime "github.com/eosswedenorg-go/jsontime/v2"
 	"github.com/eosswedenorg/thalos/api/message"
-	jsontime "github.com/liamylian/jsontime/v2/v2"
 )
 
 var json_codec = jsontime.ConfigWithCustomTimeFormat
