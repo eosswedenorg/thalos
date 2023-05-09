@@ -7,9 +7,8 @@ require (
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/go-redis/redismock/v8 v8.11.5
 	github.com/liamylian/jsontime/v2 v2.0.0
-	github.com/shamaton/msgpack/v2 v2.1.0
-	github.com/shamaton/msgpackgen v0.3.0
 	github.com/stretchr/testify v1.8.2
+	github.com/ugorji/go/codec v1.2.11
 )
 
 require (

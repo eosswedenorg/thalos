@@ -1,18 +1,34 @@
 package msgpack
 
 import (
-	"github.com/shamaton/msgpack/v2"
+	"reflect"
+
+	"github.com/ugorji/go/codec"
 
 	"github.com/eosswedenorg/thalos/api/message"
 )
 
-//go:generate msgpackgen -v -input-file ../types.go -output-file msgpack.go
+var mh codec.MsgpackHandle
+
+func encode(a any) ([]byte, error) {
+	var b []byte
+	return b, codec.NewEncoderBytes(&b, &mh).Encode(a)
+}
+
+func decode(b []byte, a any) error {
+	return codec.NewDecoderBytes(b, &mh).Decode(a)
+}
 
 func init() {
-	RegisterGeneratedResolver()
+	mh.MapType = reflect.TypeOf(map[string]any(nil))
+	mh.Canonical = true
+
+	// Wierd name but this is needed for the newest version of msgpack
+	// that has support for time and string datatypes etc.
+	mh.WriteExt = true
 
 	message.RegisterCodec("msgpack", message.Codec{
-		Encoder: msgpack.Marshal,
-		Decoder: msgpack.Unmarshal,
+		Encoder: encode,
+		Decoder: decode,
 	})
 }
