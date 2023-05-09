@@ -1,7 +1,6 @@
 package json
 
 import (
-	"encoding/json"
 	"testing"
 	"time"
 
@@ -10,14 +9,6 @@ import (
 )
 
 func TestJson_EncodeActionTrace(t *testing.T) {
-	dataJson, err := json.Marshal(map[string]string{
-		"from":     "account1",
-		"to":       "account2",
-		"quantity": "1000.0000 WAX",
-	})
-
-	assert.NoError(t, err)
-
 	msg := message.ActionTrace{
 		TxID:      "ed3b8e853647971cf8296f004c3a1aeac255f082b2cb3c12cc3222e2d7c174ab",
 		BlockNum:  267372365,
@@ -25,8 +16,11 @@ func TestJson_EncodeActionTrace(t *testing.T) {
 		Name:      "transfer",
 		Contract:  "eosio",
 		Receiver:  "account2",
-		Data:      dataJson,
-
+		Data: map[string]interface{}{
+			"from":     "account1",
+			"to":       "account2",
+			"quantity": "1000.0000 WAX",
+		},
 		Authorization: []message.PermissionLevel{
 			{Actor: "account1", Permission: "active"},
 		},
@@ -35,7 +29,7 @@ func TestJson_EncodeActionTrace(t *testing.T) {
 		Return: []byte{0xde, 0xad, 0xbe, 0xef},
 	}
 
-	expected := `{"tx_id":"ed3b8e853647971cf8296f004c3a1aeac255f082b2cb3c12cc3222e2d7c174ab","blocknum":267372365,"blocktimestamp":"2003-03-21T17:23:09.500","name":"transfer","contract":"eosio","receiver":"account2","data":"eyJmcm9tIjoiYWNjb3VudDEiLCJxdWFudGl0eSI6IjEwMDAuMDAwMCBXQVgiLCJ0byI6ImFjY291bnQyIn0=","authorization":[{"actor":"account1","permission":"active"}],"except":"errstr","error":2,"return":"3q2+7w=="}`
+	expected := `{"tx_id":"ed3b8e853647971cf8296f004c3a1aeac255f082b2cb3c12cc3222e2d7c174ab","blocknum":267372365,"blocktimestamp":"2003-03-21T17:23:09.500","name":"transfer","contract":"eosio","receiver":"account2","data":{"from":"account1","quantity":"1000.0000 WAX","to":"account2"},"authorization":[{"actor":"account1","permission":"active"}],"except":"errstr","error":2,"return":"3q2+7w=="}`
 
 	data, err := encoder(msg)
 	assert.NoError(t, err)
@@ -43,14 +37,6 @@ func TestJson_EncodeActionTrace(t *testing.T) {
 }
 
 func TestJson_DecodeActionTrace(t *testing.T) {
-	dataJson, err := json.Marshal(map[string]string{
-		"from":     "account1",
-		"to":       "account2",
-		"quantity": "1000.0000 WAX",
-	})
-
-	assert.NoError(t, err)
-
 	expected := message.ActionTrace{
 		TxID:      "952989f7464237b6cf9926e533ecd331df6794ed07564bd052bc368cbd65b4bc",
 		BlockNum:  8723971,
@@ -58,7 +44,11 @@ func TestJson_DecodeActionTrace(t *testing.T) {
 		Name:      "transfer",
 		Contract:  "eosio",
 		Receiver:  "account2",
-		Data:      dataJson,
+		Data: map[string]interface{}{
+			"from":     "account1",
+			"to":       "account2",
+			"quantity": "1000.0000 WAX",
+		},
 		Authorization: []message.PermissionLevel{
 			{Actor: "account1", Permission: "active"},
 		},
@@ -67,10 +57,10 @@ func TestJson_DecodeActionTrace(t *testing.T) {
 		Return: []byte{0xde, 0xad, 0xbe, 0xef},
 	}
 
-	input := `{"tx_id":"952989f7464237b6cf9926e533ecd331df6794ed07564bd052bc368cbd65b4bc","blocknum":8723971,"blocktimestamp":"2024-06-21T08:08:26.500","name":"transfer","contract":"eosio","receiver":"account2","data":"eyJmcm9tIjoiYWNjb3VudDEiLCJxdWFudGl0eSI6IjEwMDAuMDAwMCBXQVgiLCJ0byI6ImFjY291bnQyIn0=","authorization":[{"actor":"account1","permission":"active"}],"except":"errstr","error":2,"return":"3q2+7w=="}`
+	input := `{"tx_id":"952989f7464237b6cf9926e533ecd331df6794ed07564bd052bc368cbd65b4bc","blocknum":8723971,"blocktimestamp":"2024-06-21T08:08:26.500","name":"transfer","contract":"eosio","receiver":"account2","data":{"from":"account1","quantity":"1000.0000 WAX","to":"account2"},"authorization":[{"actor":"account1","permission":"active"}],"except":"errstr","error":2,"return":"3q2+7w=="}`
 
 	msg := message.ActionTrace{}
-	err = decoder([]byte(input), &msg)
+	err := decoder([]byte(input), &msg)
 	assert.NoError(t, err)
 	assert.Equal(t, expected, msg)
 }
