@@ -37,7 +37,7 @@ func TestJson_EncodeActionTrace(t *testing.T) {
 
 	expected := `{"tx_id":"ed3b8e853647971cf8296f004c3a1aeac255f082b2cb3c12cc3222e2d7c174ab","blocknum":267372365,"blocktimestamp":"2003-03-21T17:23:09.500","name":"transfer","contract":"eosio","receiver":"account2","data":"eyJmcm9tIjoiYWNjb3VudDEiLCJxdWFudGl0eSI6IjEwMDAuMDAwMCBXQVgiLCJ0byI6ImFjY291bnQyIn0=","authorization":[{"actor":"account1","permission":"active"}],"except":"errstr","error":2,"return":"3q2+7w=="}`
 
-	data, err := json_codec.Marshal(msg)
+	data, err := encoder(msg)
 	assert.NoError(t, err)
 	assert.Equal(t, expected, string(data))
 }
@@ -70,7 +70,7 @@ func TestJson_DecodeActionTrace(t *testing.T) {
 	input := `{"tx_id":"952989f7464237b6cf9926e533ecd331df6794ed07564bd052bc368cbd65b4bc","blocknum":8723971,"blocktimestamp":"2024-06-21T08:08:26.500","name":"transfer","contract":"eosio","receiver":"account2","data":"eyJmcm9tIjoiYWNjb3VudDEiLCJxdWFudGl0eSI6IjEwMDAuMDAwMCBXQVgiLCJ0byI6ImFjY291bnQyIn0=","authorization":[{"actor":"account1","permission":"active"}],"except":"errstr","error":2,"return":"3q2+7w=="}`
 
 	msg := message.ActionTrace{}
-	err = json_codec.Unmarshal([]byte(input), &msg)
+	err = decoder([]byte(input), &msg)
 	assert.NoError(t, err)
 	assert.Equal(t, expected, msg)
 }
