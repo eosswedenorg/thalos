@@ -1,7 +1,7 @@
 package message
 
 import (
-	"encoding/json"
+	"errors"
 	"time"
 )
 
@@ -29,9 +29,8 @@ type ActionTrace struct {
 	// Contract account.
 	Contract string `json:"contract" msgpack:"contract"`
 
-	Receiver string `json:"receiver" msgpack:"receiver"`
-	Data     []byte `json:"data" msgpack:"data"`
-	HexData  string `json:"hex_data" msgpack:"hex_data"`
+	Receiver string      `json:"receiver" msgpack:"receiver"`
+	Data     interface{} `json:"data" msgpack:"data"`
 
 	Authorization []PermissionLevel `json:"authorization" msgpack:"authorization"`
 
@@ -40,7 +39,9 @@ type ActionTrace struct {
 	Return []byte `json:"return" msgpack:"return"`
 }
 
-func (act ActionTrace) GetData() (map[string]interface{}, error) {
-	data := map[string]interface{}{}
-	return data, json.Unmarshal(act.Data, &data)
+func (act ActionTrace) GetData() (map[string]any, error) {
+	if data, ok := act.Data.(map[string]any); ok {
+		return data, nil
+	}
+	return nil, errors.New("failed to convert data to map")
 }

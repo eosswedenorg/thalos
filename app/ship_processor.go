@@ -1,7 +1,7 @@
 package app
 
 import (
-	"encoding/hex"
+	"encoding/json"
 
 	"github.com/eosswedenorg/thalos/api"
 	"github.com/eosswedenorg/thalos/api/message"
@@ -9,6 +9,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
+	"github.com/eoscanada/eos-go"
 	"github.com/eoscanada/eos-go/ship"
 	shipclient "github.com/eosswedenorg-go/antelope-ship-client"
 )
@@ -66,6 +67,14 @@ func (processor *ShipProcessor) encodeQueue(channel api.Channel, v interface{}) 
 	return false
 }
 
+func decode(abi *eos.ABI, act *ship.Action, v any) error {
+	jsondata, err := abi.DecodeAction(act.Data, act.Name)
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(jsondata, v)
+}
+
 func (processor *ShipProcessor) processBlock(block *ship.GetBlocksResultV0) {
 	if block.ThisBlock.BlockNum%100 == 0 {
 		log.Infof("Current: %d, Head: %d", block.ThisBlock.BlockNum, block.Head.BlockNum)
@@ -118,7 +127,6 @@ func (processor *ShipProcessor) processBlock(block *ship.GetBlocksResultV0) {
 					Name:      act_trace.Act.Name.String(),
 					Contract:  act_trace.Act.Account.String(),
 					Receiver:  act_trace.Receiver.String(),
-					HexData:   hex.EncodeToString(act_trace.Act.Data),
 				}
 
 				for _, auth := range act_trace.Act.Authorization {
@@ -130,11 +138,9 @@ func (processor *ShipProcessor) processBlock(block *ship.GetBlocksResultV0) {
 
 				ABI, err := processor.abi.GetAbi(act_trace.Act.Account)
 				if err == nil {
-					data, err := ABI.DecodeAction(act_trace.Act.Data, act_trace.Act.Name)
-					if err != nil {
+					if err = decode(ABI, act_trace.Act, &act.Data); err != nil {
 						log.WithError(err).Warn("Failed to decode action")
 					}
-					act.Data = data
 				} else {
 					log.WithError(err).Errorf("Failed to get abi for contract %s", act_trace.Act.Account)
 				}
