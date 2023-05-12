@@ -152,6 +152,14 @@ func (processor *ShipProcessor) processBlock(block *ship.GetBlocksResultV0) {
 					act_trace = actionTraceVar.Impl.(*ship.ActionTraceV1)
 				}
 
+				// Check if actions updates an abi.
+				if act_trace.Act.Account == processor.syscontract && act_trace.Act.Name == eos.ActionName("setabi") {
+					err := processor.updateAbiFromAction(act_trace.Act)
+					if err != nil {
+						log.WithError(err).Warn("Failed to update abi")
+					}
+				}
+
 				act := message.ActionTrace{
 					TxID:      trace.ID.String(),
 					BlockNum:  block.Block.BlockNumber(),
