@@ -1,6 +1,7 @@
 package app
 
 import (
+	"encoding/hex"
 	"encoding/json"
 
 	"github.com/eosswedenorg/thalos/api"
@@ -77,6 +78,33 @@ func decode(abi *eos.ABI, act *ship.Action, v any) error {
 		return err
 	}
 	return json.Unmarshal(jsondata, v)
+}
+
+func (processor *ShipProcessor) updateAbiFromAction(act *ship.Action) error {
+	ABI, err := processor.abi.GetAbi(processor.syscontract)
+	if err != nil {
+		return err
+	}
+
+	set_abi := struct {
+		Abi     string
+		Account eos.AccountName
+	}{}
+	if err := decode(ABI, act, &set_abi); err != nil {
+		return err
+	}
+
+	binary_abi, err := hex.DecodeString(set_abi.Abi)
+	if err != nil {
+		return err
+	}
+
+	contract_abi := eos.ABI{}
+	if err = eos.UnmarshalBinary(binary_abi, &contract_abi); err != nil {
+		return err
+	}
+
+	return processor.abi.SetAbi(set_abi.Account, &contract_abi)
 }
 
 func (processor *ShipProcessor) processBlock(block *ship.GetBlocksResultV0) {
