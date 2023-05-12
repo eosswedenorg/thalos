@@ -1,27 +1,59 @@
+
+# Reader name
 name: "ship-reader-1"
+
+# Endpoint to nodeos api
 api: "http://127.0.0.1:8080"
 message_codec: "json"
 
+# Logging settings
 log:
+  # Filename to use.
   filename: thalos.log
+  # Directory to store the logfiles in.
   directory: logs
+  # Format to rename log files when rotating
   time_format: 2006-01-02_150405
+
+  # Log rotation, logfile is rotated when any of these
+  # conditions are met. set to 0 or remove to disable.
+
+  # Rotate when the file reaches this size.
   max_filesize: 200mb
+  # Rotate when the file is this old.
   max_time: 24h
 
+# SHIP settings
 ship:
-  url: "ws://127.0.0.1:8089"
-  irreversible_only: false
-  max_messages_in_flight: 10
-  start_block_num: 4294967295
-  end_block_num: 4294967295
 
+  # Url to ship api.
+  url: "ws://127.0.0.1:8089"
+
+  # Fetch irreversible blocks only
+  # irreversible_only: true
+
+  # Request ship to start sending blocks from this block.
+  # If not set, the head block reported by the nodeos api is used.
+  #start_block_num: 1000
+
+  # Request ship to stop sending blocks when reaching this block.
+  #end_block_num: 2000
+
+# Telegram notifications
 telegram:
   id: "110201543:AAHdqTcvCH1vGWJxfSeofSAs0K5PALDsaw"
   channel: -123456789
 
+# Redis settings
 redis:
+  # Address (and port) to redis server
   addr: "localhost:6379"
+
+  # Password to use when authenticating
   pasword: ""
+
+  # database index
   db: 0
+
+  # Key prefix.
   prefix: "ship"
