@@ -1,6 +1,7 @@
 package app
 
 import (
+	"encoding/hex"
 	"encoding/json"
 
 	"github.com/eosswedenorg/thalos/api"
@@ -32,14 +33,18 @@ type ShipProcessor struct {
 	writer     api.Writer
 	shipStream *shipclient.Stream
 	encode     message.Encoder
+
+	// System contract ("eosio" per default)
+	syscontract eos.AccountName
 }
 
 func SpawnProccessor(shipStream *shipclient.Stream, writer api.Writer, abi *abi.AbiManager, codec message.Codec) *ShipProcessor {
 	processor := &ShipProcessor{
-		abi:        abi,
-		writer:     writer,
-		shipStream: shipStream,
-		encode:     logDecoratedEncoder(codec.Encoder),
+		abi:         abi,
+		writer:      writer,
+		shipStream:  shipStream,
+		encode:      logDecoratedEncoder(codec.Encoder),
+		syscontract: eos.AccountName("eosio"),
 	}
 
 	// Attach handlers
@@ -73,6 +78,33 @@ func decode(abi *eos.ABI, act *ship.Action, v any) error {
 		return err
 	}
 	return json.Unmarshal(jsondata, v)
+}
+
+func (processor *ShipProcessor) updateAbiFromAction(act *ship.Action) error {
+	ABI, err := processor.abi.GetAbi(processor.syscontract)
+	if err != nil {
+		return err
+	}
+
+	set_abi := struct {
+		Abi     string
+		Account eos.AccountName
+	}{}
+	if err := decode(ABI, act, &set_abi); err != nil {
+		return err
+	}
+
+	binary_abi, err := hex.DecodeString(set_abi.Abi)
+	if err != nil {
+		return err
+	}
+
+	contract_abi := eos.ABI{}
+	if err = eos.UnmarshalBinary(binary_abi, &contract_abi); err != nil {
+		return err
+	}
+
+	return processor.abi.SetAbi(set_abi.Account, &contract_abi)
 }
 
 func (processor *ShipProcessor) processBlock(block *ship.GetBlocksResultV0) {
@@ -118,6 +150,14 @@ func (processor *ShipProcessor) processBlock(block *ship.GetBlocksResultV0) {
 					}
 				} else {
 					act_trace = actionTraceVar.Impl.(*ship.ActionTraceV1)
+				}
+
+				// Check if actions updates an abi.
+				if act_trace.Act.Account == processor.syscontract && act_trace.Act.Name == eos.ActionName("setabi") {
+					err := processor.updateAbiFromAction(act_trace.Act)
+					if err != nil {
+						log.WithError(err).Warn("Failed to update abi")
+					}
 				}
 
 				act := message.ActionTrace{

@@ -31,6 +31,10 @@ func NewAbiManager(rdb *redis.Client, api *eos.API, id string) *AbiManager {
 	}
 }
 
+func (mgr *AbiManager) SetAbi(account eos.AccountName, abi *eos.ABI) error {
+	return mgr.cache.Set(string(account), abi, time.Hour)
+}
+
 func (mgr *AbiManager) GetAbi(account eos.AccountName) (*eos.ABI, error) {
 	key := string(account)
 
@@ -42,7 +46,7 @@ func (mgr *AbiManager) GetAbi(account eos.AccountName) (*eos.ABI, error) {
 		}
 		abi = &resp.ABI
 
-		err = mgr.cache.Set(key, abi, time.Hour)
+		err = mgr.SetAbi(account, abi)
 		if err != nil {
 			return nil, fmt.Errorf("cache: %s", err)
 		}
