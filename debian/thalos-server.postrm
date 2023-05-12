@@ -1,0 +1,13 @@
+#!/bin/sh
+set -e
+
+#DEBHELPER#
+
+
+if [ "${1}" = "purge" ]
+then
+        deluser --quiet thalos > /dev/null || true
+        rm -rf /var/log/thalos
+fi
+
+exit 0
