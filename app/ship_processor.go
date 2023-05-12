@@ -32,14 +32,18 @@ type ShipProcessor struct {
 	writer     api.Writer
 	shipStream *shipclient.Stream
 	encode     message.Encoder
+
+	// System contract ("eosio" per default)
+	syscontract eos.AccountName
 }
 
 func SpawnProccessor(shipStream *shipclient.Stream, writer api.Writer, abi *abi.AbiManager, codec message.Codec) *ShipProcessor {
 	processor := &ShipProcessor{
-		abi:        abi,
-		writer:     writer,
-		shipStream: shipStream,
-		encode:     logDecoratedEncoder(codec.Encoder),
+		abi:         abi,
+		writer:      writer,
+		shipStream:  shipStream,
+		encode:      logDecoratedEncoder(codec.Encoder),
+		syscontract: eos.AccountName("eosio"),
 	}
 
 	// Attach handlers
