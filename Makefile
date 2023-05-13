@@ -6,7 +6,7 @@ PREFIX=/usr/local
 BINDIR=$(PREFIX)/bin
 CFGDIR=$(PREFIX)/etc
 
-.PHONY: build test
+.PHONY: build build/$(PROGRAM) test
 
 build: build/$(PROGRAM)
 
