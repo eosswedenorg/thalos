@@ -7,6 +7,4 @@ cd "$DIR"
 date
 ./stop.sh
 timestamp=`date +%s`
-$BIN -p ./thalos.pid 2> logs/$timestamp.log &
-rm -f out.log
-ln -s logs/$timestamp.log out.log
+$BIN -p ./thalos.pid 2> out.log &
