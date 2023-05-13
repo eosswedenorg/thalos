@@ -37,6 +37,8 @@ var shClient *shipclient.Stream
 
 var running bool = false
 
+var VersionString string = "dev"
+
 func readerLoop() {
 	running = true
 	recon_cnt := 0
@@ -122,7 +124,7 @@ func main() {
 	}
 
 	if *showVersion {
-		fmt.Println("v0.0.0")
+		fmt.Println(VersionString)
 		return
 	}
 
