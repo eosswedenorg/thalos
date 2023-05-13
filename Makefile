@@ -10,7 +10,7 @@ CFGDIR=$(PREFIX)/etc
 build: build/$(PROGRAM)
 
 build/$(PROGRAM) :
-	$(GO) build -o $@ cmd/main/main.go
+	$(GO) build -o $@ cmd/thalos/main.go
 
 install: build
 	install -D build/$(PROGRAM) $(DESTDIR)$(BINDIR)/$(PROGRAM)
