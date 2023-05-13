@@ -1,5 +1,6 @@
 
 GO=go
+GOBUILDFLAGS=-v --buildmode=pie
 PROGRAM=thalos-server
 PREFIX=/usr/local
 BINDIR=$(PREFIX)/bin
@@ -10,7 +11,7 @@ CFGDIR=$(PREFIX)/etc
 build: build/$(PROGRAM)
 
 build/$(PROGRAM) :
-	$(GO) build -o $@ cmd/thalos/main.go
+	$(GO) build $(GOBUILDFLAGS) -o $@ cmd/thalos/main.go
 
 install: build
 	install -D build/$(PROGRAM) $(DESTDIR)$(BINDIR)/$(PROGRAM)
