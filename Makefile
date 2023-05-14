@@ -5,7 +5,7 @@ PROGRAM=thalos-server
 PROGRAM_VERSION=0.1.0
 PREFIX=/usr/local
 BINDIR=$(PREFIX)/bin
-CFGDIR=$(PREFIX)/etc
+CFGDIR=$(PREFIX)/etc/thalos
 
 .PHONY: build build/$(PROGRAM) test
 
@@ -16,7 +16,7 @@ build/$(PROGRAM) :
 
 install: build
 	install -D build/$(PROGRAM) $(DESTDIR)$(BINDIR)/$(PROGRAM)
-	install -m 644 -D config.example.yml $(DESTDIR)$(CFGDIR)/thalos/config.yml
+	install -m 644 -D config.example.yml $(DESTDIR)$(CFGDIR)/config.yml
 
 test:
 	$(GO) test -v ./...
