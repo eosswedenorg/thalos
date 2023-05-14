@@ -40,9 +40,9 @@ ship:
   #end_block_num: 2000
 
 # Telegram notifications
-telegram:
-  id: "110201543:AAHdqTcvCH1vGWJxfSeofSAs0K5PALDsaw"
-  channel: -123456789
+#telegram:
+#  id: "110201543:AAHdqTcvCH1vGWJxfSeofSAs0K5PALDsaw"
+#  channel: -123456789
 
 # Redis settings
 redis:
