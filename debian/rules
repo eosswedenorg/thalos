@@ -3,7 +3,7 @@
 include /usr/share/dpkg/default.mk
 
 %:
-	dh $@ -P debian/pkgroot
+	dh $@ --with quilt -P debian/pkgroot
 
 override_dh_auto_build:
 	dh_auto_build -- GOOS=linux

@@ -1,0 +1,12 @@
+diff --git a/config.example.yml b/config.example.yml
+index 9f4272a..8daac0a 100644
+--- a/config.example.yml
++++ b/config.example.yml
+@@ -11,7 +11,7 @@ log:
+   # Filename to use.
+   filename: thalos.log
+   # Directory to store the logfiles in.
+-  directory: logs
++  directory: /var/log
+   # Format to rename log files when rotating
+   time_format: 2006-01-02_150405
