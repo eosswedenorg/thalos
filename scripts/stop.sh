@@ -13,5 +13,5 @@ if [ -f "$PIDFILE" ]; then
         echo -ne "."
         sleep 1
     done
-    echo -ne "\rProcesss stopped. \n"
+    echo -ne "\rProcess stopped. \n"
 fi
