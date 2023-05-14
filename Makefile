@@ -18,6 +18,9 @@ install: build
 	install -D build/$(PROGRAM) $(DESTDIR)$(BINDIR)/$(PROGRAM)
 	install -m 644 -D config.example.yml $(DESTDIR)$(CFGDIR)/config.yml
 
+install-scripts:
+	install -m 755 -t $(DESTDIR) scripts/start.sh scripts/stop.sh
+
 test:
 	$(GO) test -v ./...
 
