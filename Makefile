@@ -1,6 +1,6 @@
 
 GO=go
-GOBUILDFLAGS=-v --buildmode=pie -ldflags="-v -s -w -X main.VersionString=$(PROGRAM_VERSION)"
+GOBUILDFLAGS=-v -ldflags="-v -s -w -X main.VersionString=$(PROGRAM_VERSION)"
 PROGRAM=thalos-server
 PROGRAM_VERSION=0.1.0
 PREFIX=/usr/local
