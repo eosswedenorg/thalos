@@ -9,6 +9,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/cenkalti/backoff/v4"
 	eos "github.com/eoscanada/eos-go"
 	shipclient "github.com/eosswedenorg-go/antelope-ship-client"
 	"github.com/eosswedenorg-go/pid"
@@ -43,12 +44,39 @@ func readerLoop() {
 	running = true
 	recon_cnt := 0
 
-	for running {
-		recon_cnt++
-		log.Infof("Connecting to ship at: %s (Try %d)", conf.Ship.Url, recon_cnt)
-		if err := shClient.Connect(conf.Ship.Url); err != nil {
-			log.WithError(err).Error("Failed to connect")
+	exp := &backoff.ExponentialBackOff{
+		InitialInterval:     time.Second,
+		RandomizationFactor: 0.25,
+		Multiplier:          2,
+		MaxInterval:         10 * time.Minute,
+		MaxElapsedTime:      0,
+		Stop:                -1,
+		Clock:               backoff.SystemClock,
+	}
+	exp.Reset()
 
+	log.WithFields(log.Fields{
+		"initial_interval":     exp.InitialInterval,
+		"max_interval":         exp.MaxInterval,
+		"randomization_factor": exp.RandomizationFactor,
+		"multiplier":           exp.Multiplier,
+	}).Info("Connecting with Exponential Backoff")
+
+	connectOp := func() error {
+		recon_cnt++
+
+		log.Infof("Connecting to ship at: %s (Try %d)", conf.Ship.Url, recon_cnt)
+
+		if err := shClient.Connect(conf.Ship.Url); err != nil {
+			return err
+		}
+
+		return shClient.SendBlocksRequest()
+	}
+
+	for running {
+
+		err := backoff.RetryNotify(connectOp, exp, func(err error, d time.Duration) {
 			if recon_cnt >= 3 {
 				msg := fmt.Sprintf("Failed to connect to ship at '%s'", conf.Ship.Url)
 				if err := notify.Send(context.Background(), conf.Name, msg); err != nil {
@@ -57,13 +85,16 @@ func readerLoop() {
 				recon_cnt = 0
 			}
 
-			log.Info("Trying again in 5 seconds ....")
-			time.Sleep(5 * time.Second)
-			continue
-		}
+			log.WithError(err).Error("Failed to connect to SHIP")
 
-		if err := shClient.SendBlocksRequest(); err != nil {
-			log.WithError(err).Error("Failed to send block request")
+			log.WithFields(log.Fields{
+				"reconn_at": time.Now().Add(d),
+				"reconn_in": d,
+			}).Info("Reconnecting in ", d)
+		})
+		if err != nil {
+			log.WithError(err).Error("Failed to connect to SHIP")
+			running = false
 			continue
 		}
 

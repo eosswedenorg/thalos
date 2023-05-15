@@ -3,6 +3,7 @@ module github.com/eosswedenorg/thalos
 go 1.18
 
 require (
+	github.com/cenkalti/backoff/v4 v4.1.3
 	github.com/docker/go-units v0.5.0
 	github.com/eoscanada/eos-go v0.10.3-0.20230413154640-bb75101dc2f6
 	github.com/eosswedenorg-go/antelope-ship-client v0.2.3
