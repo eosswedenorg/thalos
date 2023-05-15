@@ -29,6 +29,10 @@ ship:
   # Url to ship api.
   url: "ws://127.0.0.1:8089"
 
+  # Name of chain. Note that this is just a name to be used in channel namespace.
+  # If unset, chain id from api is used.
+  # chain: wax
+
   # Fetch irreversible blocks only
   # irreversible_only: true
 

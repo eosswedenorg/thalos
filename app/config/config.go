@@ -30,6 +30,7 @@ type ShipConfig struct {
 	MaxMessagesInFlight uint32 `yaml:"max_messages_in_flight"`
 	StartBlockNum       uint32 `yaml:"start_block_num"`
 	EndBlockNum         uint32 `yaml:"end_block_num"`
+	Chain               string `yaml:"chain"`
 }
 
 type Config struct {
