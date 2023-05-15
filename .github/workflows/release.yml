@@ -1,0 +1,106 @@
+name: Package
+
+on:
+  release:
+    types: [ created ]
+
+jobs:
+  cross-compile:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ linux, freebsd ]
+        arch: [ 386, amd64, arm, arm64 ]
+    name: Crosscompile - ${{matrix.os}}-${{matrix.arch}}
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.18
+
+      - name: compile
+        id: compile
+        run: |
+          GOOS=${{matrix.os}} GOARCH=${{matrix.arch}} make
+          FILE=$(find build -type f | head -1)
+          echo "version=$(sed -n 's/.*PROGRAM_VERSION\s*=\s*//p' Makefile)" >> "$GITHUB_OUTPUT"
+          echo "filename=$FILE" >> "$GITHUB_OUTPUT"
+          echo "name=$(basename $FILE)" >> "$GITHUB_OUTPUT"
+          echo "mime=$(file -bi $FILE)" >> "$GITHUB_OUTPUT"
+
+      - name: Upload
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_name: ${{ steps.compile.outputs.name }}-${{steps.compile.outputs.version}}-${{matrix.os}}-${{matrix.arch}}
+          asset_path: ${{ steps.compile.outputs.filename }}
+          asset_content_type: ${{ steps.compile.outputs.mime }}
+
+  package-ubuntu:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-22.04 ]
+    name: Package - ${{matrix.os}}
+    runs-on: ${{matrix.os}}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.18
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get -y update
+          sudo apt-get -y install build-essential fakeroot debhelper quilt
+
+      - name: Package
+        id: package
+        run: |
+          dpkg-buildpackage -b -us -uc
+          DEB_FILE=$(ls ../*.deb | head -1)
+          echo "deb_filename=$DEB_FILE" >> "$GITHUB_OUTPUT"
+          echo "deb_name=$(basename $DEB_FILE)" >> "$GITHUB_OUTPUT"
+          CH_FILE=$(ls ../*.changes | head -1)
+          echo "ch_filename=$CH_FILE" >> "$GITHUB_OUTPUT"
+          echo "ch_name=$(basename $CH_FILE)" >> "$GITHUB_OUTPUT"
+          INFO_FILE=$(ls ../*.buildinfo | head -1)
+          echo "info_filename=$INFO_FILE" >> "$GITHUB_OUTPUT"
+          echo "info_name=$(basename $INFO_FILE)" >> "$GITHUB_OUTPUT"
+
+      - name: Upload (package)
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_name: ${{ steps.package.outputs.deb_name }}
+          asset_path: ${{ steps.package.outputs.deb_filename }}
+          asset_content_type: application/x-deb
+
+      - name: Upload (.changes)
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_name: ${{ steps.package.outputs.ch_name }}
+          asset_path: ${{ steps.package.outputs.ch_filename }}
+          asset_content_type: text/plain
+
+      - name: Upload (buildinfo)
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_name: ${{ steps.package.outputs.info_name }}
+          asset_path: ${{ steps.package.outputs.info_filename }}
+          asset_content_type: text/plain
