@@ -106,6 +106,13 @@ func init() {
 	log.SetFormatter(&formatter)
 }
 
+func getChain(def string) string {
+	if len(conf.Ship.Chain) > 0 {
+		return conf.Ship.Chain
+	}
+	return def
+}
+
 func main() {
 	var err error
 	var chainInfo *eos.InfoResp
@@ -224,7 +231,7 @@ func main() {
 		shClient,
 		api_redis.NewPublisher(rdb, api_redis.Namespace{
 			Prefix:  conf.Redis.Prefix,
-			ChainID: chainInfo.ChainID.String(),
+			ChainID: getChain(chainInfo.ChainID.String()),
 		}),
 		abi.NewAbiManager(rdb, eosClient, conf.Redis.CacheID),
 		codec,
