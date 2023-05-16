@@ -58,6 +58,10 @@ func (w *RotatingFile) newFilename(name string) string {
 	return fmt.Sprintf("%s-%s%s", name, time.Now().Format(w.format), ext)
 }
 
+func (w RotatingFile) GetFilename() string {
+	return path.Base(w.fd.Name())
+}
+
 // Rotate the file.
 func (w *RotatingFile) Rotate() error {
 	dst, err := os.OpenFile(w.newFilename(w.fd.Name()), os.O_CREATE|os.O_WRONLY, 0o666)
