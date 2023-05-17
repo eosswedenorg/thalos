@@ -181,10 +181,14 @@ func (processor *ShipProcessor) processBlock(block *ship.GetBlocksResultV0) {
 				ABI, err := processor.abi.GetAbi(act_trace.Act.Account)
 				if err == nil {
 					if err = decode(ABI, act_trace.Act, &act.Data); err != nil {
-						logger.WithError(err).Warn("Failed to decode action")
+						logger.WithFields(log.Fields{
+							"contract": act_trace.Act.Account,
+							"action":   act_trace.Act.Name,
+						}).WithError(err).Warn("Failed to decode action")
 					}
 				} else {
-					logger.WithError(err).Errorf("Failed to get abi for contract %s", act_trace.Act.Account)
+					logger.WithField("contract", act_trace.Act.Account).
+						WithError(err).Errorf("Failed to get abi for contract %s", act_trace.Act.Account)
 				}
 
 				payload, err := processor.encode(act)
