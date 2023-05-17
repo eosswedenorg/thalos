@@ -126,6 +126,8 @@ func (processor *ShipProcessor) processBlock(block *ship.GetBlocksResultV0) {
 	if block.Traces != nil && len(block.Traces.Elem) > 0 {
 		for _, trace := range block.Traces.AsTransactionTracesV0() {
 
+			logger := log.WithField("tx_id", trace.ID.String())
+
 			processor.encodeQueue(api.TransactionChannel, trace)
 
 			// Actions
@@ -156,7 +158,7 @@ func (processor *ShipProcessor) processBlock(block *ship.GetBlocksResultV0) {
 				if act_trace.Act.Account == processor.syscontract && act_trace.Act.Name == eos.ActionName("setabi") {
 					err := processor.updateAbiFromAction(act_trace.Act)
 					if err != nil {
-						log.WithError(err).Warn("Failed to update abi")
+						logger.WithError(err).Warn("Failed to update abi")
 					}
 				}
 
@@ -179,10 +181,10 @@ func (processor *ShipProcessor) processBlock(block *ship.GetBlocksResultV0) {
 				ABI, err := processor.abi.GetAbi(act_trace.Act.Account)
 				if err == nil {
 					if err = decode(ABI, act_trace.Act, &act.Data); err != nil {
-						log.WithError(err).Warn("Failed to decode action")
+						logger.WithError(err).Warn("Failed to decode action")
 					}
 				} else {
-					log.WithError(err).Errorf("Failed to get abi for contract %s", act_trace.Act.Account)
+					logger.WithError(err).Errorf("Failed to get abi for contract %s", act_trace.Act.Account)
 				}
 
 				payload, err := processor.encode(act)
