@@ -1,3 +1,12 @@
+thalos-server (0.1.1) bionic focal jammy; urgency=medium
+
+  * Backoff algorithm when reconnecting
+  * Support for human friendly chain name instead of using chain_id from api.
+  * More info when logging abi decoding errors.
+  * Split logging into two files (info and error)
+
+ -- Henrik Hautakoski <henrik@eossweden.org>  Fri, 19 May 2023 15:42:42 +0200
+
 thalos-server (0.1.0) bionic focal jammy; urgency=medium
 
   Initial release.

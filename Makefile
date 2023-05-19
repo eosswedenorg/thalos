@@ -2,7 +2,7 @@
 GO=go
 GOBUILDFLAGS=-v -ldflags="-v -s -w -X main.VersionString=$(PROGRAM_VERSION)"
 PROGRAM=thalos-server
-PROGRAM_VERSION=0.1.0
+PROGRAM_VERSION=0.1.1
 PREFIX=/usr/local
 BINDIR=$(PREFIX)/bin
 CFGDIR=$(PREFIX)/etc/thalos
