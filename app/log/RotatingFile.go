@@ -46,8 +46,12 @@ func NewRotatingFile(filename string, maxSize int64, maxAge time.Duration) (*Rot
 	}, nil
 }
 
-func NewRotatingFileFromConfig(config Config) (*RotatingFile, error) {
-	return NewRotatingFile(config.GetFilePath(), int64(config.MaxFileSize), config.MaxTime)
+func NewRotatingFileFromConfig(config Config, suffix string) (*RotatingFile, error) {
+	if len(suffix) > 0 {
+		suffix = "_" + suffix
+	}
+
+	return NewRotatingFile(config.GetFilePath()+suffix+".log", int64(config.MaxFileSize), config.MaxTime)
 }
 
 func (w *RotatingFile) newFilename(name string) string {
@@ -56,6 +60,10 @@ func (w *RotatingFile) newFilename(name string) string {
 		name = name[:len(name)-len(ext)]
 	}
 	return fmt.Sprintf("%s-%s%s", name, time.Now().Format(w.format), ext)
+}
+
+func (w RotatingFile) GetFilename() string {
+	return path.Base(w.fd.Name())
 }
 
 // Rotate the file.

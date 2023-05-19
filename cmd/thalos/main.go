@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"io"
 	"os"
 	"os/signal"
 	"path"
@@ -190,18 +191,28 @@ func main() {
 	}
 
 	if len(conf.Log.Filename) > 0 {
-		writer, err := NewRotatingFileFromConfig(conf.Log)
+		stdWriter, err := NewRotatingFileFromConfig(conf.Log, "info")
 		if err != nil {
-			log.WithError(err).Fatal("Failed to open log")
+			log.WithError(err).Fatal("Failed to open info log")
 			return
 		}
+		errWriter, err := NewRotatingFileFromConfig(conf.Log, "error")
+		if err != nil {
+			log.WithError(err).Fatal("Failed to open error log")
+			return
+		}
+
 		log.WithFields(log.Fields{
-			"maxfilesize": conf.Log.MaxFileSize,
-			"maxage":      conf.Log.MaxTime,
-			"directory":   conf.Log.GetDirectory(),
-			"filename":    conf.Log.GetFilename(),
-		}).Info("Logging to file: ", conf.Log.GetFilePath())
-		log.SetOutput(writer)
+			"maxfilesize":    conf.Log.MaxFileSize,
+			"maxage":         conf.Log.MaxTime,
+			"directory":      conf.Log.GetDirectory(),
+			"info_filename":  stdWriter.GetFilename(),
+			"error_filename": errWriter.GetFilename(),
+		}).Info("Logging to file")
+
+		log.SetOutput(io.Discard)
+		log.AddHook(MakeStdHook(stdWriter))
+		log.AddHook(MakeErrorHook(errWriter))
 	}
 
 	// Init telegram notification service

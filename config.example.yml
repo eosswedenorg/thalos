@@ -9,7 +9,7 @@ message_codec: "json"
 # Logging settings
 log:
   # Filename to use.
-  filename: thalos.log
+  filename: thalos
   # Directory to store the logfiles in.
   directory: logs
   # Format to rename log files when rotating
