@@ -16,6 +16,24 @@ type PermissionLevel struct {
 	Permission string `json:"permission" msgpack:"permission"`
 }
 
+type TransactionTrace struct {
+	ID            string        `json:"id" msgpack:"id"`
+	BlockNum      uint32        `json:"blocknum" msgpack:"blocknum"`
+	Timestamp     time.Time     `json:"blocktimestamp" msgpack:"blocktimestamp"`
+	Status        string        `json:"status" msgpack:"status"`
+	CPUUsageUS    uint32        `json:"cpu_usage_us" msgpack:"cpu_usage_us"`
+	NetUsageWords uint32        `json:"net_usage_words" msgpack:"net_usage_words"`
+	Elapsed       int64         `json:"elapsed" msgpack:"elapsed"`
+	NetUsage      uint64        `json:"net_usage" msgpack:"net_usage"`
+	Scheduled     bool          `json:"scheduled" msgpack:"scheduled"`
+	ActionTraces  []ActionTrace `json:"action_traces" msgpack:"action_traces"`
+	// AccountDelta    *eos.AccountRAMDelta `json:"account_delta" eos:"optional"`
+	Except string `json:"except" msgpack:"except"`
+	Error  uint64 `json:"error" msgpack:"error"`
+	// FailedDtrxTrace *TransactionTrace   `json:"failed_dtrx_trace" eos:"optional"`
+	// Partial         *PartialTransaction `json:"partial" eos:"optional"`
+}
+
 type ActionTrace struct {
 	TxID string `json:"tx_id" msgpack:"tx_id"`
 
