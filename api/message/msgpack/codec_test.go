@@ -91,7 +91,7 @@ func TestMsgpack_EncodeActionTrace(t *testing.T) {
 	assert.Equal(t, expected, data)
 }
 
-func TestMsgpack_Decode(t *testing.T) {
+func TestMsgpack_DecodeActionTrace(t *testing.T) {
 	data := []byte("\x8b\xadauthorization\x91\x82\xa5actor\xa6mygame\xaapermission\xa6active\xa8blocknum\xce\x00\x85F7\xaeblocktimestamp\xd6\xffH\xf1U\x1f\xa8contract\xa6mygame\xa4data\x83\xafdropped_from_id\xd2\x00\nK\x02\xa4item\x86\xa3dur\xd1\x00\x91\xa2id\xd2\x00\x00\xc1פname\xacShadowmourne\xa4qual\xa9legendary\xa3sta\xd1\x00ƣstr\xd1\x00ߨreceiver\xa8account1\xa5error\x02\xa6except\xa6errstr\xa4name\xa4drop\xa8receiver\xa8account1\xa6return\xc4\x04ޭ\xbe\xef\xa5tx_id\xd9@edc06dce6320459fd644756972048da453b2816b0a434c37ddffde36778dcab3")
 
 	expected := message.ActionTrace{
