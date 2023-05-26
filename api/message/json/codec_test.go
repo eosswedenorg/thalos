@@ -16,6 +16,20 @@ func TestJson_EncodeActionTrace(t *testing.T) {
 		Name:      "transfer",
 		Contract:  "eosio",
 		Receiver:  "account2",
+		Receipt: &message.ActionReceipt{
+			Receiver:       "account2",
+			ActDigest:      "0a2c71dba327cf13a107d3a4f91c9c98f510a8fbbb483b233e222033f13a3e36",
+			GlobalSequence: 2329381932,
+			RecvSequence:   22,
+			AuthSequence: []message.AccountAuthSequence{
+				{
+					Account:  "account1",
+					Sequence: 1382772,
+				},
+			},
+			CodeSequence: 1122,
+			ABISequence:  12352,
+		},
 		Data: map[string]interface{}{
 			"from":     "account1",
 			"to":       "account2",
@@ -29,7 +43,7 @@ func TestJson_EncodeActionTrace(t *testing.T) {
 		Return: []byte{0xde, 0xad, 0xbe, 0xef},
 	}
 
-	expected := `{"tx_id":"ed3b8e853647971cf8296f004c3a1aeac255f082b2cb3c12cc3222e2d7c174ab","blocknum":267372365,"blocktimestamp":"2003-03-21T17:23:09.500","name":"transfer","contract":"eosio","receiver":"account2","data":{"from":"account1","quantity":"1000.0000 WAX","to":"account2"},"authorization":[{"actor":"account1","permission":"active"}],"except":"errstr","error":2,"return":"3q2+7w=="}`
+	expected := `{"tx_id":"ed3b8e853647971cf8296f004c3a1aeac255f082b2cb3c12cc3222e2d7c174ab","blocknum":267372365,"blocktimestamp":"2003-03-21T17:23:09.500","receipt":{"receiver":"account2","act_digest":"0a2c71dba327cf13a107d3a4f91c9c98f510a8fbbb483b233e222033f13a3e36","global_sequence":2329381932,"recv_sequence":22,"auth_sequence":[{"account":"account1","sequence":1382772}],"code_sequence":1122,"abi_sequence":12352},"name":"transfer","contract":"eosio","receiver":"account2","data":{"from":"account1","quantity":"1000.0000 WAX","to":"account2"},"authorization":[{"actor":"account1","permission":"active"}],"except":"errstr","error":2,"return":"3q2+7w=="}`
 
 	data, err := encoder(msg)
 	assert.NoError(t, err)
@@ -44,6 +58,20 @@ func TestJson_DecodeActionTrace(t *testing.T) {
 		Name:      "transfer",
 		Contract:  "eosio",
 		Receiver:  "account2",
+		Receipt: &message.ActionReceipt{
+			Receiver:       "account2",
+			ActDigest:      "f2f682847fd5bf00fb315b075dc00b4ff0ce18776758077b86a233dea49dc047",
+			GlobalSequence: 287328,
+			RecvSequence:   42,
+			AuthSequence: []message.AccountAuthSequence{
+				{
+					Account:  "account1",
+					Sequence: 271877283,
+				},
+			},
+			CodeSequence: 237823,
+			ABISequence:  68323,
+		},
 		Data: map[string]interface{}{
 			"from":     "account1",
 			"to":       "account2",
@@ -57,7 +85,7 @@ func TestJson_DecodeActionTrace(t *testing.T) {
 		Return: []byte{0xde, 0xad, 0xbe, 0xef},
 	}
 
-	input := `{"tx_id":"952989f7464237b6cf9926e533ecd331df6794ed07564bd052bc368cbd65b4bc","blocknum":8723971,"blocktimestamp":"2024-06-21T08:08:26.500","name":"transfer","contract":"eosio","receiver":"account2","data":{"from":"account1","quantity":"1000.0000 WAX","to":"account2"},"authorization":[{"actor":"account1","permission":"active"}],"except":"errstr","error":2,"return":"3q2+7w=="}`
+	input := `{"tx_id":"952989f7464237b6cf9926e533ecd331df6794ed07564bd052bc368cbd65b4bc","blocknum":8723971,"blocktimestamp":"2024-06-21T08:08:26.500","receipt":{"receiver":"account2","act_digest":"f2f682847fd5bf00fb315b075dc00b4ff0ce18776758077b86a233dea49dc047","global_sequence":287328,"recv_sequence":42,"auth_sequence":[{"account":"account1","sequence":271877283}],"code_sequence":237823,"abi_sequence":68323},"name":"transfer","contract":"eosio","receiver":"account2","data":{"from":"account1","quantity":"1000.0000 WAX","to":"account2"},"authorization":[{"actor":"account1","permission":"active"}],"except":"errstr","error":2,"return":"3q2+7w=="}`
 
 	msg := message.ActionTrace{}
 	err := decoder([]byte(input), &msg)
@@ -137,7 +165,7 @@ func TestJson_DecodeTransactionTrace(t *testing.T) {
 	ts := time.Unix(1730755743, int64(time.Millisecond)*500).UTC()
 	block_num := uint32(2378197231)
 
-	input := `{"id":"f58bf8a0137fcea644dbc2b0cc5b6a017a848cd33b2e924703e7e3c6d1ca0c2e","blocknum":2378197231,"blocktimestamp":"2024-11-04T21:29:03.500","status":"executed","cpu_usage_us":442,"net_usage_words":16,"elapsed":22,"net_usage":128,"scheduled":true,"action_traces":[{"tx_id":"f58bf8a0137fcea644dbc2b0cc5b6a017a848cd33b2e924703e7e3c6d1ca0c2e","blocknum":2378197231,"blocktimestamp":"2024-11-04T21:29:03.500","name":"mine","contract":"","receiver":"actor01","data":{"equipment_id":1234,"location_id":5445453},"authorization":[{"actor":"actor01","permission":"active"}],"except":"","error":2,"return":"AQI="},{"tx_id":"f58bf8a0137fcea644dbc2b0cc5b6a017a848cd33b2e924703e7e3c6d1ca0c2e","blocknum":2378197231,"blocktimestamp":"2024-11-04T21:29:03.500","name":"addpoints","contract":"","receiver":"coolgame","data":{"points":"1023.0423 SCAM"},"authorization":[{"actor":"coolgame","permission":"usrpoints"}],"except":"","error":2,"return":"CPE="}],"except":"errstr","error":2}`
+	input := `{"id":"f58bf8a0137fcea644dbc2b0cc5b6a017a848cd33b2e924703e7e3c6d1ca0c2e","blocknum":2378197231,"blocktimestamp":"2024-11-04T21:29:03.500","status":"executed","cpu_usage_us":442,"net_usage_words":16,"elapsed":22,"net_usage":128,"scheduled":true,"action_traces":[{"tx_id":"f58bf8a0137fcea644dbc2b0cc5b6a017a848cd33b2e924703e7e3c6d1ca0c2e","blocknum":2378197231,"blocktimestamp":"2024-11-04T21:29:03.500","receipt":{"receiver":"actor01","act_digest":"bf68a227a617aa9138215d31a2847005175f01151c6feeaeb6513fe2d090ff3a","global_sequence":47322,"recv_sequence":23289,"auth_sequence":[{"account":"actor01","sequence":56637232}],"code_sequence":98272,"abi_sequence":6823762},"name":"mine","contract":"","receiver":"actor01","data":{"equipment_id":1234,"location_id":5445453},"authorization":[{"actor":"actor01","permission":"active"}],"except":"","error":2,"return":"AQI="},{"tx_id":"f58bf8a0137fcea644dbc2b0cc5b6a017a848cd33b2e924703e7e3c6d1ca0c2e","blocknum":2378197231,"blocktimestamp":"2024-11-04T21:29:03.500","name":"addpoints","contract":"","receiver":"coolgame","data":{"points":"1023.0423 SCAM"},"authorization":[{"actor":"coolgame","permission":"usrpoints"}],"except":"","error":2,"return":"CPE="}],"except":"errstr","error":2}`
 
 	expected := message.TransactionTrace{
 		Timestamp:     ts,
@@ -156,6 +184,20 @@ func TestJson_DecodeTransactionTrace(t *testing.T) {
 				Timestamp: ts,
 				Receiver:  "actor01",
 				Name:      "mine",
+				Receipt: &message.ActionReceipt{
+					Receiver:       "actor01",
+					ActDigest:      "bf68a227a617aa9138215d31a2847005175f01151c6feeaeb6513fe2d090ff3a",
+					GlobalSequence: 47322,
+					RecvSequence:   23289,
+					AuthSequence: []message.AccountAuthSequence{
+						{
+							Account:  "actor01",
+							Sequence: 56637232,
+						},
+					},
+					CodeSequence: 98272,
+					ABISequence:  6823762,
+				},
 				Authorization: []message.PermissionLevel{
 					{
 						Actor:      "actor01",
