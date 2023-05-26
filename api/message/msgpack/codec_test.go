@@ -309,9 +309,6 @@ func TestMsgpack_DecodeTransactionTrace(t *testing.T) {
 		Error:  43,
 	}
 
-	// x, _ := encode(expected)
-	// assert.Equal(t, data, string(x))
-
 	res := message.TransactionTrace{}
 	err := decode(data, &res)
 	assert.NoError(t, err)
