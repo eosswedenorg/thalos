@@ -90,6 +90,26 @@ func TestChannel_String(t *testing.T) {
 	}
 }
 
+func TestChannel_Type(t *testing.T) {
+	tests := []struct {
+		name string
+		c    Channel
+		want string
+	}{
+		{"Empty", Channel{}, "unknown"},
+		{"Heartbeat", HeartbeatChannel, "heartbeat"},
+		{"Transaction", TransactionChannel, "transactions"},
+		{"Actions", ActionChannel{}.Channel(), "actions"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.c.Type(); got != tt.want {
+				t.Errorf("Channel.Type() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
 func TestAction_Channel(t *testing.T) {
 	tests := []struct {
 		name   string

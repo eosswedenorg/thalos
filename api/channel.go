@@ -19,6 +19,13 @@ func (c Channel) String() string {
 	return c.Format("/")
 }
 
+func (c Channel) Type() string {
+	if len(c) > 0 {
+		return c[0]
+	}
+	return "unknown"
+}
+
 // Check if two channels are equal
 func (c Channel) Is(other Channel) bool {
 	if len(c) != len(other) {
