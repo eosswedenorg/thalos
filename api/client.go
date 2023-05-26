@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/eosswedenorg/thalos/api/message"
@@ -63,13 +64,16 @@ func (c *Client) hbHandler(payload []byte) {
 	c.OnHeartbeat(hb)
 }
 
-func (c *Client) Subscribe(channel Channel) {
+func (c *Client) Subscribe(channel Channel) error {
 	var handler handler
 
-	if HeartbeatChannel.Is(channel) {
+	switch t := channel.Type(); t {
+	case HeartbeatChannel.Type():
 		handler = c.hbHandler
-	} else {
+	case ActionChannel{}.Channel().Type():
 		handler = c.actHandler
+	default:
+		return fmt.Errorf("invalid channel type. %s", t)
 	}
 
 	// Start a worker for this channel.
@@ -78,6 +82,8 @@ func (c *Client) Subscribe(channel Channel) {
 		defer c.wg.Done()
 		c.worker(channel, handler)
 	}()
+
+	return nil
 }
 
 func (c *Client) Run() {
