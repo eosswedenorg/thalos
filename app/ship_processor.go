@@ -171,6 +171,25 @@ func (processor *ShipProcessor) processBlock(block *ship.GetBlocksResultV0) {
 					Receiver:  act_trace.Receiver.String(),
 				}
 
+				if act_trace.Receipt != nil {
+					receipt := actionTraceVar.Impl.(*ship.ActionReceiptV0)
+					act.Receipt = &message.ActionReceipt{
+						Receiver:       receipt.Receiver.String(),
+						ActDigest:      receipt.ActDigest.String(),
+						GlobalSequence: receipt.GlobalSequence,
+						RecvSequence:   receipt.GlobalSequence,
+						CodeSequence:   uint32(receipt.CodeSequence),
+						ABISequence:    uint32(receipt.ABISequence),
+					}
+
+					for _, auth := range receipt.AuthSequence {
+						act.Receipt.AuthSequence = append(act.Receipt.AuthSequence, message.AccountAuthSequence{
+							Account:  auth.Account.String(),
+							Sequence: auth.Sequence,
+						})
+					}
+				}
+
 				for _, auth := range act_trace.Act.Authorization {
 					act.Authorization = append(act.Authorization, message.PermissionLevel{
 						Actor:      auth.Actor.String(),
