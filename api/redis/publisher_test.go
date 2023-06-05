@@ -1,11 +1,12 @@
 package redis
 
 import (
+	"context"
 	"testing"
 
 	"github.com/eosswedenorg/thalos/api"
 
-	"github.com/go-redis/redismock/v8"
+	"github.com/go-redis/redismock/v9"
 	"github.com/stretchr/testify/assert"
 )
 

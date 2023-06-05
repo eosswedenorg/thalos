@@ -5,7 +5,7 @@ import (
 	"time"
 
 	eos "github.com/eoscanada/eos-go"
-	redis_cache "github.com/go-redis/cache/v8"
+	redis_cache "github.com/go-redis/cache/v9"
 )
 
 type Cache struct {

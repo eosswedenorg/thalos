@@ -22,10 +22,10 @@ import (
 	"github.com/eosswedenorg/thalos/app/abi"
 	"github.com/eosswedenorg/thalos/app/config"
 	. "github.com/eosswedenorg/thalos/app/log"
-	"github.com/go-redis/redis/v8"
 	"github.com/nikoksr/notify"
 	"github.com/nikoksr/notify/service/telegram"
 	"github.com/pborman/getopt/v2"
+	"github.com/redis/go-redis/v9"
 	log "github.com/sirupsen/logrus"
 )
 

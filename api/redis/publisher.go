@@ -5,7 +5,7 @@ import (
 
 	"github.com/eosswedenorg/thalos/api"
 
-	"github.com/go-redis/redis/v8"
+	"github.com/redis/go-redis/v9"
 )
 
 type Publisher struct {
@@ -32,5 +32,5 @@ func (r *Publisher) Flush() error {
 }
 
 func (r *Publisher) Close() error {
-	return r.pipeline.Close()
+	return r.Flush()
 }
