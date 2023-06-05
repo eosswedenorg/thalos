@@ -66,7 +66,7 @@ func main() {
 		"interval": interval,
 	}).Info("Starting benchmark")
 
-	sub := api_redis.NewSubscriber(rdb, api_redis.Namespace{
+	sub := api_redis.NewSubscriber(context.Background(), rdb, api_redis.Namespace{
 		Prefix:  redis_prefix,
 		ChainID: chain_id,
 	})
