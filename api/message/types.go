@@ -16,6 +16,11 @@ type PermissionLevel struct {
 	Permission string `json:"permission" msgpack:"permission"`
 }
 
+type AccountAuthSequence struct {
+	Account  string `json:"account" msgpack:"account"`
+	Sequence uint64 `json:"sequence" msgpack:"sequence"`
+}
+
 type TransactionTrace struct {
 	ID            string        `json:"id" msgpack:"id"`
 	BlockNum      uint32        `json:"blocknum" msgpack:"blocknum"`
@@ -34,12 +39,24 @@ type TransactionTrace struct {
 	// Partial         *PartialTransaction `json:"partial" eos:"optional"`
 }
 
+type ActionReceipt struct {
+	Receiver       string                `json:"receiver" msgpack:"receiver"`
+	ActDigest      string                `json:"act_digest" msgpack:"act_digest"`
+	GlobalSequence uint64                `json:"global_sequence" msgpack:"global_sequence"`
+	RecvSequence   uint64                `json:"recv_sequence" msgpack:"recv_sequence"`
+	AuthSequence   []AccountAuthSequence `json:"auth_sequence" msgpack:"auth_sequence"`
+	CodeSequence   uint32                `json:"code_sequence" msgpack:"code_sequence"`
+	ABISequence    uint32                `json:"abi_sequence" msgpack:"abi_sequence"`
+}
+
 type ActionTrace struct {
 	TxID string `json:"tx_id" msgpack:"tx_id"`
 
 	BlockNum uint32 `json:"blocknum" msgpack:"blocknum"`
 
 	Timestamp time.Time `json:"blocktimestamp" msgpack:"blocktimestamp"`
+
+	Receipt *ActionReceipt `json:"receipt,omitempty" msgpack:"receipt"`
 
 	// Action name
 	Name string `json:"name" msgpack:"name"`
