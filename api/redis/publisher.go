@@ -5,7 +5,7 @@ import (
 
 	"github.com/eosswedenorg/thalos/api"
 
-	"github.com/go-redis/redis/v8"
+	"github.com/redis/go-redis/v9"
 )
 
 type Publisher struct {
@@ -14,10 +14,10 @@ type Publisher struct {
 	ns       Namespace
 }
 
-func NewPublisher(client *redis.Client, ns Namespace) *Publisher {
+func NewPublisher(ctx context.Context, client *redis.Client, ns Namespace) *Publisher {
 	return &Publisher{
 		pipeline: client.Pipeline(),
-		ctx:      client.Context(),
+		ctx:      ctx,
 		ns:       ns,
 	}
 }
@@ -32,5 +32,5 @@ func (r *Publisher) Flush() error {
 }
 
 func (r *Publisher) Close() error {
-	return r.pipeline.Close()
+	return r.Flush()
 }

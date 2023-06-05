@@ -7,7 +7,7 @@ import (
 
 	"github.com/eosswedenorg/thalos/api"
 
-	"github.com/go-redis/redis/v8"
+	"github.com/redis/go-redis/v9"
 )
 
 type Subscriber struct {
@@ -27,10 +27,10 @@ func WithTimeout(value time.Duration) SubscriberOption {
 	}
 }
 
-func NewSubscriber(client *redis.Client, ns Namespace, options ...SubscriberOption) *Subscriber {
+func NewSubscriber(ctx context.Context, client *redis.Client, ns Namespace, options ...SubscriberOption) *Subscriber {
 	sub := &Subscriber{
-		ctx:      client.Context(),
-		sub:      client.PSubscribe(client.Context()),
+		ctx:      ctx,
+		sub:      client.PSubscribe(ctx),
 		channels: make(map[string]chan []byte),
 		timeout:  time.Millisecond * 200,
 		ns:       ns,

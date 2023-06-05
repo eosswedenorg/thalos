@@ -1,14 +1,15 @@
 package redis
 
 import (
+	"context"
 	"testing"
 	"time"
 
 	"github.com/eosswedenorg/thalos/api"
 
 	"github.com/alicebob/miniredis/v2"
-	"github.com/go-redis/redis/v8"
-	"github.com/go-redis/redismock/v8"
+	"github.com/go-redis/redismock/v9"
+	"github.com/redis/go-redis/v9"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -16,14 +17,14 @@ func TestSubscriber_Construct(t *testing.T) {
 	client, _ := redismock.NewClientMock()
 	ns := Namespace{Prefix: "prefix", ChainID: "8f2f6ec19400d372c9b3340b1438e9c805cf9e69be962fa81d055bc037ceed8d"}
 
-	s := NewSubscriber(client, ns)
+	s := NewSubscriber(context.Background(), client, ns)
 
-	assert.Equal(t, s.ctx, client.Context())
+	assert.Equal(t, s.ctx, context.Background())
 	assert.NotNil(t, s.sub)
 	assert.Equal(t, s.ns, ns)
 	assert.Equal(t, s.timeout, 200*time.Millisecond)
 
-	s = NewSubscriber(client, ns, WithTimeout(4*time.Second))
+	s = NewSubscriber(context.Background(), client, ns, WithTimeout(4*time.Second))
 	assert.Equal(t, s.timeout, 4*time.Second)
 }
 
@@ -36,7 +37,7 @@ func TestSubscriber_Read(t *testing.T) {
 		Addr: server.Addr(),
 	})
 
-	s := NewSubscriber(client, Namespace{Prefix: "prefix", ChainID: "d41dbd2921d5a377325661427090c6c508904d60920d6b7ea771c58da5299754"})
+	s := NewSubscriber(context.Background(), client, Namespace{Prefix: "prefix", ChainID: "d41dbd2921d5a377325661427090c6c508904d60920d6b7ea771c58da5299754"})
 
 	go func() {
 		time.Sleep(time.Millisecond * 10)

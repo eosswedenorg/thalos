@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"os/signal"
@@ -10,14 +11,14 @@ import (
 	_ "github.com/eosswedenorg/thalos/api/message/json"
 	api_redis "github.com/eosswedenorg/thalos/api/redis"
 
-	"github.com/go-redis/redis/v8"
+	"github.com/redis/go-redis/v9"
 )
 
 func main() {
 	// Create redis client
 	rdb := redis.NewClient(&redis.Options{})
 
-	sub := api_redis.NewSubscriber(rdb, api_redis.Namespace{
+	sub := api_redis.NewSubscriber(context.Background(), rdb, api_redis.Namespace{
 		Prefix:  "ship",
 		ChainID: "1064487b3cd1a897ce03ae5b6a865651747e2e152090f99c1d19d44e01aea5a4", // Wax mainnet.
 	})

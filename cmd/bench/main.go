@@ -13,7 +13,7 @@ import (
 	_ "github.com/eosswedenorg/thalos/api/message/json"
 	api_redis "github.com/eosswedenorg/thalos/api/redis"
 
-	"github.com/go-redis/redis/v8"
+	"github.com/redis/go-redis/v9"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -66,7 +66,7 @@ func main() {
 		"interval": interval,
 	}).Info("Starting benchmark")
 
-	sub := api_redis.NewSubscriber(rdb, api_redis.Namespace{
+	sub := api_redis.NewSubscriber(context.Background(), rdb, api_redis.Namespace{
 		Prefix:  redis_prefix,
 		ChainID: chain_id,
 	})

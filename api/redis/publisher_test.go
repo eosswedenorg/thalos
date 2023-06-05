@@ -1,18 +1,19 @@
 package redis
 
 import (
+	"context"
 	"testing"
 
 	"github.com/eosswedenorg/thalos/api"
 
-	"github.com/go-redis/redismock/v8"
+	"github.com/go-redis/redismock/v9"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestPublisher_Write(t *testing.T) {
 	client, mock := redismock.NewClientMock()
 
-	pub := NewPublisher(client, Namespace{ChainID: "id"})
+	pub := NewPublisher(context.Background(), client, Namespace{ChainID: "id"})
 
 	mock.MatchExpectationsInOrder(true)
 	mock.ExpectPublish("ship::id::test", []byte("some string")).SetVal(0)

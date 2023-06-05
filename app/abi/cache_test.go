@@ -6,8 +6,8 @@ import (
 	"time"
 
 	eos "github.com/eoscanada/eos-go"
-	redis_cache "github.com/go-redis/cache/v8"
-	"github.com/go-redis/redismock/v8"
+	redis_cache "github.com/go-redis/cache/v9"
+	"github.com/go-redis/redismock/v9"
 
 	"github.com/stretchr/testify/assert"
 )

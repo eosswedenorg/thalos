@@ -9,11 +9,11 @@ require (
 	github.com/eosswedenorg-go/antelope-ship-client v0.2.3
 	github.com/eosswedenorg-go/pid v1.0.1
 	github.com/eosswedenorg/thalos/api v0.0.0-00010101000000-000000000000
-	github.com/go-redis/cache/v8 v8.4.4
-	github.com/go-redis/redis/v8 v8.11.6-0.20220405070650-99c79f7041fc
-	github.com/go-redis/redismock/v8 v8.11.5
+	github.com/go-redis/cache/v9 v9.0.0
+	github.com/go-redis/redismock/v9 v9.0.3
 	github.com/nikoksr/notify v0.38.1
 	github.com/pborman/getopt/v2 v2.1.0
+	github.com/redis/go-redis/v9 v9.0.5
 	github.com/sirupsen/logrus v1.9.0
 	github.com/stretchr/testify v1.8.2
 	gopkg.in/yaml.v3 v3.0.1
