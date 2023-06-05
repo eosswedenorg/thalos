@@ -172,7 +172,7 @@ func (processor *ShipProcessor) processBlock(block *ship.GetBlocksResultV0) {
 				}
 
 				if act_trace.Receipt != nil {
-					receipt := actionTraceVar.Impl.(*ship.ActionReceiptV0)
+					receipt := act_trace.Receipt.Impl.(*ship.ActionReceiptV0)
 					act.Receipt = &message.ActionReceipt{
 						Receiver:       receipt.Receiver.String(),
 						ActDigest:      receipt.ActDigest.String(),
