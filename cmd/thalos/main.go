@@ -271,7 +271,7 @@ func main() {
 
 	processor := app.SpawnProccessor(
 		shClient,
-		api_redis.NewPublisher(rdb, api_redis.Namespace{
+		api_redis.NewPublisher(context.Background(), rdb, api_redis.Namespace{
 			Prefix:  conf.Redis.Prefix,
 			ChainID: getChain(chainInfo.ChainID.String()),
 		}),

@@ -12,7 +12,7 @@ import (
 func TestPublisher_Write(t *testing.T) {
 	client, mock := redismock.NewClientMock()
 
-	pub := NewPublisher(client, Namespace{ChainID: "id"})
+	pub := NewPublisher(context.Background(), client, Namespace{ChainID: "id"})
 
 	mock.MatchExpectationsInOrder(true)
 	mock.ExpectPublish("ship::id::test", []byte("some string")).SetVal(0)

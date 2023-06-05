@@ -14,10 +14,10 @@ type Publisher struct {
 	ns       Namespace
 }
 
-func NewPublisher(client *redis.Client, ns Namespace) *Publisher {
+func NewPublisher(ctx context.Context, client *redis.Client, ns Namespace) *Publisher {
 	return &Publisher{
 		pipeline: client.Pipeline(),
-		ctx:      client.Context(),
+		ctx:      ctx,
 		ns:       ns,
 	}
 }
