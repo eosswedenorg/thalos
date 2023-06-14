@@ -7,17 +7,17 @@ PREFIX=/usr/local
 BINDIR=$(PREFIX)/bin
 CFGDIR=$(PREFIX)/etc/thalos
 
-.PHONY: build build/$(PROGRAM) build/benchmark test
+.PHONY: build build/$(PROGRAM) build/thalos-tools test
 
 build: build/$(PROGRAM)
 
 build/$(PROGRAM) :
 	$(GO) build $(GOBUILDFLAGS) -o $@ cmd/thalos/main.go
 
-build-benchmark : build/benchmark
+build-tools : build/thalos-tools
 
-build/benchmark :
-	$(GO) build $(GOBUILDFLAGS) -o $@ cmd/bench/main.go
+build/thalos-tools :
+	$(GO) build $(GOBUILDFLAGS) -o $@ cmd/tools/main.go cmd/tools/bench.go
 
 install: build
 	install -D build/$(PROGRAM) $(DESTDIR)$(BINDIR)/$(PROGRAM)
