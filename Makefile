@@ -19,8 +19,9 @@ tools : build/thalos-tools
 build/thalos-tools :
 	$(GO) build $(GOBUILDFLAGS) -o $@ cmd/tools/main.go cmd/tools/bench.go cmd/tools/validate.go
 
-install: build
+install: build tools
 	install -D build/$(PROGRAM) $(DESTDIR)$(BINDIR)/$(PROGRAM)
+	install -D build/thalos-tools $(DESTDIR)$(BINDIR)/thalos-tools
 	install -m 644 -D config.example.yml $(DESTDIR)$(CFGDIR)/config.yml
 
 install-scripts:
