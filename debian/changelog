@@ -1,3 +1,11 @@
+thalos (0.1.2) bionic focal jammy; urgency=medium
+
+  * API: Adding receipt to ActionTrace.
+  * Update redis package to v9
+  * Adding thalos-tools program with benchmark and validate tools.
+
+ -- Henrik Hautakoski <henrik@eossweden.org>  Thu, 15 Jun 2023 12:08:57 +0200
+
 thalos-server (0.1.1) bionic focal jammy; urgency=medium
 
   * Backoff algorithm when reconnecting
