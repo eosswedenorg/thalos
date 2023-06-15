@@ -16,6 +16,16 @@ var rootCmd = &cobra.Command{
 	Version: VersionString,
 }
 
+func init() {
+	// Initialize logger
+	formatter := log.TextFormatter{
+		FullTimestamp:   true,
+		TimestampFormat: "2006-01-02 15:04:05.0000",
+	}
+
+	log.SetFormatter(&formatter)
+}
+
 func main() {
 	if err := rootCmd.Execute(); err != nil {
 		log.WithError(err).Fatal("Application error")
