@@ -14,7 +14,7 @@ build: build/$(PROGRAM)
 build/$(PROGRAM) :
 	$(GO) build $(GOBUILDFLAGS) -o $@ cmd/thalos/main.go
 
-build-tools : build/thalos-tools
+tools : build/thalos-tools
 
 build/thalos-tools :
 	$(GO) build $(GOBUILDFLAGS) -o $@ cmd/tools/main.go cmd/tools/bench.go cmd/tools/validate.go
