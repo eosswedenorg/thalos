@@ -1,4 +1,4 @@
-Source: thalos-server
+Source: thalos
 Section: utils
 Build-Depends:
  debhelper (>= 11)
@@ -8,7 +8,7 @@ Vcs-Browser: https://github.com/eosswedenorg/thalos
 Priority: optional
 Maintainer: Henrik Hautakoski <henrik@eossweden.org>
 
-Package: thalos-server
+Package: thalos
 Section: utils
 Priority: optional
 Architecture: amd64

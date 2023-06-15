@@ -1,0 +1,1 @@
+debian/thalos-server.service /lib/systemd/system
