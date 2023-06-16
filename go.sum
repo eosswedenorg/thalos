@@ -25,8 +25,8 @@ github.com/docker/go-units v0.5.0 h1:69rxXcBk27SvSaaxTtLh/8llcHD8vYHT7WSdRZ/jvr4
 github.com/docker/go-units v0.5.0/go.mod h1:fgPhTUdO+D/Jk86RDLlptpiXQzgHJF7gydDDbaIK4Dk=
 github.com/eoscanada/eos-go v0.10.3-0.20230413154640-bb75101dc2f6 h1:93LUOgAmRkmz8DF2V62GBAFm+7JgWA15zI1uYukBeRk=
 github.com/eoscanada/eos-go v0.10.3-0.20230413154640-bb75101dc2f6/go.mod h1:L3avCf8OkDrjlUeNy9DdoV67TCmDNj2dSlc5Xp3DNNk=
-github.com/eosswedenorg-go/antelope-ship-client v0.2.3 h1:08HOQj3YtlEYVsm0RoNZ27JsZWikrUISKAUli6H1Qac=
-github.com/eosswedenorg-go/antelope-ship-client v0.2.3/go.mod h1:kZ/4gkAIdAq4/WiZlVaSONpELcDCMJQJMmlikLUGCb8=
+github.com/eosswedenorg-go/antelope-ship-client v0.2.5 h1:Tn5i3HDTGdfn5VgDNLAAV1DzF5j7JfrQLb2ZSZkcLp4=
+github.com/eosswedenorg-go/antelope-ship-client v0.2.5/go.mod h1:kZ/4gkAIdAq4/WiZlVaSONpELcDCMJQJMmlikLUGCb8=
 github.com/eosswedenorg-go/jsontime v0.0.0-20230509125027-08422d6236c7 h1:rLPu++RHaxg4WmUOXeWYioZuafWs0PVcYuvzOWbOJjk=
 github.com/eosswedenorg-go/jsontime v0.0.0-20230509125027-08422d6236c7/go.mod h1:eNUkVOymzgl0lViUhmm08PkutzqLnOQ6Dr+RUnf+Mq0=
 github.com/eosswedenorg-go/pid v1.0.1 h1:W4AEnnNwb041SpNR1uTZ/KbJ0OTA5eqiqIR1Q5Ah6A0=
