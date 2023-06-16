@@ -1,6 +1,6 @@
 
 GO=go
-GOBUILDFLAGS=-v -ldflags="-v -s -w -X main.VersionString=$(PROGRAM_VERSION)"
+GOBUILDFLAGS=-v -p $(shell nproc) -ldflags="-v -s -w -X main.VersionString=$(PROGRAM_VERSION)"
 PROGRAM=thalos-server
 PROGRAM_VERSION=0.1.2
 PREFIX=/usr/local
