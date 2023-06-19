@@ -45,7 +45,7 @@ ship:
 
 # Telegram notifications
 #telegram:
-#  id: "110201543:AAHdqTcvCH1vGWJxfSeofSAs0K5PALDsaw"
+#  id: "123456789:GPdmGPBWvpgHPxlergJLavus-PoAURTjMWP"
 #  channel: -123456789
 
 # Redis settings
