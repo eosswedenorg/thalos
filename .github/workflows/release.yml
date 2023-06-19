@@ -24,22 +24,40 @@ jobs:
       - name: compile
         id: compile
         run: |
-          GOOS=${{matrix.os}} GOARCH=${{matrix.arch}} make
-          FILE=$(find build -type f | head -1)
+          mkdir -p build/bundle/{bin,logs}
+          GOOS=${{matrix.os}} GOARCH=${{matrix.arch}} make -e DESTDIR=build/bundle PREFIX= CFGDIR= install install-scripts
+          tar -C build/bundle -z -cf build/bundle.tar.gz .
           echo "version=$(sed -n 's/.*PROGRAM_VERSION\s*=\s*//p' Makefile)" >> "$GITHUB_OUTPUT"
-          echo "filename=$FILE" >> "$GITHUB_OUTPUT"
-          echo "name=$(basename $FILE)" >> "$GITHUB_OUTPUT"
-          echo "mime=$(file -bi $FILE)" >> "$GITHUB_OUTPUT"
 
-      - name: Upload
+      - name: Upload thalos-server
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_name: ${{ steps.compile.outputs.name }}-${{steps.compile.outputs.version}}-${{matrix.os}}-${{matrix.arch}}
-          asset_path: ${{ steps.compile.outputs.filename }}
-          asset_content_type: ${{ steps.compile.outputs.mime }}
+          asset_name: thalos-server-${{steps.compile.outputs.version}}-${{matrix.os}}-${{matrix.arch}}
+          asset_path: build/thalos-server
+          asset_content_type: application/octal-stream
+
+      - name: Upload thalos-tools
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_name: thalos-tools-${{steps.compile.outputs.version}}-${{matrix.os}}-${{matrix.arch}}
+          asset_path: build/thalos-tools
+          asset_content_type: application/octal-stream
+
+      - name: Upload bundle
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_name: thalos-${{steps.compile.outputs.version}}-${{matrix.os}}-${{matrix.arch}}.tar.gz
+          asset_path: build/bundle.tar.gz
+          asset_content_type: application/tar+gzip
 
   package-ubuntu:
     strategy:
