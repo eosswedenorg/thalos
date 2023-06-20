@@ -26,13 +26,34 @@ or using go directly if you dont have make installed.
 $ go build -o build/thalos-server cmd/main/main.go
 ```
 
-
 ## Install
 
-After compiling the binary, you can install it along with basic config file and start/stop scripts using `install.sh`
+There are several ways to install thalos, via package manager, downloading a pre-built binary or building directly from source.
+
+### Package Managers
+
+* [Debian/Ubuntu based (apt)](docs/install/debian.md)
+
+## Manually using prebuilt binaries
+
+You can get the latest archive package [here](https://github.com/eosswedenorg/thalos/releases/latest)
+
+Simply download using your webbrowser or via curl:
+
+```sh
+curl -Ls https://github.com/eosswedenorg/thalos/releases/download/<version>/thalos-server-<version>-linux-amd64.tar.gz | tar -z --one-top-level=thalos -xvf -
+```
+
+**NOTE**: Using curl command above, the files are extracted into the `thalos` subdirectory of the current directory where the command is run.
+
+## From source
+
+Follow the instructions from the [Compiling](#compiling) section.
+
+After building the binary you can install it along with basic config file and start/stop scripts using `install.sh`
 
 ```shell
-$ ./install.sh /path/to/your/directory/of/choice
+./install.sh /path/to/your/directory/of/choice
 ```
 
 ## Runtime dependencies
