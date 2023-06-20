@@ -3,7 +3,7 @@
 name: "ship-reader-1"
 
 # Endpoint to nodeos api
-api: "http://127.0.0.1:8080"
+api: "http://127.0.0.1:8888"
 message_codec: "json"
 
 # Logging settings
@@ -27,7 +27,7 @@ log:
 ship:
 
   # Url to ship api.
-  url: "ws://127.0.0.1:8089"
+  url: "ws://127.0.0.1:8080"
 
   # Name of chain. Note that this is just a name to be used in channel namespace.
   # If unset, chain id from api is used.
