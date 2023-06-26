@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -40,6 +41,8 @@ var shClient *shipclient.Stream
 var running bool = false
 
 var VersionString string = "dev"
+
+var exit chan bool
 
 func readerLoop() {
 	running = true
@@ -101,7 +104,17 @@ func readerLoop() {
 
 		recon_cnt = 0
 		log.Infof("Connected, Start: %d, End: %d", shClient.StartBlock, shClient.EndBlock)
-		log.WithError(shClient.Run()).Error("Failed to read from ship")
+
+		if err := shClient.Run(); err != nil {
+
+			if errors.Is(err, shipclient.ErrEndBlockReached) {
+				exit <- true
+				log.Info("Endblock reached.")
+				break
+			}
+
+			log.WithError(err).Error("Failed to read from ship")
+		}
 	}
 }
 
@@ -116,13 +129,17 @@ func run() {
 	signal.Notify(signals, syscall.SIGINT, syscall.SIGTERM)
 
 	// Wait for interrupt
-	sig := <-signals
-	log.WithField("signal", sig).Info("Signal received")
+	select {
+	case sig := <-signals:
+		log.WithField("signal", sig).Info("Signal received")
 
-	// Cleanly close the connection by sending a close message.
-	err := shClient.Shutdown()
-	if err != nil {
-		log.WithError(err).Info("failed to send close message to ship server")
+		// Cleanly close the connection by sending a close message.
+		err := shClient.Shutdown()
+		if err != nil {
+			log.WithError(err).Info("failed to send close message to ship server")
+		}
+	case <-exit:
+		// Do nothing, just exit.
 	}
 
 	running = false
@@ -138,6 +155,8 @@ func getChain(def string) string {
 func main() {
 	var err error
 	var chainInfo *eos.InfoResp
+
+	exit = make(chan bool)
 
 	showHelp := getopt.BoolLong("help", 'h', "display this help text")
 	showVersion := getopt.BoolLong("version", 'v', "display this help text")
