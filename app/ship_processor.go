@@ -128,7 +128,19 @@ func (processor *ShipProcessor) processBlock(block *ship.GetBlocksResultV0) {
 
 			logger := log.WithField("tx_id", trace.ID.String())
 
-			processor.encodeQueue(api.TransactionChannel, trace)
+			transaction := message.TransactionTrace{
+				ID:            trace.ID.String(),
+				BlockNum:      block.Block.BlockNumber(),
+				Timestamp:     block.Block.Timestamp.Time.UTC(),
+				Status:        trace.Status.String(),
+				CPUUsageUS:    trace.CPUUsageUS,
+				NetUsage:      trace.NetUsage,
+				NetUsageWords: uint32(trace.NetUsageWords),
+				Elapsed:       int64(trace.Elapsed),
+				Scheduled:     trace.Scheduled,
+				Except:        trace.Except,
+				Error:         trace.ErrorCode,
+			}
 
 			// Actions
 			for _, actionTraceVar := range trace.ActionTraces {
@@ -215,6 +227,8 @@ func (processor *ShipProcessor) processBlock(block *ship.GetBlocksResultV0) {
 					continue
 				}
 
+				transaction.ActionTraces = append(transaction.ActionTraces, act)
+
 				channels := []api.Channel{
 					api.ActionChannel{}.Channel(),
 					api.ActionChannel{Name: act.Name}.Channel(),
@@ -226,6 +240,8 @@ func (processor *ShipProcessor) processBlock(block *ship.GetBlocksResultV0) {
 					processor.queueMessage(channel, payload)
 				}
 			}
+
+			processor.encodeQueue(api.TransactionChannel, transaction)
 		}
 	}
 
