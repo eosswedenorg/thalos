@@ -31,6 +31,7 @@ func NewAbiManager(rdb *redis.Client, api *eos.API, id string) *AbiManager {
 	}
 }
 
+// Set or update an ABI in the cache.
 func (mgr *AbiManager) SetAbi(account eos.AccountName, abi *eos.ABI) error {
 	return mgr.cache.Set(string(account), abi, time.Hour)
 }
