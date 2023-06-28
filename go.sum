@@ -28,6 +28,8 @@ github.com/eoscanada/eos-go v0.10.3-0.20230413154640-bb75101dc2f6 h1:93LUOgAmRkm
 github.com/eoscanada/eos-go v0.10.3-0.20230413154640-bb75101dc2f6/go.mod h1:L3avCf8OkDrjlUeNy9DdoV67TCmDNj2dSlc5Xp3DNNk=
 github.com/eosswedenorg-go/antelope-ship-client v0.2.6-0.20230619114830-a4e1c4b91f25 h1:IR2hb8VXScZyuZLY2ZZHv8NtBOyvj8cSt1iYmciul2c=
 github.com/eosswedenorg-go/antelope-ship-client v0.2.6-0.20230619114830-a4e1c4b91f25/go.mod h1:kZ/4gkAIdAq4/WiZlVaSONpELcDCMJQJMmlikLUGCb8=
+github.com/eosswedenorg-go/antelope-ship-client v0.2.6 h1:0wPF9TC867eG/+rEzJd0L+TtSOrP09YQzcbDU050FoA=
+github.com/eosswedenorg-go/antelope-ship-client v0.2.6/go.mod h1:kZ/4gkAIdAq4/WiZlVaSONpELcDCMJQJMmlikLUGCb8=
 github.com/eosswedenorg-go/jsontime v0.0.0-20230509125027-08422d6236c7 h1:rLPu++RHaxg4WmUOXeWYioZuafWs0PVcYuvzOWbOJjk=
 github.com/eosswedenorg-go/jsontime v0.0.0-20230509125027-08422d6236c7/go.mod h1:eNUkVOymzgl0lViUhmm08PkutzqLnOQ6Dr+RUnf+Mq0=
 github.com/eosswedenorg-go/pid v1.0.1 h1:W4AEnnNwb041SpNR1uTZ/KbJ0OTA5eqiqIR1Q5Ah6A0=
