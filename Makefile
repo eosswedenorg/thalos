@@ -18,7 +18,7 @@ build/$(PROGRAM) :
 tools : build/thalos-tools
 
 build/thalos-tools :
-	$(GO) build $(GOBUILDFLAGS) -o $@ cmd/tools/main.go cmd/tools/bench.go cmd/tools/validate.go
+	$(GO) build $(GOBUILDFLAGS) -o $@ cmd/tools/main.go cmd/tools/flags.go cmd/tools/bench.go cmd/tools/validate.go
 
 install: build tools
 	install -D build/$(PROGRAM) $(DESTDIR)$(BINDIR)/$(PROGRAM)
