@@ -7,7 +7,7 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/spf13/cobra"
+	"github.com/urfave/cli/v2"
 
 	"github.com/eosswedenorg/thalos/api"
 	"github.com/eosswedenorg/thalos/api/message"
@@ -49,32 +49,34 @@ func (t *Tester) OnAction(act message.ActionTrace) {
 	t.timer.Reset(t.timeout)
 }
 
-var validateCmd = &cobra.Command{
-	Use:     "validate",
-	Short:   "Run a benchmark against a thalos node",
-	Example: "thalos-tools bench -u 192.168.0.123:6379 --redis-db 1 --chain_id my_id -i 5m",
-	Run: func(cmd *cobra.Command, args []string) {
+var validateCmd = &cli.Command{
+	Name:  "validate",
+	Usage: "Run a benchmark against a thalos node",
+	Flags: []cli.Flag{
+		redisUrlFlag,
+		redisDbFlag,
+		redisPrefixFlag,
+		chainIdFlag,
+	},
+	Action: func(ctx *cli.Context) error {
 		tester := NewTester(time.Second * 5)
 		status_duration := time.Second * 10
 
 		log.WithFields(log.Fields{
-			"url":      redis_url,
-			"prefix":   redis_prefix,
-			"chain_id": chain_id,
-			"database": redis_db,
+			"url":      ctx.String("redis-url"),
+			"prefix":   ctx.String("redis-prefix"),
+			"chain_id": ctx.String("chain_id"),
+			"database": ctx.Int("redis-db"),
 		}).Info("Connecting to redis")
 
 		// Create redis client
 		rdb := redis.NewClient(&redis.Options{
-			Addr: redis_url,
-			DB:   redis_db,
+			Addr: ctx.String("redis-url"),
+			DB:   ctx.Int("redis-db"),
 		})
 
-		status := rdb.Ping(context.Background())
-
-		if status.Err() != nil {
-			log.Fatal("cant connect to redis: ", status.Err())
-			return
+		if err := rdb.Ping(context.Background()).Err(); err != nil {
+			return err
 		}
 
 		log.Println("Connected to redis")
@@ -82,14 +84,13 @@ var validateCmd = &cobra.Command{
 		log.Info("Starting validation, following the stream")
 
 		sub := api_redis.NewSubscriber(context.Background(), rdb, api_redis.Namespace{
-			Prefix:  redis_prefix,
-			ChainID: chain_id,
+			Prefix:  ctx.String("redis-prefix"),
+			ChainID: ctx.String("chain_id"),
 		})
 
 		codec, err := message.GetCodec("json")
 		if err != nil {
-			log.Fatal(err)
-			return
+			return err
 		}
 
 		client := api.NewClient(sub, codec.Decoder)
@@ -97,8 +98,7 @@ var validateCmd = &cobra.Command{
 
 		// Subscribe to all actions
 		if err = client.Subscribe(api.ActionChannel{}.Channel()); err != nil {
-			log.Fatal(err)
-			return
+			return err
 		}
 
 		go func() {
@@ -124,9 +124,7 @@ var validateCmd = &cobra.Command{
 
 		// Read stuff.
 		client.Run()
-	},
-}
 
-func init() {
-	rootCmd.AddCommand(validateCmd)
+		return nil
+	},
 }

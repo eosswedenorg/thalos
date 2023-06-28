@@ -7,7 +7,7 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/spf13/cobra"
+	"github.com/urfave/cli/v2"
 
 	"github.com/eosswedenorg/thalos/api"
 	"github.com/eosswedenorg/thalos/api/message"
@@ -18,40 +18,62 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-var (
-	interval time.Duration
-	chain_id string
+var chainIdFlag = &cli.StringFlag{
+	Name:  "chain_id",
+	Value: "1064487b3cd1a897ce03ae5b6a865651747e2e152090f99c1d19d44e01aea5a4",
+}
 
-	redis_prefix string
-	redis_url    string
-	redis_db     int
-)
+var redisPrefixFlag = &cli.StringFlag{
+	Name:  "prefix",
+	Value: "ship",
+}
 
-var benchCmd = &cobra.Command{
-	Use:     "bench",
-	Short:   "Run a benchmark against a thalos node",
-	Example: "thalos-tools bench -u 192.168.0.123:6379 --redis-db 1 --chain_id my_id -i 5m",
-	Run: func(cmd *cobra.Command, args []string) {
+var redisUrlFlag = &cli.StringFlag{
+	Name:  "redis-url",
+	Value: "127.0.0.1:6379",
+	Usage: "host:port to the redis server",
+}
+
+var redisDbFlag = &cli.IntFlag{
+	Name:  "redis-db",
+	Value: 0,
+	Usage: "What redis database we should connect to.",
+}
+
+var benchCmd = &cli.Command{
+	Name:  "bench",
+	Usage: "Run a benchmark against a thalos node",
+	Flags: []cli.Flag{
+		redisUrlFlag,
+		redisDbFlag,
+		redisPrefixFlag,
+		chainIdFlag,
+		&cli.DurationFlag{
+			Name:    "interval",
+			Aliases: []string{"i"},
+			Value:   time.Minute,
+			Usage:   "How often the benchmark results should be displayed.",
+		},
+	},
+	Action: func(ctx *cli.Context) error {
 		var counter int = 0
+		interval := ctx.Duration("interval")
 
 		log.WithFields(log.Fields{
-			"url":      redis_url,
-			"prefix":   redis_prefix,
-			"chain_id": chain_id,
-			"database": redis_db,
+			"url":      ctx.String("redis-url"),
+			"prefix":   ctx.String("redis-prefix"),
+			"chain_id": ctx.String("chain_id"),
+			"database": ctx.Int("redis-db"),
 		}).Info("Connecting to redis")
 
 		// Create redis client
 		rdb := redis.NewClient(&redis.Options{
-			Addr: redis_url,
-			DB:   redis_db,
+			Addr: ctx.String("redis-url"),
+			DB:   ctx.Int("redis-db"),
 		})
 
-		status := rdb.Ping(context.Background())
-
-		if status.Err() != nil {
-			log.Fatal("cant connect to redis: ", status.Err())
-			return
+		if err := rdb.Ping(context.Background()).Err(); err != nil {
+			return err
 		}
 
 		log.Println("Connected to redis")
@@ -61,14 +83,13 @@ var benchCmd = &cobra.Command{
 		}).Info("Starting benchmark")
 
 		sub := api_redis.NewSubscriber(context.Background(), rdb, api_redis.Namespace{
-			Prefix:  redis_prefix,
-			ChainID: chain_id,
+			Prefix:  ctx.String("redis-prefix"),
+			ChainID: ctx.String("chain_id"),
 		})
 
 		codec, err := message.GetCodec("json")
 		if err != nil {
-			log.Fatal(err)
-			return
+			return err
 		}
 
 		client := api.NewClient(sub, codec.Decoder)
@@ -79,8 +100,7 @@ var benchCmd = &cobra.Command{
 
 		// Subscribe to all actions
 		if err = client.Subscribe(api.ActionChannel{}.Channel()); err != nil {
-			log.Fatal(err)
-			return
+			return err
 		}
 
 		go func() {
@@ -113,16 +133,7 @@ var benchCmd = &cobra.Command{
 
 		// Read stuff.
 		client.Run()
+
+		return nil
 	},
-}
-
-func init() {
-	benchCmd.Flags().DurationVarP(&interval, "interval", "i", time.Minute, "How often the benchmark results should be displayed.")
-	benchCmd.Flags().StringVar(&chain_id, "chain_id", "1064487b3cd1a897ce03ae5b6a865651747e2e152090f99c1d19d44e01aea5a4", "")
-	benchCmd.Flags().StringVar(&redis_prefix, "prefix", "ship", "")
-
-	benchCmd.Flags().StringVarP(&redis_url, "redis-url", "u", "127.0.0.1:6379", "host:port to the redis server")
-	benchCmd.Flags().IntVar(&redis_db, "redis-db", 0, "What redis database we should connect to.")
-
-	rootCmd.AddCommand(benchCmd)
 }
