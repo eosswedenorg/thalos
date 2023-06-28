@@ -51,7 +51,7 @@ func (t *Tester) OnAction(act message.ActionTrace) {
 
 var validateCmd = &cli.Command{
 	Name:  "validate",
-	Usage: "Run a benchmark against a thalos node",
+	Usage: "Validate a thalos server by following action traces and makes sure that blocks arrive in order.",
 	Flags: []cli.Flag{
 		redisUrlFlag,
 		redisDbFlag,
