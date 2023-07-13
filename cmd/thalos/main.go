@@ -279,13 +279,15 @@ func main() {
 		return
 	}
 
+	chain_id := getChain(chainInfo.ChainID.String())
+
 	processor := app.SpawnProccessor(
 		shClient,
 		api_redis.NewPublisher(context.Background(), rdb, api_redis.Namespace{
 			Prefix:  conf.Redis.Prefix,
-			ChainID: getChain(chainInfo.ChainID.String()),
+			ChainID: chain_id,
 		}),
-		abi.NewAbiManager(rdb, eosClient, conf.Redis.CacheID),
+		abi.NewAbiManager(rdb, eosClient, chain_id),
 		codec,
 	)
 
