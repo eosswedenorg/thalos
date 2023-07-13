@@ -75,7 +75,7 @@ var abiString = `
 func TestGetSet(t *testing.T) {
 	client, mock := redismock.NewClientMock()
 
-	c := NewCache("abi.cache.test", &redis_cache.Options{
+	c := NewCache("thalos::cache::test", &redis_cache.Options{
 		Redis: client,
 		// Cache 10k keys for 1 minute.
 		LocalCache: redis_cache.NewTinyLFU(10000, time.Minute),
@@ -86,7 +86,7 @@ func TestGetSet(t *testing.T) {
 
 	bytes, _ := c.c.Marshal(*abi)
 
-	mock.ExpectSet("abi.cache.test.testaccount", bytes, time.Minute).SetVal("OK")
+	mock.ExpectSet("thalos::cache::test::testaccount", bytes, time.Minute).SetVal("OK")
 
 	err = c.Set("testaccount", abi, time.Minute)
 	assert.NoError(t, err)
@@ -147,7 +147,7 @@ func TestGetSet(t *testing.T) {
 func TestCacheMiss(t *testing.T) {
 	client, _ := redismock.NewClientMock()
 
-	c := NewCache("abi.cache.test", &redis_cache.Options{
+	c := NewCache("thalos::cache::test", &redis_cache.Options{
 		Redis: client,
 		// Cache 10k keys for 1 minute.
 		LocalCache: redis_cache.NewTinyLFU(10000, time.Minute),

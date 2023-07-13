@@ -38,5 +38,5 @@ func (cache *Cache) Set(account string, abi *eos.ABI, ttl time.Duration) error {
 }
 
 func (cache *Cache) key(account string) string {
-	return cache.prefix + "." + account
+	return cache.prefix + "::" + account
 }
