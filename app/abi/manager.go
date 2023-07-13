@@ -18,7 +18,7 @@ type AbiManager struct {
 
 func NewAbiManager(rdb *redis.Client, api *eos.API, id string) *AbiManager {
 	// Init abi cache
-	cache := NewCache("ship.cache."+id+".abi", &redis_cache.Options{
+	cache := NewCache("thalos::cache::"+id+"::abi", &redis_cache.Options{
 		Redis: rdb,
 		// Cache 10k keys for 10 minutes.
 		LocalCache: redis_cache.NewTinyLFU(10000, 10*time.Minute),
