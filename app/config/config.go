@@ -13,6 +13,7 @@ import (
 
 type RedisConfig struct {
 	Addr     string `yaml:"addr"`
+	User     string `yaml:"user"`
 	Password string `yaml:"password"`
 	DB       int    `yaml:"db"`
 	CacheID  string `yaml:"cache_id"`

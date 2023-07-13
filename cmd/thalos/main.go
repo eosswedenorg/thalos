@@ -239,6 +239,7 @@ func main() {
 	// Connect to redis
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     conf.Redis.Addr,
+		Username: conf.Redis.User,
 		Password: conf.Redis.Password,
 		DB:       conf.Redis.DB,
 	})

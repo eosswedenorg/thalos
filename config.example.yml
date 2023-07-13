@@ -53,6 +53,9 @@ redis:
   # Address (and port) to redis server
   addr: "localhost:6379"
 
+  # Username to use when authenticating
+  user: ""
+
   # Password to use when authenticating
   pasword: ""
 

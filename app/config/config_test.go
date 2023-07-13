@@ -63,6 +63,7 @@ func TestParse(t *testing.T) {
 		},
 		Redis: RedisConfig{
 			Addr:     "localhost:6379",
+			User:     "myuser",
 			Password: "passwd",
 			DB:       4,
 			Prefix:   "some::ship",
@@ -89,6 +90,7 @@ telegram:
   channel: -123456789
 redis:
   addr: "localhost:6379"
+  user: "myuser"
   password: "passwd"
   db: 4
   prefix: "some::ship"
