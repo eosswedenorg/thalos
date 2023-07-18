@@ -225,16 +225,19 @@ func main() {
 	}
 
 	// Init telegram notification service
-	telegram, err := telegram.New(conf.Telegram.Id)
-	if err != nil {
-		log.WithError(err).Fatal("Failed to initialize telegram")
-		return
+	if len(conf.Telegram.Id) > 0 {
+
+		telegram, err := telegram.New(conf.Telegram.Id)
+		if err != nil {
+			log.WithError(err).Fatal("Failed to initialize telegram")
+			return
+		}
+
+		telegram.AddReceivers(conf.Telegram.Channel)
+
+		// Register services in notification manager
+		notify.UseServices(telegram)
 	}
-
-	telegram.AddReceivers(conf.Telegram.Channel)
-
-	// Register services in notification manager
-	notify.UseServices(telegram)
 
 	// Connect to redis
 	rdb := redis.NewClient(&redis.Options{
