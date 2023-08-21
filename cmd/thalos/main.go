@@ -44,7 +44,7 @@ var VersionString string = "dev"
 
 var exit chan bool
 
-func readerLoop() {
+func readerLoop(processor *app.ShipProcessor) {
 	running = true
 	recon_cnt := 0
 
@@ -74,6 +74,11 @@ func readerLoop() {
 		if err := shClient.Connect(conf.Ship.Url); err != nil {
 			return err
 		}
+
+		// Set stream client start block to processors current block
+		// Both values should be the same on first connect, but when reconnecting
+		// We don't want to start from the beginning
+		shClient.StartBlock = processor.GetCurrentBlock()
 
 		return shClient.SendBlocksRequest()
 	}
@@ -118,9 +123,9 @@ func readerLoop() {
 	}
 }
 
-func run() {
+func run(processor *app.ShipProcessor) {
 	// Spawn reader loop in another thread.
-	go readerLoop()
+	go readerLoop(processor)
 
 	// Create interrupt channel.
 	signals := make(chan os.Signal, 1)
@@ -295,7 +300,7 @@ func main() {
 	)
 
 	// Run the application
-	run()
+	run(processor)
 
 	// Close the processor properly
 	processor.Close()
