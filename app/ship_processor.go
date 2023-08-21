@@ -34,17 +34,21 @@ type ShipProcessor struct {
 	shipStream *shipclient.Stream
 	encode     message.Encoder
 
+	// Keep track of the current block we have processed.
+	current_block uint32
+
 	// System contract ("eosio" per default)
 	syscontract eos.AccountName
 }
 
 func SpawnProccessor(shipStream *shipclient.Stream, writer api.Writer, abi *abi.AbiManager, codec message.Codec) *ShipProcessor {
 	processor := &ShipProcessor{
-		abi:         abi,
-		writer:      writer,
-		shipStream:  shipStream,
-		encode:      logDecoratedEncoder(codec.Encoder),
-		syscontract: eos.AccountName("eosio"),
+		abi:           abi,
+		writer:        writer,
+		shipStream:    shipStream,
+		encode:        logDecoratedEncoder(codec.Encoder),
+		syscontract:   eos.AccountName("eosio"),
+		current_block: shipStream.StartBlock,
 	}
 
 	// Attach handlers
@@ -107,9 +111,15 @@ func (processor *ShipProcessor) updateAbiFromAction(act *ship.Action) error {
 	return processor.abi.SetAbi(set_abi.Account, &contract_abi)
 }
 
+func (processor *ShipProcessor) GetCurrentBlock() uint32 {
+	return processor.current_block
+}
+
 func (processor *ShipProcessor) processBlock(block *ship.GetBlocksResultV0) {
+	processor.current_block = block.ThisBlock.BlockNum
+
 	if block.ThisBlock.BlockNum%100 == 0 {
-		log.Infof("Current: %d, Head: %d", block.ThisBlock.BlockNum, block.Head.BlockNum)
+		log.Infof("Current: %d, Head: %d", processor.current_block, block.Head.BlockNum)
 	}
 
 	if block.ThisBlock.BlockNum%10 == 0 {
