@@ -23,6 +23,8 @@ var benchCmd = &cli.Command{
 	Usage: "Run a benchmark against a thalos node",
 	Flags: []cli.Flag{
 		redisUrlFlag,
+		redisUserFlag,
+		redisPasswordFlag,
 		redisDbFlag,
 		redisPrefixFlag,
 		chainIdFlag,
@@ -46,8 +48,10 @@ var benchCmd = &cli.Command{
 
 		// Create redis client
 		rdb := redis.NewClient(&redis.Options{
-			Addr: ctx.String("redis-url"),
-			DB:   ctx.Int("redis-db"),
+			Addr:     ctx.String("redis-url"),
+			Username: ctx.String("redis-user"),
+			Password: ctx.String("redis-pw"),
+			DB:       ctx.Int("redis-db"),
 		})
 
 		if err := rdb.Ping(context.Background()).Err(); err != nil {
