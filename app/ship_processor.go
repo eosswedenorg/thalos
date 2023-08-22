@@ -28,11 +28,20 @@ func logDecoratedEncoder(encoder message.Encoder) message.Encoder {
 	}
 }
 
+// A ShipProcessor will consume messages from a ship stream, convert the messages into
+// thalos specfic ones, encode them and finally post them to an api.Writer
 type ShipProcessor struct {
-	abi        *abi.AbiManager
-	writer     api.Writer
+	// The ship stream to process.
 	shipStream *shipclient.Stream
-	encode     message.Encoder
+
+	// Abi manager used for cacheing
+	abi *abi.AbiManager
+
+	// Writer to send messages to.
+	writer api.Writer
+
+	// Encoder used to encode messages
+	encode message.Encoder
 
 	// Keep track of the current block we have processed.
 	current_block uint32
@@ -41,6 +50,7 @@ type ShipProcessor struct {
 	syscontract eos.AccountName
 }
 
+// SpawnProcessor creates a new ShipProccessor that consumes the shipclient.Stream passed to it.
 func SpawnProccessor(shipStream *shipclient.Stream, writer api.Writer, abi *abi.AbiManager, codec message.Codec) *ShipProcessor {
 	processor := &ShipProcessor{
 		abi:           abi,
@@ -84,6 +94,7 @@ func decode(abi *eos.ABI, act *ship.Action, v any) error {
 	return json.Unmarshal(jsondata, v)
 }
 
+// updateAbiFromAction updates the contract abi based on the ship.Action passed.
 func (processor *ShipProcessor) updateAbiFromAction(act *ship.Action) error {
 	ABI, err := processor.abi.GetAbi(processor.syscontract)
 	if err != nil {
@@ -111,10 +122,12 @@ func (processor *ShipProcessor) updateAbiFromAction(act *ship.Action) error {
 	return processor.abi.SetAbi(set_abi.Account, &contract_abi)
 }
 
+// Get the current block.
 func (processor *ShipProcessor) GetCurrentBlock() uint32 {
 	return processor.current_block
 }
 
+// Callback function called by shipclient.Stream when a new block arrives.
 func (processor *ShipProcessor) processBlock(block *ship.GetBlocksResultV0) {
 	processor.current_block = block.ThisBlock.BlockNum
 
@@ -261,6 +274,7 @@ func (processor *ShipProcessor) processBlock(block *ship.GetBlocksResultV0) {
 	}
 }
 
+// Close closes the writer assciated with the processor.
 func (processor *ShipProcessor) Close() error {
 	return processor.writer.Close()
 }

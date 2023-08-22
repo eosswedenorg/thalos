@@ -10,12 +10,14 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
+// AbiManager handles an ABI cache that fetches the ABI from an API on cache miss.
 type AbiManager struct {
 	cache *Cache
 	api   *eos.API
 	ctx   context.Context
 }
 
+// Create a new ABI Manager
 func NewAbiManager(rdb *redis.Client, api *eos.API, id string) *AbiManager {
 	// Init abi cache
 	cache := NewCache("thalos::cache::"+id+"::abi", &redis_cache.Options{
@@ -36,6 +38,8 @@ func (mgr *AbiManager) SetAbi(account eos.AccountName, abi *eos.ABI) error {
 	return mgr.cache.Set(string(account), abi, time.Hour)
 }
 
+// Get an ABI from the cache, on cache miss it is fetched from the
+// API, gets cached and then returned to the user
 func (mgr *AbiManager) GetAbi(account eos.AccountName) (*eos.ABI, error) {
 	key := string(account)
 

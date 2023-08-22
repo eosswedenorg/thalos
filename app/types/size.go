@@ -6,9 +6,10 @@ import (
 )
 
 // Size is an alias of int64 that can handle sizes represented
-// in human readable strings like "200mb", "20 GB" etc
+// in human readable strings like "200mb", "20 GB" etc.
 
-type Size int64 // Size in bytes.
+// The value is in bytes.
+type Size int64
 
 // Parse a string into number of bytes stored in a int64
 func (s *Size) Parse(value string) error {

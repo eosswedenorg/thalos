@@ -8,6 +8,8 @@ import (
 	"time"
 )
 
+// Rotating file represents a file that can be rotated when either the file
+// becomes to large or to old, whatever comes first
 type RotatingFile struct {
 	fd      *os.File
 	size    int64
@@ -21,6 +23,7 @@ func open(filename string) (*os.File, error) {
 	return os.OpenFile(filename, os.O_CREATE|os.O_RDWR|os.O_APPEND, 0o666)
 }
 
+// Open a new rotating file.
 func NewRotatingFile(filename string, maxSize int64, maxAge time.Duration) (*RotatingFile, error) {
 	if err := os.MkdirAll(path.Dir(filename), 0o766); err != nil && !os.IsExist(err) {
 		return nil, err
@@ -46,6 +49,7 @@ func NewRotatingFile(filename string, maxSize int64, maxAge time.Duration) (*Rot
 	}, nil
 }
 
+// Open a new rotating file using a config struct.
 func NewRotatingFileFromConfig(config Config, suffix string) (*RotatingFile, error) {
 	if len(suffix) > 0 {
 		suffix = "_" + suffix
@@ -62,6 +66,7 @@ func (w *RotatingFile) newFilename(name string) string {
 	return fmt.Sprintf("%s-%s%s", name, time.Now().Format(w.format), ext)
 }
 
+// Get the filename
 func (w RotatingFile) GetFilename() string {
 	return path.Base(w.fd.Name())
 }
