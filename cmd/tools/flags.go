@@ -15,6 +15,16 @@ var redisUrlFlag = &cli.StringFlag{
 	Usage: "host:port to the redis server",
 }
 
+var redisUserFlag = &cli.StringFlag{
+	Name:  "redis-user",
+	Usage: "User to use when authenticating to the server",
+}
+
+var redisPasswordFlag = &cli.StringFlag{
+	Name:  "redis-pw",
+	Usage: "Password to use when authenticating to the server",
+}
+
 var redisDbFlag = &cli.IntFlag{
 	Name:  "redis-db",
 	Value: 0,
