@@ -1,3 +1,19 @@
+thalos (0.2.0) bionic focal jammy; urgency=medium
+
+  * Update to use antelope-ship-client v0.2.5
+  * Adding benchmark and architecture documentation
+  * Improved install documentation
+  * Documentation is now hosted in a dedicated repo and published as a website.
+  * Redis: Adding User field to config.
+  * ABI Cache: use `::` as separator for redis keys.
+  * ABI Cache: `thalos::cache` is now used as hardcoded prefix for redis keys.
+  * ABI Cache: chain id is now used as id for redis keys instead of config field.
+  * Config: `CacheID` removed from `RedisConfig`
+  * Telegram notification are now optional.
+  * Fix a bug where the reader restarted from initial block number when reconnecting after connection loss.
+
+ -- Henrik Hautakoski <henrik@eossweden.org>  Tue, 22 Aug 2023 07:32:08 +0200
+
 thalos (0.1.2) bionic focal jammy; urgency=medium
 
   * API: Adding receipt to ActionTrace.

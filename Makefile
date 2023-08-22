@@ -3,7 +3,7 @@ GO=go
 GOLDFLAGS=-v -s -w -X main.VersionString=$(PROGRAM_VERSION)
 GOBUILDFLAGS=-v -p $(shell nproc) -ldflags="$(GOLDFLAGS)"
 PROGRAM=thalos-server
-PROGRAM_VERSION=0.1.2
+PROGRAM_VERSION=0.2.0
 PREFIX=/usr/local
 BINDIR=$(PREFIX)/bin
 CFGDIR=$(PREFIX)/etc/thalos
