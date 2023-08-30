@@ -163,6 +163,14 @@ func getChain(def string) string {
 	return def
 }
 
+func LogLevels() []string {
+	list := []string{}
+	for _, lvl := range log.AllLevels {
+		list = append(list, lvl.String())
+	}
+	return list
+}
+
 func main() {
 	var err error
 	var chainInfo *eos.InfoResp
@@ -174,6 +182,7 @@ func main() {
 	configFile := getopt.StringLong("config", 'c', "./config.yml", "Config file to read", "file")
 	pidFile := getopt.StringLong("pid", 'p', "", "Where to write process id", "file")
 	logFile := getopt.StringLong("log", 'l', "", "Path to log file", "file")
+	logLevel := getopt.EnumLong("level", 'L', LogLevels(), "info", "Log level to use")
 
 	getopt.Parse()
 
@@ -208,6 +217,14 @@ func main() {
 	if len(*logFile) > 0 {
 		conf.Log.Directory = path.Dir(*logFile)
 		conf.Log.Filename = path.Base(*logFile)
+	}
+
+	lvl, err := log.ParseLevel(*logLevel)
+	if err == nil {
+		log.WithField("value", lvl).Info("Setting log level")
+		log.SetLevel(lvl)
+	} else {
+		log.WithError(err).Warn("Failed to parse level")
 	}
 
 	if len(conf.Log.Filename) > 0 {
