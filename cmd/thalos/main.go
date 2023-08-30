@@ -69,7 +69,10 @@ func readerLoop(processor *app.ShipProcessor) {
 	connectOp := func() error {
 		recon_cnt++
 
-		log.Infof("Connecting to ship at: %s (Try %d)", conf.Ship.Url, recon_cnt)
+		log.WithFields(log.Fields{
+			"url": conf.Ship.Url,
+			"try": recon_cnt,
+		}).Info("Connecting to ship")
 
 		if err := shClient.Connect(conf.Ship.Url); err != nil {
 			return err
@@ -108,7 +111,10 @@ func readerLoop(processor *app.ShipProcessor) {
 		}
 
 		recon_cnt = 0
-		log.Infof("Connected, Start: %d, End: %d", shClient.StartBlock, shClient.EndBlock)
+		log.WithFields(log.Fields{
+			"start": shClient.StartBlock,
+			"end":   shClient.EndBlock,
+		}).Info("Connected to ship")
 
 		if err := shClient.Run(); err != nil {
 
@@ -183,7 +189,7 @@ func main() {
 
 	// Write PID file
 	if len(*pidFile) > 0 {
-		log.Infof("Writing pid to: %s", *pidFile)
+		log.WithField("file", *pidFile).Info("Writing pid to file")
 		err = pid.Save(*pidFile)
 		if err != nil {
 			log.WithError(err).Fatal("failed to write pid file")
@@ -258,7 +264,7 @@ func main() {
 		return
 	}
 
-	log.Printf("Get chain info from api at: %s", conf.Api)
+	log.WithField("api", conf.Api).Info("Get chain info from api")
 	eosClient := eos.New(conf.Api)
 	chainInfo, err = eosClient.GetInfo(context.Background())
 	if err != nil {
