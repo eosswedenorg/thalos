@@ -149,7 +149,7 @@ func (processor *ShipProcessor) processBlock(block *ship.GetBlocksResultV0) {
 	if block.Traces != nil && len(block.Traces.Elem) > 0 {
 		for _, trace := range block.Traces.AsTransactionTracesV0() {
 
-			logger := log.WithField("tx_id", trace.ID.String())
+			logger := log.WithField("tx_id", trace.ID.String()).Dup()
 
 			transaction := message.TransactionTrace{
 				ID:            trace.ID.String(),
