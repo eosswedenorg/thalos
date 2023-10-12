@@ -1,7 +1,7 @@
 package config
 
 import (
-	"io/ioutil"
+	"os"
 	"time"
 
 	"github.com/eosswedenorg/thalos/app/log"
@@ -88,7 +88,7 @@ func (ship *ShipConfig) UnmarshalYAML(value *yaml.Node) error {
 }
 
 func Load(filename string) (*Config, error) {
-	bytes, err := ioutil.ReadFile(filename)
+	bytes, err := os.ReadFile(filename)
 	if err != nil {
 		return nil, err
 	}
