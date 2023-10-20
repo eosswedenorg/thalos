@@ -6,7 +6,7 @@ Consult the [documentation](https://thalos.waxsweden.org/docs) for more informat
 
 ## Compiling
 
-You will need golang version `1.18` or later to compile the source.
+You will need golang version `1.20` or later to compile the source.
 
 Compile using make:
 
