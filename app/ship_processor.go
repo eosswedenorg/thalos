@@ -274,7 +274,7 @@ func (processor *ShipProcessor) processBlock(block *ship.GetBlocksResultV0) {
 	}
 }
 
-// Close closes the writer assciated with the processor.
+// Close closes the writer associated with the processor.
 func (processor *ShipProcessor) Close() error {
 	return processor.writer.Close()
 }
