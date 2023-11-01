@@ -21,8 +21,10 @@ import (
 	api_redis "github.com/eosswedenorg/thalos/api/redis"
 	"github.com/eosswedenorg/thalos/app"
 	"github.com/eosswedenorg/thalos/app/abi"
+	. "github.com/eosswedenorg/thalos/app/cache"
 	"github.com/eosswedenorg/thalos/app/config"
 	. "github.com/eosswedenorg/thalos/app/log"
+	redis_cache "github.com/go-redis/cache/v9"
 	"github.com/nikoksr/notify"
 	"github.com/nikoksr/notify/service/telegram"
 	"github.com/pborman/getopt/v2"
@@ -43,6 +45,10 @@ var running bool = false
 var VersionString string = "dev"
 
 var exit chan bool
+
+var cache *Cache
+
+var cacheStore Store
 
 func readerLoop(processor *app.ShipProcessor) {
 	running = true
@@ -171,6 +177,11 @@ func LogLevels() []string {
 	return list
 }
 
+func initAbiManger(api *eos.API, chain_id string) *abi.AbiManager {
+	cache := NewCache("thalos::cache::abi::"+chain_id, cacheStore)
+	return abi.NewAbiManager(cache, api)
+}
+
 func main() {
 	var err error
 	var chainInfo *eos.InfoResp
@@ -281,6 +292,16 @@ func main() {
 		return
 	}
 
+	// Setup cache storage
+	cacheStore = NewRedisStore(&redis_cache.Options{
+		Redis: rdb,
+		// Cache 10k keys for 10 minutes.
+		LocalCache: redis_cache.NewTinyLFU(10000, 10*time.Minute),
+	})
+
+	// Setup general cache
+	cache = NewCache("thalos::cache::instance::"+conf.Name, cacheStore)
+
 	log.WithField("api", conf.Api).Info("Get chain info from api")
 	eosClient := eos.New(conf.Api)
 	chainInfo, err = eosClient.GetInfo(context.Background())
@@ -318,7 +339,7 @@ func main() {
 			Prefix:  conf.Redis.Prefix,
 			ChainID: chain_id,
 		}),
-		abi.NewAbiManager(rdb, eosClient, chain_id),
+		initAbiManger(eosClient, chain_id),
 		codec,
 	)
 
