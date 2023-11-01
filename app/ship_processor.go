@@ -43,8 +43,8 @@ type ShipProcessor struct {
 	// Encoder used to encode messages
 	encode message.Encoder
 
-	// Keep track of the current block we have processed.
-	current_block uint32
+	// Internal state
+	state State
 
 	// System contract ("eosio" per default)
 	syscontract eos.AccountName
@@ -53,12 +53,14 @@ type ShipProcessor struct {
 // SpawnProcessor creates a new ShipProccessor that consumes the shipclient.Stream passed to it.
 func SpawnProccessor(shipStream *shipclient.Stream, writer api.Writer, abi *abi.AbiManager, codec message.Codec) *ShipProcessor {
 	processor := &ShipProcessor{
-		abi:           abi,
-		writer:        writer,
-		shipStream:    shipStream,
-		encode:        logDecoratedEncoder(codec.Encoder),
-		syscontract:   eos.AccountName("eosio"),
-		current_block: shipStream.StartBlock,
+		abi:         abi,
+		writer:      writer,
+		shipStream:  shipStream,
+		encode:      logDecoratedEncoder(codec.Encoder),
+		syscontract: eos.AccountName("eosio"),
+		state: State{
+			CurrentBlock: shipStream.StartBlock,
+		},
 	}
 
 	// Attach handlers
@@ -124,15 +126,15 @@ func (processor *ShipProcessor) updateAbiFromAction(act *ship.Action) error {
 
 // Get the current block.
 func (processor *ShipProcessor) GetCurrentBlock() uint32 {
-	return processor.current_block
+	return processor.state.CurrentBlock
 }
 
 // Callback function called by shipclient.Stream when a new block arrives.
 func (processor *ShipProcessor) processBlock(block *ship.GetBlocksResultV0) {
-	processor.current_block = block.ThisBlock.BlockNum
+	processor.state.CurrentBlock = block.ThisBlock.BlockNum
 
 	if block.ThisBlock.BlockNum%100 == 0 {
-		log.Infof("Current: %d, Head: %d", processor.current_block, block.Head.BlockNum)
+		log.Infof("Current: %d, Head: %d", processor.state.CurrentBlock, block.Head.BlockNum)
 	}
 
 	if block.ThisBlock.BlockNum%10 == 0 {
