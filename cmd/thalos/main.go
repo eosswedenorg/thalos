@@ -182,15 +182,16 @@ func initAbiManger(api *eos.API, chain_id string) *abi.AbiManager {
 	return abi.NewAbiManager(cache, api)
 }
 
-func stateLoader(chainInfo *eos.InfoResp) app.StateLoader {
+func stateLoader(chainInfo *eos.InfoResp, current_block_no_cache bool) app.StateLoader {
 	return func(state *app.State) {
 		var source string
 
 		// Load state from cache.
 		err := cache.Get("state", &state)
 
-		// on error (cache miss) set current block from config/api
-		if err != nil {
+		// on error (cache miss) or if current_block_no_cache is set.
+		// set current block from config/api
+		if current_block_no_cache || err != nil {
 			// Set from config if we have a sane value.
 			if conf.Ship.StartBlockNum != shipclient.NULL_BLOCK_NUMBER {
 				source = "config"
@@ -232,6 +233,7 @@ func main() {
 	pidFile := getopt.StringLong("pid", 'p', "", "Where to write process id", "file")
 	logFile := getopt.StringLong("log", 'l', "", "Path to log file", "file")
 	logLevel := getopt.EnumLong("level", 'L', LogLevels(), "info", "Log level to use")
+	skip_currentblock_cache := getopt.Bool('n', "Force the application to take start block from config/api")
 
 	getopt.Parse()
 
@@ -365,7 +367,7 @@ func main() {
 
 	processor := app.SpawnProccessor(
 		shClient,
-		stateLoader(chainInfo),
+		stateLoader(chainInfo, *skip_currentblock_cache),
 		stateSaver,
 		api_redis.NewPublisher(context.Background(), rdb, api_redis.Namespace{
 			Prefix:  conf.Redis.Prefix,
