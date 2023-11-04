@@ -43,6 +43,9 @@ type ShipProcessor struct {
 	// Encoder used to encode messages
 	encode message.Encoder
 
+	// Function for saving state.
+	saver StateSaver
+
 	// Internal state
 	state State
 
@@ -51,17 +54,17 @@ type ShipProcessor struct {
 }
 
 // SpawnProcessor creates a new ShipProccessor that consumes the shipclient.Stream passed to it.
-func SpawnProccessor(shipStream *shipclient.Stream, writer api.Writer, abi *abi.AbiManager, codec message.Codec) *ShipProcessor {
+func SpawnProccessor(shipStream *shipclient.Stream, loader StateLoader, saver StateSaver, writer api.Writer, abi *abi.AbiManager, codec message.Codec) *ShipProcessor {
 	processor := &ShipProcessor{
+		saver:       saver,
 		abi:         abi,
 		writer:      writer,
 		shipStream:  shipStream,
 		encode:      logDecoratedEncoder(codec.Encoder),
 		syscontract: eos.AccountName("eosio"),
-		state: State{
-			CurrentBlock: shipStream.StartBlock,
-		},
 	}
+
+	loader(&processor.state)
 
 	// Attach handlers
 	shipStream.BlockHandler = processor.processBlock
@@ -273,6 +276,11 @@ func (processor *ShipProcessor) processBlock(block *ship.GetBlocksResultV0) {
 	err := processor.writer.Flush()
 	if err != nil {
 		log.WithError(err).Error("Failed to send messages")
+	}
+
+	err = processor.saver(processor.state)
+	if err != nil {
+		log.WithError(err).Error("Failed to save state")
 	}
 }
 
