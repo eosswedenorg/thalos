@@ -178,7 +178,7 @@ func main() {
 	exit = make(chan bool)
 
 	showHelp := getopt.BoolLong("help", 'h', "display this help text")
-	showVersion := getopt.BoolLong("version", 'v', "display this help text")
+	showVersion := getopt.BoolLong("version", 'v', "display the version")
 	configFile := getopt.StringLong("config", 'c', "./config.yml", "Config file to read", "file")
 	pidFile := getopt.StringLong("pid", 'p', "", "Where to write process id", "file")
 	logFile := getopt.StringLong("log", 'l', "", "Path to log file", "file")
