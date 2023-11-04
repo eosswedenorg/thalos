@@ -1,3 +1,14 @@
+thalos (0.2.1) bionic focal jammy; urgency=medium
+
+  * new tool: publisher mock (writes test data to redis channels.)
+  * golang: Drop support for 1.18, 1.19
+  * new cli flag: "--level" to specify log level.
+  * new tool: redis ACL config generator.
+  * tools: adding flags for redis username/password
+  * code documentation
+
+ -- Henrik Hautakoski <henrik@eossweden.org>  Sat, 04 Nov 2023 13:35:06 +0100
+
 thalos (0.2.0) bionic focal jammy; urgency=medium
 
   * Update to use antelope-ship-client v0.2.5
