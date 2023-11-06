@@ -6,7 +6,7 @@ require (
 	github.com/cenkalti/backoff/v4 v4.2.1
 	github.com/docker/go-units v0.5.0
 	github.com/eoscanada/eos-go v0.10.3-0.20230609180026-5d4ee54fe15e
-	github.com/eosswedenorg-go/antelope-ship-client v0.2.6
+	github.com/eosswedenorg-go/antelope-ship-client v0.2.7
 	github.com/eosswedenorg-go/pid v1.0.1
 	github.com/eosswedenorg/thalos/api v0.1.2
 	github.com/go-redis/cache/v9 v9.0.0
