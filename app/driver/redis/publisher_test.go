@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/eosswedenorg/thalos/api"
+	. "github.com/eosswedenorg/thalos/api/redis"
 
 	"github.com/go-redis/redismock/v9"
 	"github.com/stretchr/testify/assert"

@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/eosswedenorg/thalos/api"
+	. "github.com/eosswedenorg/thalos/api/redis"
 
 	"github.com/redis/go-redis/v9"
 )

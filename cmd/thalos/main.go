@@ -22,6 +22,7 @@ import (
 	"github.com/eosswedenorg/thalos/app"
 	"github.com/eosswedenorg/thalos/app/abi"
 	"github.com/eosswedenorg/thalos/app/config"
+	driver "github.com/eosswedenorg/thalos/app/driver/redis"
 	. "github.com/eosswedenorg/thalos/app/log"
 	"github.com/nikoksr/notify"
 	"github.com/nikoksr/notify/service/telegram"
@@ -314,7 +315,7 @@ func main() {
 
 	processor := app.SpawnProccessor(
 		shClient,
-		api_redis.NewPublisher(context.Background(), rdb, api_redis.Namespace{
+		driver.NewPublisher(context.Background(), rdb, api_redis.Namespace{
 			Prefix:  conf.Redis.Prefix,
 			ChainID: chain_id,
 		}),

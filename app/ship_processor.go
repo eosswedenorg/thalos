@@ -7,6 +7,7 @@ import (
 	"github.com/eosswedenorg/thalos/api"
 	"github.com/eosswedenorg/thalos/api/message"
 	"github.com/eosswedenorg/thalos/app/abi"
+	"github.com/eosswedenorg/thalos/app/driver"
 
 	log "github.com/sirupsen/logrus"
 
@@ -38,7 +39,7 @@ type ShipProcessor struct {
 	abi *abi.AbiManager
 
 	// Writer to send messages to.
-	writer api.Writer
+	writer driver.Writer
 
 	// Encoder used to encode messages
 	encode message.Encoder
@@ -51,7 +52,7 @@ type ShipProcessor struct {
 }
 
 // SpawnProcessor creates a new ShipProccessor that consumes the shipclient.Stream passed to it.
-func SpawnProccessor(shipStream *shipclient.Stream, writer api.Writer, abi *abi.AbiManager, codec message.Codec) *ShipProcessor {
+func SpawnProccessor(shipStream *shipclient.Stream, writer driver.Writer, abi *abi.AbiManager, codec message.Codec) *ShipProcessor {
 	processor := &ShipProcessor{
 		abi:           abi,
 		writer:        writer,
