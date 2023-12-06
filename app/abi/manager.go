@@ -45,7 +45,9 @@ func (mgr *AbiManager) GetAbi(account eos.AccountName) (*eos.ABI, error) {
 
 	abi, err := mgr.cache.Get(key)
 	if err != nil {
-		resp, err := mgr.api.GetABI(mgr.ctx, account)
+		ctx, cancel := context.WithTimeout(mgr.ctx, time.Second)
+		defer cancel()
+		resp, err := mgr.api.GetABI(ctx, account)
 		if err != nil {
 			return nil, fmt.Errorf("api: %s", err)
 		}
