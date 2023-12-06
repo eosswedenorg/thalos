@@ -44,23 +44,28 @@ type ShipProcessor struct {
 	// Encoder used to encode messages
 	encode message.Encoder
 
-	// Keep track of the current block we have processed.
-	current_block uint32
+	// Function for saving state.
+	saver StateSaver
+
+	// Internal state
+	state State
 
 	// System contract ("eosio" per default)
 	syscontract eos.AccountName
 }
 
 // SpawnProcessor creates a new ShipProccessor that consumes the shipclient.Stream passed to it.
-func SpawnProccessor(shipStream *shipclient.Stream, writer driver.Writer, abi *abi.AbiManager, codec message.Codec) *ShipProcessor {
+func SpawnProccessor(shipStream *shipclient.Stream, loader StateLoader, saver StateSaver, writer driver.Writer, abi *abi.AbiManager, codec message.Codec) *ShipProcessor {
 	processor := &ShipProcessor{
-		abi:           abi,
-		writer:        writer,
-		shipStream:    shipStream,
-		encode:        logDecoratedEncoder(codec.Encoder),
-		syscontract:   eos.AccountName("eosio"),
-		current_block: shipStream.StartBlock,
+		saver:       saver,
+		abi:         abi,
+		writer:      writer,
+		shipStream:  shipStream,
+		encode:      logDecoratedEncoder(codec.Encoder),
+		syscontract: eos.AccountName("eosio"),
 	}
+
+	loader(&processor.state)
 
 	// Attach handlers
 	shipStream.BlockHandler = processor.processBlock
@@ -125,15 +130,15 @@ func (processor *ShipProcessor) updateAbiFromAction(act *ship.Action) error {
 
 // Get the current block.
 func (processor *ShipProcessor) GetCurrentBlock() uint32 {
-	return processor.current_block
+	return processor.state.CurrentBlock
 }
 
 // Callback function called by shipclient.Stream when a new block arrives.
 func (processor *ShipProcessor) processBlock(block *ship.GetBlocksResultV0) {
-	processor.current_block = block.ThisBlock.BlockNum
+	processor.state.CurrentBlock = block.ThisBlock.BlockNum
 
 	if block.ThisBlock.BlockNum%100 == 0 {
-		log.Infof("Current: %d, Head: %d", processor.current_block, block.Head.BlockNum)
+		log.Infof("Current: %d, Head: %d", processor.state.CurrentBlock, block.Head.BlockNum)
 	}
 
 	if block.ThisBlock.BlockNum%10 == 0 {
@@ -273,9 +278,14 @@ func (processor *ShipProcessor) processBlock(block *ship.GetBlocksResultV0) {
 	if err != nil {
 		log.WithError(err).Error("Failed to send messages")
 	}
+
+	err = processor.saver(processor.state)
+	if err != nil {
+		log.WithError(err).Error("Failed to save state")
+	}
 }
 
-// Close closes the writer assciated with the processor.
+// Close closes the writer associated with the processor.
 func (processor *ShipProcessor) Close() error {
 	return processor.writer.Close()
 }

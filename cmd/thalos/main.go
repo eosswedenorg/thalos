@@ -21,9 +21,11 @@ import (
 	api_redis "github.com/eosswedenorg/thalos/api/redis"
 	"github.com/eosswedenorg/thalos/app"
 	"github.com/eosswedenorg/thalos/app/abi"
+	. "github.com/eosswedenorg/thalos/app/cache"
 	"github.com/eosswedenorg/thalos/app/config"
 	driver "github.com/eosswedenorg/thalos/app/driver/redis"
 	. "github.com/eosswedenorg/thalos/app/log"
+	redis_cache "github.com/go-redis/cache/v9"
 	"github.com/nikoksr/notify"
 	"github.com/nikoksr/notify/service/telegram"
 	"github.com/pborman/getopt/v2"
@@ -44,6 +46,10 @@ var running bool = true
 var VersionString string = "dev"
 
 var exit chan bool
+
+var cache *Cache
+
+var cacheStore Store
 
 func readerLoop(processor *app.ShipProcessor) {
 	recon_cnt := 0
@@ -171,6 +177,50 @@ func LogLevels() []string {
 	return list
 }
 
+func initAbiManger(api *eos.API, chain_id string) *abi.AbiManager {
+	cache := NewCache("thalos::cache::abi::"+chain_id, cacheStore)
+	return abi.NewAbiManager(cache, api)
+}
+
+func stateLoader(chainInfo *eos.InfoResp, current_block_no_cache bool) app.StateLoader {
+	return func(state *app.State) {
+		var source string
+
+		// Load state from cache.
+		err := cache.Get("state", &state)
+
+		// on error (cache miss) or if current_block_no_cache is set.
+		// set current block from config/api
+		if current_block_no_cache || err != nil {
+			// Set from config if we have a sane value.
+			if conf.Ship.StartBlockNum != shipclient.NULL_BLOCK_NUMBER {
+				source = "config"
+				state.CurrentBlock = conf.Ship.StartBlockNum
+			} else {
+				// Otherwise, set from api.
+				if conf.Ship.IrreversibleOnly {
+					source = "api (LIB)"
+					state.CurrentBlock = uint32(chainInfo.LastIrreversibleBlockNum)
+				} else {
+					source = "api (HEAD)"
+					state.CurrentBlock = uint32(chainInfo.HeadBlockNum)
+				}
+			}
+		} else {
+			source = "cache"
+		}
+
+		log.WithFields(log.Fields{
+			"block":  state.CurrentBlock,
+			"source": source,
+		}).Info("Starting from block")
+	}
+}
+
+func stateSaver(state app.State) error {
+	return cache.Set("state", state, 0)
+}
+
 func main() {
 	var err error
 	var chainInfo *eos.InfoResp
@@ -183,6 +233,7 @@ func main() {
 	pidFile := getopt.StringLong("pid", 'p', "", "Where to write process id", "file")
 	logFile := getopt.StringLong("log", 'l', "", "Path to log file", "file")
 	logLevel := getopt.EnumLong("level", 'L', LogLevels(), "info", "Log level to use")
+	skip_currentblock_cache := getopt.Bool('n', "Force the application to take start block from config/api")
 
 	getopt.Parse()
 
@@ -281,20 +332,22 @@ func main() {
 		return
 	}
 
+	// Setup cache storage
+	cacheStore = NewRedisStore(&redis_cache.Options{
+		Redis: rdb,
+		// Cache 10k keys for 10 minutes.
+		LocalCache: redis_cache.NewTinyLFU(10000, 10*time.Minute),
+	})
+
+	// Setup general cache
+	cache = NewCache("thalos::cache::instance::"+conf.Name, cacheStore)
+
 	log.WithField("api", conf.Api).Info("Get chain info from api")
 	eosClient := eos.New(conf.Api)
 	chainInfo, err = eosClient.GetInfo(context.Background())
 	if err != nil {
 		log.WithError(err).Fatal("Failed to get info")
 		return
-	}
-
-	if conf.Ship.StartBlockNum == shipclient.NULL_BLOCK_NUMBER {
-		if conf.Ship.IrreversibleOnly {
-			conf.Ship.StartBlockNum = uint32(chainInfo.LastIrreversibleBlockNum)
-		} else {
-			conf.Ship.StartBlockNum = uint32(chainInfo.HeadBlockNum)
-		}
 	}
 
 	shClient = shipclient.NewStream(func(s *shipclient.Stream) {
@@ -314,11 +367,13 @@ func main() {
 
 	processor := app.SpawnProccessor(
 		shClient,
+		stateLoader(chainInfo, *skip_currentblock_cache),
+		stateSaver,
 		driver.NewPublisher(context.Background(), rdb, api_redis.Namespace{
 			Prefix:  conf.Redis.Prefix,
 			ChainID: chain_id,
 		}),
-		abi.NewAbiManager(rdb, eosClient, chain_id),
+		initAbiManger(eosClient, chain_id),
 		codec,
 	)
 
