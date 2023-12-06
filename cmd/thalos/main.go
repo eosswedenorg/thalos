@@ -39,14 +39,13 @@ var conf *config.Config
 
 var shClient *shipclient.Stream
 
-var running bool = false
+var running bool = true
 
 var VersionString string = "dev"
 
 var exit chan bool
 
 func readerLoop(processor *app.ShipProcessor) {
-	running = true
 	recon_cnt := 0
 
 	exp := &backoff.ExponentialBackOff{
