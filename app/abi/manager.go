@@ -27,14 +27,16 @@ func NewAbiManager(cache *cache.Cache, api *eos.API) *AbiManager {
 
 // Set or update an ABI in the cache.
 func (mgr *AbiManager) SetAbi(account eos.AccountName, abi *eos.ABI) error {
-	return mgr.cache.Set(string(account), *abi, time.Hour)
+	ctx, cancel := context.WithTimeout(mgr.ctx, time.Millisecond*500)
+	defer cancel()
+	return mgr.cache.Set(ctx, string(account), *abi, time.Hour)
 }
 
 // Get an ABI from the cache, on cache miss it is fetched from the
 // API, gets cached and then returned to the user
 func (mgr *AbiManager) GetAbi(account eos.AccountName) (*eos.ABI, error) {
 	var abi eos.ABI
-	if err := mgr.cache.Get(string(account), &abi); err != nil {
+	if err := mgr.cacheGet(account, &abi); err != nil {
 		ctx, cancel := context.WithTimeout(mgr.ctx, time.Second)
 		defer cancel()
 		resp, err := mgr.api.GetABI(ctx, account)
@@ -49,4 +51,10 @@ func (mgr *AbiManager) GetAbi(account eos.AccountName) (*eos.ABI, error) {
 		}
 	}
 	return &abi, nil
+}
+
+func (mgr *AbiManager) cacheGet(account eos.AccountName, value any) error {
+	ctx, cancel := context.WithTimeout(mgr.ctx, time.Millisecond*500)
+	defer cancel()
+	return mgr.cache.Get(ctx, string(account), value)
 }
