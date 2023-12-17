@@ -10,6 +10,7 @@ import (
 	"github.com/eosswedenorg/thalos/api/message"
 	_ "github.com/eosswedenorg/thalos/api/message/json"
 	api_redis "github.com/eosswedenorg/thalos/api/redis"
+	redis_driver "github.com/eosswedenorg/thalos/app/driver/redis"
 
 	"github.com/redis/go-redis/v9"
 )
@@ -47,7 +48,7 @@ var MockPublisherCmd = &cli.Command{
 			Prefix:  ctx.String("redis-prefix"),
 			ChainID: ctx.String("chain_id"),
 		}
-		publisher := api_redis.NewPublisher(context.Background(), rdb, ns)
+		publisher := redis_driver.NewPublisher(context.Background(), rdb, ns)
 
 		msg := message.ActionTrace{
 			TxID:      "401e8a7e5deb18a2a69fc6559f49509a155f4355c85efb69c1c1fab5b60ee532",
