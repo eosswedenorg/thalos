@@ -1,6 +1,7 @@
 package cache
 
 import (
+	"context"
 	"time"
 )
 
@@ -17,12 +18,12 @@ func NewCache(prefix string, store Store) *Cache {
 	}
 }
 
-func (cache *Cache) Get(key string, value any) error {
-	return cache.store.Get(cache.key(key), value)
+func (cache *Cache) Get(ctx context.Context, key string, value any) error {
+	return cache.store.Get(ctx, cache.key(key), value)
 }
 
-func (cache *Cache) Set(key string, value any, ttl time.Duration) error {
-	return cache.store.Set(cache.key(key), value, ttl)
+func (cache *Cache) Set(ctx context.Context, key string, value any, ttl time.Duration) error {
+	return cache.store.Set(ctx, cache.key(key), value, ttl)
 }
 
 func (cache *Cache) key(key string) string {
