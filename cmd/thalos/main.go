@@ -187,7 +187,9 @@ func stateLoader(chainInfo *eos.InfoResp, current_block_no_cache bool) app.State
 		var source string
 
 		// Load state from cache.
-		err := cache.Get("state", &state)
+		ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond*500)
+		err := cache.Get(ctx, "state", &state)
+		cancel()
 
 		// on error (cache miss) or if current_block_no_cache is set.
 		// set current block from config/api
@@ -218,7 +220,9 @@ func stateLoader(chainInfo *eos.InfoResp, current_block_no_cache bool) app.State
 }
 
 func stateSaver(state app.State) error {
-	return cache.Set("state", state, 0)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond*500)
+	defer cancel()
+	return cache.Set(ctx, "state", state, 0)
 }
 
 func main() {
