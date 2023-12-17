@@ -1,3 +1,13 @@
+thalos (0.2.2) bionic focal jammy; urgency=medium
+
+  * Current processing state (block number) is now cached and loaded on start.
+  * cli: new `-n` flag that forces the application to take start block from config/api instead of cache.
+  * bug: the ABI Cache now has a timeout for the api call on cache miss fixing
+         a bug where the application would hang if api did not respond.
+  * Update to use antelope-ship-client v0.2.7
+
+ -- Henrik Hautakoski <henrik@eossweden.org>  Sun, 17 Dec 2023 19:37:30 +0100
+
 thalos (0.2.1) bionic focal jammy; urgency=medium
 
   * new tool: publisher mock (writes test data to redis channels.)
