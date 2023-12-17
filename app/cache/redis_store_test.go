@@ -1,6 +1,7 @@
 package cache
 
 import (
+	"context"
 	"testing"
 	"time"
 
@@ -32,7 +33,7 @@ func TestRedisStore_Set(t *testing.T) {
 
 	mock.ExpectSet("mykey", bytes, time.Minute).SetVal("OK")
 
-	err = store.Set("mykey", expected, time.Minute)
+	err = store.Set(context.Background(), "mykey", expected, time.Minute)
 	assert.NoError(t, err)
 
 	assert.NoError(t, mock.ExpectationsWereMet())
@@ -48,7 +49,7 @@ func TestRedisStore_GetMiss(t *testing.T) {
 	mock.ExpectGet("mykey").SetErr(redis_cache.ErrCacheMiss)
 
 	expected := testItem{}
-	err := store.Get("mykey", &expected)
+	err := store.Get(context.Background(), "mykey", &expected)
 	assert.ErrorIs(t, err, redis_cache.ErrCacheMiss)
 	assert.NoError(t, mock.ExpectationsWereMet())
 }
@@ -71,11 +72,11 @@ func TestRedisStore_GetHit(t *testing.T) {
 	mock.ExpectSet("mykey2", bytes, time.Second*20).SetVal("OK")
 	mock.ExpectGet("mykey2").SetVal(string(bytes))
 
-	err = store.Set("mykey2", expected, time.Second*20)
+	err = store.Set(context.Background(), "mykey2", expected, time.Second*20)
 	assert.NoError(t, err)
 
 	actual := testItem{}
-	err = store.Get("mykey2", &actual)
+	err = store.Get(context.Background(), "mykey2", &actual)
 	assert.NoError(t, err)
 	assert.Equal(t, expected, actual)
 	assert.NoError(t, mock.ExpectationsWereMet())
@@ -95,9 +96,9 @@ func TestRedisStore_Has(t *testing.T) {
 	mock.ExpectGet("key1").SetVal(string(bytes))
 	mock.ExpectGet("key2").RedisNil()
 
-	err = store.Set("key1", "value", time.Minute*15)
+	err = store.Set(context.Background(), "key1", "value", time.Minute*15)
 	assert.NoError(t, err)
-	assert.True(t, store.Has("key1"))
-	assert.False(t, store.Has("key2"))
+	assert.True(t, store.Has(context.Background(), "key1"))
+	assert.False(t, store.Has(context.Background(), "key2"))
 	assert.NoError(t, mock.ExpectationsWereMet())
 }

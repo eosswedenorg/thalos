@@ -1,6 +1,7 @@
 package cache
 
 import (
+	"context"
 	"fmt"
 	"reflect"
 	"time"
@@ -21,7 +22,7 @@ func NewMemoryStore() *MemoryStore {
 	return &MemoryStore{make(map[string]memoryStoreItem)}
 }
 
-func (s *MemoryStore) Get(key string, value any) error {
+func (s *MemoryStore) Get(ctx context.Context, key string, value any) error {
 	if item, ok := s.data[key]; ok {
 
 		if item.expired.Before(now()) {
@@ -41,12 +42,12 @@ func (s *MemoryStore) Get(key string, value any) error {
 	return fmt.Errorf("key: %s does not exist", key)
 }
 
-func (s *MemoryStore) Has(key string) bool {
+func (s *MemoryStore) Has(ctx context.Context, key string) bool {
 	_, hit := s.data[key]
 	return hit
 }
 
-func (s *MemoryStore) Set(key string, value any, ttl time.Duration) error {
+func (s *MemoryStore) Set(ctx context.Context, key string, value any, ttl time.Duration) error {
 	s.data[key] = memoryStoreItem{
 		value:   value,
 		expired: now().Add(ttl),
