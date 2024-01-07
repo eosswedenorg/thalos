@@ -129,3 +129,21 @@ func TestAction_Channel(t *testing.T) {
 		})
 	}
 }
+
+func TestTableDelta_Channel(t *testing.T) {
+	tests := []struct {
+		name   string
+		action TableDeltaChannel
+		want   Channel
+	}{
+		{"Empty", TableDeltaChannel{}, Channel{"tabledeltas"}},
+		{"Contract", TableDeltaChannel{Name: "delta_name"}, Channel{"tabledeltas", "name", "delta_name"}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.action.Channel(); !got.Is(tt.want) {
+				t.Errorf("TableDeltaChannel.String() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
