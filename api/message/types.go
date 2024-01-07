@@ -80,3 +80,16 @@ func (act ActionTrace) GetData() (map[string]any, error) {
 	}
 	return nil, errors.New("failed to convert data to map")
 }
+
+type TableDeltaRow struct {
+	Present bool   `json:"present" msgpack:"present"`
+	Data    []byte `json:"data" msgpack:"data"`
+	RawData []byte `json:"raw_data" msgpack:"raw_data"`
+}
+
+type TableDelta struct {
+	BlockNum  uint32          `json:"blocknum" msgpack:"blocknum"`
+	Timestamp time.Time       `json:"blocktimestamp" msgpack:"blocktimestamp"`
+	Name      string          `json:"name" msgpack:"name"`
+	Rows      []TableDeltaRow `json:"rows" msgpack:"rows"`
+}
