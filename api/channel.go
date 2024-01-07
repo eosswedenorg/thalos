@@ -45,6 +45,7 @@ func (c Channel) Is(other Channel) bool {
 var (
 	TransactionChannel = Channel{"transactions"}
 	HeartbeatChannel   = Channel{"heartbeat"}
+	RollbackChannel    = Channel{"rollback"}
 )
 
 // Action Channel
