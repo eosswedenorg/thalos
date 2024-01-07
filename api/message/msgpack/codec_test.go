@@ -51,7 +51,7 @@ func TestMsgpack_EncodeActionTrace(t *testing.T) {
 		Return: []byte{0xde, 0xad, 0xbe, 0xef},
 	}
 
-	data, err := encode(msg)
+	data, err := createCodec().Encoder(msg)
 	assert.NoError(t, err)
 
 	expected := []byte{
@@ -177,7 +177,7 @@ func TestMsgpack_DecodeActionTrace(t *testing.T) {
 	}
 
 	res := message.ActionTrace{}
-	err := decode(data, &res)
+	err := createCodec().Decoder(data, &res)
 	assert.NoError(t, err)
 
 	assert.Equal(t, expected, res)
@@ -190,7 +190,7 @@ func TestMsgpack_EncodeHeartbeat(t *testing.T) {
 		LastIrreversibleBlockNum: 1236,
 	}
 
-	data, err := encode(msg)
+	data, err := createCodec().Encoder(msg)
 	assert.NoError(t, err)
 
 	assert.Equal(t, data, []byte{0x83, 0xa8, 0x62, 0x6c, 0x6f, 0x63, 0x6b, 0x6e, 0x75, 0x6d, 0xcd, 0x4, 0xd2, 0xad, 0x68, 0x65, 0x61, 0x64, 0x5f, 0x62, 0x6c, 0x6f, 0x63, 0x6b, 0x6e, 0x75, 0x6d, 0xcd, 0x4, 0xd3, 0xba, 0x6c, 0x61, 0x73, 0x74, 0x5f, 0x69, 0x72, 0x72, 0x65, 0x76, 0x65, 0x72, 0x73, 0x69, 0x62, 0x6c, 0x65, 0x5f, 0x62, 0x6c, 0x6f, 0x63, 0x6b, 0x6e, 0x75, 0x6d, 0xcd, 0x4, 0xd4})
@@ -206,7 +206,7 @@ func TestMsgpack_DecodeHeartbeat(t *testing.T) {
 	}
 
 	msg := message.HeartBeat{}
-	err := decode(data, &msg)
+	err := createCodec().Decoder(data, &msg)
 	assert.NoError(t, err)
 	assert.Equal(t, expected, msg)
 }
@@ -265,7 +265,7 @@ func TestMsgpack_EncodeTransactionTrace(t *testing.T) {
 		Error:  2,
 	}
 
-	data, err := encode(msg)
+	data, err := createCodec().Encoder(msg)
 	assert.NoError(t, err)
 
 	expected := []byte{
@@ -406,7 +406,7 @@ func TestMsgpack_DecodeTransactionTrace(t *testing.T) {
 	}
 
 	res := message.TransactionTrace{}
-	err := decode(data, &res)
+	err := createCodec().Decoder(data, &res)
 	assert.NoError(t, err)
 
 	assert.Equal(t, expected, res)

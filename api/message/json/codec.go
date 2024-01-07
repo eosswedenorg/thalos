@@ -7,17 +7,19 @@ import (
 	"github.com/eosswedenorg/thalos/api/message"
 )
 
-var (
-	json_codec = jsontime.ConfigWithCustomTimeFormat
-	encoder    = json_codec.Marshal
-	decoder    = json_codec.Unmarshal
-)
+func createCodec() message.Codec {
+	json_codec := jsontime.ConfigWithCustomTimeFormat
+
+	return message.Codec{
+		Encoder: json_codec.Marshal,
+		Decoder: json_codec.Unmarshal,
+	}
+}
 
 func init() {
+	// Set timeformat used by eos api.
 	jsontime.SetDefaultTimeFormat("2006-01-02T15:04:05.000", time.UTC)
 
-	message.RegisterCodec("json", message.Codec{
-		Encoder: encoder,
-		Decoder: decoder,
-	})
+	// Register the json codec.
+	message.RegisterCodec("json", createCodec())
 }

@@ -45,7 +45,7 @@ func TestJson_EncodeActionTrace(t *testing.T) {
 
 	expected := `{"tx_id":"ed3b8e853647971cf8296f004c3a1aeac255f082b2cb3c12cc3222e2d7c174ab","blocknum":267372365,"blocktimestamp":"2003-03-21T17:23:09.500","receipt":{"receiver":"account2","act_digest":"0a2c71dba327cf13a107d3a4f91c9c98f510a8fbbb483b233e222033f13a3e36","global_sequence":2329381932,"recv_sequence":22,"auth_sequence":[{"account":"account1","sequence":1382772}],"code_sequence":1122,"abi_sequence":12352},"name":"transfer","contract":"eosio","receiver":"account2","data":{"from":"account1","quantity":"1000.0000 WAX","to":"account2"},"authorization":[{"actor":"account1","permission":"active"}],"except":"errstr","error":2,"return":"3q2+7w=="}`
 
-	data, err := encoder(msg)
+	data, err := createCodec().Encoder(msg)
 	assert.NoError(t, err)
 	assert.Equal(t, expected, string(data))
 }
@@ -88,7 +88,7 @@ func TestJson_DecodeActionTrace(t *testing.T) {
 	input := `{"tx_id":"952989f7464237b6cf9926e533ecd331df6794ed07564bd052bc368cbd65b4bc","blocknum":8723971,"blocktimestamp":"2024-06-21T08:08:26.500","receipt":{"receiver":"account2","act_digest":"f2f682847fd5bf00fb315b075dc00b4ff0ce18776758077b86a233dea49dc047","global_sequence":287328,"recv_sequence":42,"auth_sequence":[{"account":"account1","sequence":271877283}],"code_sequence":237823,"abi_sequence":68323},"name":"transfer","contract":"eosio","receiver":"account2","data":{"from":"account1","quantity":"1000.0000 WAX","to":"account2"},"authorization":[{"actor":"account1","permission":"active"}],"except":"errstr","error":2,"return":"3q2+7w=="}`
 
 	msg := message.ActionTrace{}
-	err := decoder([]byte(input), &msg)
+	err := createCodec().Decoder([]byte(input), &msg)
 	assert.NoError(t, err)
 	assert.Equal(t, expected, msg)
 }
@@ -155,7 +155,7 @@ func TestJson_EncodeTransactionTrace(t *testing.T) {
 
 	expected := `{"id":"ed04516bdd1194aa5f0ab4c8c5445eec542c17f45a85bb3e9e4bc33e1a2486f8","blocknum":283781923,"blocktimestamp":"2029-02-08T15:10:05.500","status":"executed","cpu_usage_us":442,"net_usage_words":16,"elapsed":22,"net_usage":128,"scheduled":true,"action_traces":[{"tx_id":"ed04516bdd1194aa5f0ab4c8c5445eec542c17f45a85bb3e9e4bc33e1a2486f8","blocknum":283781923,"blocktimestamp":"2029-02-08T15:10:05.500","name":"mine","contract":"coolgame","receiver":"actor01","data":{"equipment_id":1234,"location_id":5445453},"authorization":[{"actor":"actor01","permission":"active"}],"except":"","error":0,"return":"CPE="},{"tx_id":"ed04516bdd1194aa5f0ab4c8c5445eec542c17f45a85bb3e9e4bc33e1a2486f8","blocknum":283781923,"blocktimestamp":"2029-02-08T15:10:05.500","name":"addpoints","contract":"coolgame","receiver":"coolgame","data":{"points":"1023.0423 SCAM"},"authorization":[{"actor":"coolgame","permission":"usrpoints"}],"except":"some error string","error":2,"return":"/wI="}],"except":"errstr","error":2}`
 
-	data, err := encoder(msg)
+	data, err := createCodec().Encoder(msg)
 	assert.NoError(t, err)
 	assert.Equal(t, expected, string(data))
 }
@@ -235,7 +235,7 @@ func TestJson_DecodeTransactionTrace(t *testing.T) {
 	}
 
 	msg := message.TransactionTrace{}
-	err := decoder([]byte(input), &msg)
+	err := createCodec().Decoder([]byte(input), &msg)
 	assert.NoError(t, err)
 	assert.Equal(t, expected, msg)
 }
