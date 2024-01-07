@@ -248,7 +248,7 @@ func (processor *ShipProcessor) processBlock(block *ship.GetBlocksResultV0) {
 					}
 				} else {
 					logger.WithField("contract", act_trace.Act.Account).
-						WithError(err).Errorf("Failed to get abi for contract %s", act_trace.Act.Account)
+						WithError(err).Error("Failed to get abi for contract")
 				}
 
 				payload, err := processor.encode(act)
