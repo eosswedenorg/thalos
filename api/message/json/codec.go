@@ -17,7 +17,7 @@ func createCodec() message.Codec {
 }
 
 func init() {
-	// Set timeformat used by eos api.
+	// Set timeformat used by SHIP api
 	jsontime.SetDefaultTimeFormat("2006-01-02T15:04:05.000", time.UTC)
 
 	// Register the json codec.
