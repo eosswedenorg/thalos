@@ -135,6 +135,19 @@ func (processor *ShipProcessor) GetCurrentBlock() uint32 {
 
 // Callback function called by shipclient.Stream when a new block arrives.
 func (processor *ShipProcessor) processBlock(block *ship.GetBlocksResultV0) {
+	// Check to see if we have a microfork and post a message to
+	// the rollback channel in that case.
+	if processor.state.CurrentBlock > 0 && block.ThisBlock.BlockNum < processor.state.CurrentBlock {
+		log.WithField("old_block", processor.state.CurrentBlock).
+			WithField("new_block", block.ThisBlock.BlockNum).
+			Warn("Fork detected, old_block is greater than new_block")
+
+		processor.encodeQueue(api.RollbackChannel, message.RollbackMessage{
+			OldBlockNum: processor.state.CurrentBlock,
+			NewBlockNum: block.ThisBlock.BlockNum,
+		})
+	}
+
 	processor.state.CurrentBlock = block.ThisBlock.BlockNum
 
 	if block.ThisBlock.BlockNum%100 == 0 {
