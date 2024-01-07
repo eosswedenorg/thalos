@@ -80,3 +80,8 @@ func (act ActionTrace) GetData() (map[string]any, error) {
 	}
 	return nil, errors.New("failed to convert data to map")
 }
+
+type RollbackMessage struct {
+	OldBlockNum uint32 `json:"old_block" msgpack:"old_block"`
+	NewBlockNum uint32 `json:"new_block" msgpack:"new_block"`
+}
