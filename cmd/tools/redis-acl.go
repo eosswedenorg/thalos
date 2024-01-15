@@ -135,7 +135,7 @@ var RedisACLCmd = &cli.Command{
 		var err error
 		var out *os.File = os.Stdout
 
-		rnd = rand.New(rand.NewSource(time.Now().Unix()))
+		rnd = rand.New(rand.NewSource(time.Now().UnixNano()))
 
 		defaultUser := NewUser("default", ctx.String("default-pw"))
 		serverUser := NewUser(ctx.String("server"), ctx.String("server-pw"))
