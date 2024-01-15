@@ -231,7 +231,7 @@ func (processor *ShipProcessor) processBlock(block *ship.GetBlocksResultV0) {
 						Receiver:       receipt.Receiver.String(),
 						ActDigest:      receipt.ActDigest.String(),
 						GlobalSequence: receipt.GlobalSequence,
-						RecvSequence:   receipt.GlobalSequence,
+						RecvSequence:   receipt.RecvSequence,
 						CodeSequence:   uint32(receipt.CodeSequence),
 						ABISequence:    uint32(receipt.ABISequence),
 					}
