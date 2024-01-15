@@ -13,6 +13,8 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
+var rnd *rand.Rand
+
 // Helper struct representing a redis user.
 type User struct {
 	// Username
@@ -54,7 +56,7 @@ func randomString(length int) string {
 	charset := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUWXYZ0123456789"
 	out := ""
 	for i := 0; i < length; i++ {
-		idx := rand.Intn(len(charset))
+		idx := rnd.Intn(len(charset))
 		out += string(charset[idx])
 	}
 	return out
@@ -133,7 +135,7 @@ var RedisACLCmd = &cli.Command{
 		var err error
 		var out *os.File = os.Stdout
 
-		rand.Seed(time.Now().Unix())
+		rnd = rand.New(rand.NewSource(time.Now().Unix()))
 
 		defaultUser := NewUser("default", ctx.String("default-pw"))
 		serverUser := NewUser(ctx.String("server"), ctx.String("server-pw"))
