@@ -1,3 +1,15 @@
+thalos (0.3.0) bionic focal jammy; urgency=medium
+
+  * Feature: Table Delta message (issue https://github.com/eosswedenorg/thalos/issues/31)
+  * Feature: Rollback message (issue https://github.com/eosswedenorg/thalos/issues/30)
+  * Bug: Fix a bug where GlobalSequence was passed as ActionTrace.Receipt.RecvSequence
+  * Bug: fixed random password generator in redis-acl tool to not produce
+         the same password if executed during the same second.
+
+  * Security: update golang.org/x/crypto from 0.14.0 to 0.17.0
+
+ -- Henrik Hautakoski <henrik.hautakoski@gmail.com>  Sun, 21 Jan 2024 14:29:23 +0100
+
 thalos (0.2.2) bionic focal jammy; urgency=medium
 
   * Current processing state (block number) is now cached and loaded on start.
