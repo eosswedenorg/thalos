@@ -85,3 +85,16 @@ type RollbackMessage struct {
 	OldBlockNum uint32 `json:"old_block" msgpack:"old_block"`
 	NewBlockNum uint32 `json:"new_block" msgpack:"new_block"`
 }
+
+type TableDeltaRow struct {
+	Present bool           `json:"present" msgpack:"present"`
+	Data    map[string]any `json:"data" msgpack:"data"`
+	RawData []byte         `json:"raw_data" msgpack:"raw_data"`
+}
+
+type TableDelta struct {
+	BlockNum  uint32          `json:"blocknum" msgpack:"blocknum"`
+	Timestamp time.Time       `json:"blocktimestamp" msgpack:"blocktimestamp"`
+	Name      string          `json:"name" msgpack:"name"`
+	Rows      []TableDeltaRow `json:"rows" msgpack:"rows"`
+}

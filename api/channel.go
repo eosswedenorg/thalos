@@ -67,3 +67,18 @@ func (a ActionChannel) Channel() Channel {
 
 	return ch
 }
+
+// Table deltas
+type TableDeltaChannel struct {
+	Name string
+}
+
+func (td TableDeltaChannel) Channel() Channel {
+	ch := Channel{"tabledeltas"}
+
+	if len(td.Name) > 0 {
+		ch.Append("name", td.Name)
+	}
+
+	return ch
+}
