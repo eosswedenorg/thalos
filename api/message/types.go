@@ -82,9 +82,9 @@ func (act ActionTrace) GetData() (map[string]any, error) {
 }
 
 type TableDeltaRow struct {
-	Present bool   `json:"present" msgpack:"present"`
-	Data    []byte `json:"data" msgpack:"data"`
-	RawData []byte `json:"raw_data" msgpack:"raw_data"`
+	Present bool           `json:"present" msgpack:"present"`
+	Data    map[string]any `json:"data" msgpack:"data"`
+	RawData []byte         `json:"raw_data" msgpack:"raw_data"`
 }
 
 type TableDelta struct {
