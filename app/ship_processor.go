@@ -52,6 +52,9 @@ type ShipProcessor struct {
 
 	// System contract ("eosio" per default)
 	syscontract eos.AccountName
+
+	// ABI Returned from SHIP
+	shipABI *eos.ABI
 }
 
 // SpawnProcessor creates a new ShipProccessor that consumes the shipclient.Stream passed to it.
@@ -69,11 +72,16 @@ func SpawnProccessor(shipStream *shipclient.Stream, loader StateLoader, saver St
 
 	// Attach handlers
 	shipStream.BlockHandler = processor.processBlock
+	shipStream.InitHandler = processor.initHandler
 
 	// Needed because if nil, traces will not be included in the response from ship.
 	shipStream.TraceHandler = func([]*ship.TransactionTraceV0) {}
 
 	return processor
+}
+
+func (processor *ShipProcessor) initHandler(abi *eos.ABI) {
+	processor.shipABI = abi
 }
 
 func (processor *ShipProcessor) queueMessage(channel api.Channel, payload []byte) bool {
