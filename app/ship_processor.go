@@ -173,11 +173,13 @@ func (processor *ShipProcessor) processBlock(block *ship.GetBlocksResultV0) {
 		processor.encodeQueue(api.HeartbeatChannel, hb)
 	}
 
+	mainLogger := log.WithField("block", block.ThisBlock.BlockNum).Dup()
+
 	// Process traces
 	if block.Traces != nil && len(block.Traces.Elem) > 0 {
 		for _, trace := range block.Traces.AsTransactionTracesV0() {
 
-			logger := log.WithField("tx_id", trace.ID.String()).Dup()
+			logger := mainLogger.WithField("type", "trace").WithField("tx_id", trace.ID.String()).Dup()
 
 			transaction := message.TransactionTrace{
 				ID:            trace.ID.String(),
@@ -299,7 +301,7 @@ func (processor *ShipProcessor) processBlock(block *ship.GetBlocksResultV0) {
 	// Process deltas
 	for _, delta := range block.Deltas.AsTableDeltasV0() {
 
-		logger := log.WithField("type", "table_delta").WithField("table", delta.Name).Dup()
+		logger := mainLogger.WithField("type", "table_delta").WithField("table", delta.Name).Dup()
 
 		rows := []message.TableDeltaRow{}
 		for _, row := range delta.Rows {
