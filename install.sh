@@ -27,6 +27,7 @@ fi
 mkdir -p "$INSTALL_DIR"/{bin,logs}
 make -e DESTDIR=$INSTALL_DIR PREFIX= CFGDIR= install install-scripts
 if [ $? -ne 0 ]; then
+    rm -fr "$INSTALL_DIR"
     echo -e "\033[31m!!\033[0m Installation failed"
     exit 1
 fi
