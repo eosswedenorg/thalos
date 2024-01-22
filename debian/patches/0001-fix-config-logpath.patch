@@ -7,6 +7,6 @@ index 9f4272a..8daac0a 100644
    filename: thalos.log
    # Directory to store the logfiles in.
 -  directory: logs
-+  directory: /var/log
++  directory: /var/log/thalos
    # Format to rename log files when rotating
    time_format: 2006-01-02_150405
