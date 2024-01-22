@@ -1,3 +1,10 @@
+thalos (0.3.1) bionic focal jammy; urgency=medium
+
+  * Bug: fix incorrect log path in debian packages.
+  * Improved install.sh script.
+
+ -- Henrik Hautakoski <henrik.hautakoski@gmail.com>  Mon, 22 Jan 2024 14:46:48 +0100
+
 thalos (0.3.0) bionic focal jammy; urgency=medium
 
   * Feature: Table Delta message (issue https://github.com/eosswedenorg/thalos/issues/31)
