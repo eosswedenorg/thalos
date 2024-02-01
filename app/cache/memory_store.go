@@ -7,10 +7,15 @@ import (
 	"time"
 )
 
+// Store time function in a variable.
+// Makes it easy to travel in time when testing.
 var now = time.Now
 
 type memoryStoreItem struct {
-	value   any
+	// Actual value stored.
+	value any
+
+	// Cache expiration time.
 	expired time.Time
 }
 

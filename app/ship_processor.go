@@ -74,7 +74,7 @@ func SpawnProccessor(shipStream *shipclient.Stream, loader StateLoader, saver St
 	shipStream.BlockHandler = processor.processBlock
 	shipStream.InitHandler = processor.initHandler
 
-	// Needed because if nil, traces will not be included in the response from ship.
+	// Needed because if nil, traces/table deltas will not be included in the response from ship.
 	shipStream.TraceHandler = func([]*ship.TransactionTraceV0) {}
 	shipStream.TableDeltaHandler = func([]*ship.TableDeltaV0) {}
 

@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+// Interface to a cache storage.
 type Store interface {
 	// Set an item in the store.
 	Set(ctx context.Context, key string, value any, TTL time.Duration) error
