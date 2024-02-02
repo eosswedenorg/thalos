@@ -4,11 +4,6 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-var redisPrefixFlag = &cli.StringFlag{
-	Name:  "prefix",
-	Value: "ship",
-}
-
 var redisUrlFlag = &cli.StringFlag{
 	Name:  "redis-url",
 	Value: "127.0.0.1:6379",
@@ -29,6 +24,11 @@ var redisDbFlag = &cli.IntFlag{
 	Name:  "redis-db",
 	Value: 0,
 	Usage: "What redis database we should connect to.",
+}
+
+var prefixFlag = &cli.StringFlag{
+	Name:  "prefix",
+	Value: "ship",
 }
 
 var chainIdFlag = &cli.StringFlag{

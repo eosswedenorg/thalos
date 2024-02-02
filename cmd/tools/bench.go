@@ -26,7 +26,7 @@ var benchCmd = &cli.Command{
 		redisUserFlag,
 		redisPasswordFlag,
 		redisDbFlag,
-		redisPrefixFlag,
+		prefixFlag,
 		chainIdFlag,
 		&cli.DurationFlag{
 			Name:    "interval",
@@ -41,7 +41,7 @@ var benchCmd = &cli.Command{
 
 		log.WithFields(log.Fields{
 			"url":      ctx.String("redis-url"),
-			"prefix":   ctx.String("redis-prefix"),
+			"prefix":   ctx.String("prefix"),
 			"chain_id": ctx.String("chain_id"),
 			"database": ctx.Int("redis-db"),
 		}).Info("Connecting to redis")
@@ -65,7 +65,7 @@ var benchCmd = &cli.Command{
 		}).Info("Starting benchmark")
 
 		sub := api_redis.NewSubscriber(context.Background(), rdb, api_redis.Namespace{
-			Prefix:  ctx.String("redis-prefix"),
+			Prefix:  ctx.String("prefix"),
 			ChainID: ctx.String("chain_id"),
 		})
 

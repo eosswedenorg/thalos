@@ -55,7 +55,7 @@ var validateCmd = &cli.Command{
 	Flags: []cli.Flag{
 		redisUrlFlag,
 		redisDbFlag,
-		redisPrefixFlag,
+		prefixFlag,
 		chainIdFlag,
 	},
 	Action: func(ctx *cli.Context) error {
@@ -64,7 +64,7 @@ var validateCmd = &cli.Command{
 
 		log.WithFields(log.Fields{
 			"url":      ctx.String("redis-url"),
-			"prefix":   ctx.String("redis-prefix"),
+			"prefix":   ctx.String("prefix"),
 			"chain_id": ctx.String("chain_id"),
 			"database": ctx.Int("redis-db"),
 		}).Info("Connecting to redis")
@@ -84,7 +84,7 @@ var validateCmd = &cli.Command{
 		log.Info("Starting validation, following the stream")
 
 		sub := api_redis.NewSubscriber(context.Background(), rdb, api_redis.Namespace{
-			Prefix:  ctx.String("redis-prefix"),
+			Prefix:  ctx.String("prefix"),
 			ChainID: ctx.String("chain_id"),
 		})
 

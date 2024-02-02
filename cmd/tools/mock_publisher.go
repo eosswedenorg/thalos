@@ -23,7 +23,7 @@ var MockPublisherCmd = &cli.Command{
 		redisUserFlag,
 		redisPasswordFlag,
 		redisDbFlag,
-		redisPrefixFlag,
+		prefixFlag,
 		chainIdFlag,
 		&cli.StringFlag{
 			Name:  "codec",
@@ -45,7 +45,7 @@ var MockPublisherCmd = &cli.Command{
 		}
 
 		ns := api_redis.Namespace{
-			Prefix:  ctx.String("redis-prefix"),
+			Prefix:  ctx.String("prefix"),
 			ChainID: ctx.String("chain_id"),
 		}
 		publisher := redis_driver.NewPublisher(context.Background(), rdb, ns)
