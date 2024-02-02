@@ -13,6 +13,7 @@ import (
 	redis_driver "github.com/eosswedenorg/thalos/app/driver/redis"
 
 	"github.com/redis/go-redis/v9"
+	log "github.com/sirupsen/logrus"
 )
 
 var MockPublisherCmd = &cli.Command{
@@ -43,6 +44,13 @@ var MockPublisherCmd = &cli.Command{
 		if err != nil {
 			return err
 		}
+
+		log.WithFields(log.Fields{
+			"url":      ctx.String("redis-url"),
+			"prefix":   ctx.String("prefix"),
+			"chain_id": ctx.String("chain_id"),
+			"database": ctx.Int("redis-db"),
+		}).Info("Starting mock publisher")
 
 		ns := api_redis.Namespace{
 			Prefix:  ctx.String("prefix"),
