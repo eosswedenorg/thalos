@@ -239,3 +239,68 @@ func TestJson_DecodeTransactionTrace(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, expected, msg)
 }
+
+func TestJson_EncodeTableDelta(t *testing.T) {
+	msg := message.TableDelta{
+		BlockNum:  2736712863,
+		Timestamp: time.Unix(1724791632, 0).UTC(),
+		Name:      "contract_row",
+		Rows: []message.TableDeltaRow{
+			{
+				Present: true,
+				Data: map[string]any{
+					"string": "value",
+					"int":    1234,
+				},
+				RawData: []byte{0x23, 0x54, 0xF2, 0xab, 0xeb},
+			},
+			{
+				Present: false,
+				Data: map[string]any{
+					"string": "value",
+					"int":    1234,
+				},
+				RawData: []byte{0x23, 0xe2, 0x3c, 0xb9},
+			},
+		},
+	}
+
+	expected := `{"blocknum":2736712863,"blocktimestamp":"2024-08-27T20:47:12.000","name":"contract_row","rows":[{"present":true,"data":{"int":1234,"string":"value"},"raw_data":"I1Tyq+s="},{"present":false,"data":{"int":1234,"string":"value"},"raw_data":"I+I8uQ=="}]}`
+
+	data, err := createCodec().Encoder(msg)
+	assert.NoError(t, err)
+	assert.Equal(t, expected, string(data))
+}
+
+func TestJson_DecodeTableDelta(t *testing.T) {
+	data := `{"blocknum":2787282732,"blocktimestamp":"2014-02-18T04:20:43.500","name":"contract_row","rows":[{"present":true,"data":{"id":2,"name":"some_name"},"raw_data":"XbosHA1WDbI="},{"present":false,"data":{"id":1234,"name":"some_other_name"},"raw_data":"KNQA1g=="}]}`
+
+	expected := message.TableDelta{
+		BlockNum:  2787282732,
+		Timestamp: time.Date(2014, time.February, 18, 4, 20, 43, 500000000, time.UTC),
+		Name:      "contract_row",
+		Rows: []message.TableDeltaRow{
+			{
+				Present: true,
+				Data: map[string]any{
+					"name": "some_name",
+					"id":   float64(2),
+				},
+				RawData: []byte{0x5d, 0xba, 0x2c, 0x1c, 0x0d, 0x56, 0x0d, 0xb2},
+			},
+			{
+				Present: false,
+				Data: map[string]any{
+					"name": "some_other_name",
+					"id":   float64(1234),
+				},
+				RawData: []byte{0x28, 0xd4, 0x00, 0xd6},
+			},
+		},
+	}
+
+	actual := message.TableDelta{}
+	err := createCodec().Decoder([]byte(data), &actual)
+	assert.NoError(t, err)
+	assert.Equal(t, expected, actual)
+}
