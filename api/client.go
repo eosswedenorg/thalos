@@ -14,6 +14,7 @@ type Client struct {
 	reader  Reader
 	decoder message.Decoder
 
+	// waitgroup for worker threads.
 	wg sync.WaitGroup
 
 	OnError     func(error)
@@ -42,6 +43,7 @@ func (c *Client) worker(channel Channel, h handler) {
 	}
 }
 
+// Action handler
 func (c *Client) actHandler(payload []byte) {
 	var act message.ActionTrace
 	if err := c.decoder(payload, &act); err != nil {
@@ -53,6 +55,7 @@ func (c *Client) actHandler(payload []byte) {
 	c.OnAction(act)
 }
 
+// HeartBeat handler
 func (c *Client) hbHandler(payload []byte) {
 	var hb message.HeartBeat
 	if err := c.decoder(payload, &hb); err != nil {
@@ -87,6 +90,7 @@ func (c *Client) Subscribe(channel Channel) error {
 }
 
 func (c *Client) Run() {
+	// Just wait for workers to complete.
 	c.wg.Wait()
 }
 
