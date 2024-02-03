@@ -411,3 +411,72 @@ func TestMsgpack_DecodeTransactionTrace(t *testing.T) {
 
 	assert.Equal(t, expected, res)
 }
+
+func TestMsgpack_EncodeTableDelta(t *testing.T) {
+	msg := message.TableDelta{
+		BlockNum:  6347293,
+		Timestamp: time.Date(1998, time.December, 4, 8, 54, 35, 500, time.UTC),
+		Name:      "contract_row",
+		Rows: []message.TableDeltaRow{
+			{
+				Present: true,
+				Data: map[string]any{
+					"id":   2213,
+					"name": "Freddie Mercury",
+					"band": "Queen",
+				},
+				RawData: []byte{0x23, 0x13, 0xe2},
+			},
+			{
+				Present: false,
+				Data: map[string]any{
+					"id":   27182,
+					"name": "Eddie Van Halen",
+					"band": "Van Halen",
+				},
+				RawData: []byte{0xfe, 0x4e, 0x52, 0x05},
+			},
+		},
+	}
+
+	expected := "\x84\xa8blocknum\xce\x00`\xda\x1d\xaeblocktimestamp\xd7\xff\x00\x00\a\xd06g\xa3K\xa4name\xaccontract_row\xa4rows\x92\x83\xa4data\x83\xa4band\xa5Queen\xa2id\xd1\b\xa5\xa4name\xafFreddie Mercury\xa7presentèraw_data\xc4\x03#\x13⃤data\x83\xa4band\xa9Van Halen\xa2id\xd1j.\xa4name\xafEddie Van Halen\xa7present¨raw_data\xc4\x04\xfeNR\x05"
+
+	actual, err := createCodec().Encoder(msg)
+	assert.NoError(t, err)
+	assert.Equal(t, expected, string(actual))
+}
+
+func TestMsgpack_DecodeTableDelta(t *testing.T) {
+	data := []byte("\x84\xa8blocknum\xce\x00`\xda\x1d\xaeblocktimestamp\xd7\xff\x00\x00\a\xd06g\xa3K\xa4name\xaccontract_row\xa4rows\x92\x83\xa4data\x83\xa4band\xa5Queen\xa2id\xd1\b\xa5\xa4name\xafFreddie Mercury\xa7presentèraw_data\xc4\x03#\x13⃤data\x83\xa4band\xa9Van Halen\xa2id\xd1j.\xa4name\xafEddie Van Halen\xa7present¨raw_data\xc4\x04\xfeNR\x05")
+
+	expected := message.TableDelta{
+		BlockNum:  6347293,
+		Timestamp: time.Date(1998, time.December, 4, 8, 54, 35, 500, time.UTC),
+		Name:      "contract_row",
+		Rows: []message.TableDeltaRow{
+			{
+				Present: true,
+				Data: map[string]any{
+					"id":   int64(2213),
+					"name": "Freddie Mercury",
+					"band": "Queen",
+				},
+				RawData: []byte{0x23, 0x13, 0xe2},
+			},
+			{
+				Present: false,
+				Data: map[string]any{
+					"id":   int64(27182),
+					"name": "Eddie Van Halen",
+					"band": "Van Halen",
+				},
+				RawData: []byte{0xfe, 0x4e, 0x52, 0x05},
+			},
+		},
+	}
+	actual := message.TableDelta{}
+	err := createCodec().Decoder(data, &actual)
+	assert.NoError(t, err)
+
+	assert.Equal(t, expected, actual)
+}
