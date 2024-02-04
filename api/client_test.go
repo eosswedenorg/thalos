@@ -33,12 +33,6 @@ func mockDecoder([]byte, any) error {
 	return nil
 }
 
-func mockHbHandler(message.HeartBeat) {
-}
-
-func mockActionHandler(message.ActionTrace) {
-}
-
 func TestClient_Subscribe(t *testing.T) {
 	tests := []struct {
 		name    string
@@ -48,13 +42,12 @@ func TestClient_Subscribe(t *testing.T) {
 		{"Channel", Channel{}, true},
 		{"ActionChannel", ActionChannel{}.Channel(), false},
 		{"HeartbeatChannel", HeartbeatChannel, false},
-		{"TransactionChannel", TransactionChannel, true},
+		{"TransactionChannel", TransactionChannel, false},
+		{"InvalidChannel", Channel{"random_type"}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			c := NewClient(&mockReader{}, mockDecoder)
-			c.OnHeartbeat = mockHbHandler
-			c.OnAction = mockActionHandler
 			if err := c.Subscribe(tt.channel); (err != nil) != tt.wantErr {
 				t.Errorf("Client.Subscribe() error = %v, wantErr %v", err, tt.wantErr)
 			}
@@ -62,18 +55,7 @@ func TestClient_Subscribe(t *testing.T) {
 	}
 }
 
-func TestClient_SubscribeWithNilHandler(t *testing.T) {
-	client := NewClient(nil, nil)
-	client.OnAction = mockActionHandler
-	client.OnHeartbeat = mockHbHandler
-
-	err := client.Subscribe(TableDeltaChannel{Name: "name"}.Channel())
-
-	assert.Error(t, err)
-}
-
 func TestClient_ReadRollback(t *testing.T) {
-	called := false
 	expected := message.RollbackMessage{
 		OldBlockNum: 1000,
 		NewBlockNum: 50,
@@ -86,15 +68,10 @@ func TestClient_ReadRollback(t *testing.T) {
 	assert.NoError(t, err)
 
 	client := NewClient(mockReader{bytes.NewReader(payload)}, codec.Decoder)
-	client.OnRollback = func(rb message.RollbackMessage) {
-		assert.Equal(t, rb, expected)
-		called = true
-	}
 
 	err = client.Subscribe(RollbackChannel)
 	assert.NoError(t, err)
 
-	client.Run()
-
-	assert.True(t, called, "Rollback callback not called when it should have been")
+	actual := <-client.Channel()
+	assert.Equal(t, expected, actual)
 }

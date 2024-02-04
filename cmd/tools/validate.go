@@ -18,37 +18,6 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-type Tester struct {
-	block_num uint32
-	timeout   time.Duration
-	timer     *time.Ticker
-}
-
-func NewTester(timeout time.Duration) *Tester {
-	return &Tester{
-		block_num: 0,
-		timeout:   timeout,
-		timer:     time.NewTicker(timeout),
-	}
-}
-
-func (t *Tester) OnAction(act message.ActionTrace) {
-	if t.block_num > 0 {
-		var diff int32 = int32(act.BlockNum - t.block_num)
-		if diff < 0 || diff > 1 {
-			log.WithFields(log.Fields{
-				"current_block": t.block_num,
-				"block":         act.BlockNum,
-				"diff":          diff,
-			}).Warn("Invalid")
-		}
-	}
-
-	t.block_num = act.BlockNum
-
-	t.timer.Reset(t.timeout)
-}
-
 var validateCmd = &cli.Command{
 	Name:  "validate",
 	Usage: "Validate a thalos server by following action traces and makes sure that blocks arrive in order.",
@@ -59,7 +28,6 @@ var validateCmd = &cli.Command{
 		chainIdFlag,
 	},
 	Action: func(ctx *cli.Context) error {
-		tester := NewTester(time.Second * 5)
 		status_duration := time.Second * 10
 
 		log.WithFields(log.Fields{
@@ -94,37 +62,53 @@ var validateCmd = &cli.Command{
 		}
 
 		client := api.NewClient(sub, codec.Decoder)
-		client.OnAction = tester.OnAction
 
 		// Subscribe to all actions
 		if err = client.Subscribe(api.ActionChannel{}.Channel()); err != nil {
 			return err
 		}
 
-		go func() {
-			sig := make(chan os.Signal, 1)
-			signal.Notify(sig, os.Interrupt)
+		block_num := uint32(0)
+		timeout := time.Second * 5
+		timer := time.NewTicker(timeout)
 
-			for {
-				select {
-				case <-sig:
-					fmt.Println("Got interrupt")
-					client.Close()
-					return
-				case <-tester.timer.C:
-					log.WithField("duration", tester.timeout).
-						Warn("Did not get any messages during the defined duration")
-				case <-time.After(status_duration):
-					log.WithFields(log.Fields{
-						"current_block": tester.block_num,
-					}).Info("Status")
+		go func() {
+			for t := range client.Channel() {
+				switch msg := t.(type) {
+				case message.ActionTrace:
+					if block_num > 0 {
+						var diff int32 = int32(msg.BlockNum - block_num)
+						if diff < 0 || diff > 1 {
+							log.WithFields(log.Fields{
+								"current_block": block_num,
+								"block":         msg.BlockNum,
+								"diff":          diff,
+							}).Warn("Invalid")
+						}
+					}
+					block_num = msg.BlockNum
+					timer.Reset(timeout)
 				}
 			}
 		}()
 
-		// Read stuff.
-		client.Run()
+		sig := make(chan os.Signal, 1)
+		signal.Notify(sig, os.Interrupt)
 
-		return nil
+		for {
+			select {
+			case <-sig:
+				fmt.Println("Got interrupt")
+				client.Close()
+				return nil
+			case <-timer.C:
+				log.WithField("duration", timeout).
+					Warn("Did not get any messages during the defined duration")
+			case <-time.After(status_duration):
+				log.WithFields(log.Fields{
+					"current_block": block_num,
+				}).Info("Status")
+			}
+		}
 	},
 }

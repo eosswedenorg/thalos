@@ -76,46 +76,47 @@ var benchCmd = &cli.Command{
 
 		client := api.NewClient(sub, codec.Decoder)
 
-		client.OnAction = func(act message.ActionTrace) {
-			counter++
-		}
-
 		// Subscribe to all actions
 		if err = client.Subscribe(api.ActionChannel{}.Channel()); err != nil {
 			return err
 		}
 
 		go func() {
-			t := time.Now()
-			sig := make(chan os.Signal, 1)
-			signal.Notify(sig, os.Interrupt)
-
-			for {
-				select {
-				case <-sig:
-					fmt.Println("Got interrupt")
-					client.Close()
-					return
-				case now := <-time.After(interval):
-					elapsed := now.Sub(t)
-					t = now
-
-					log.WithFields(log.Fields{
-						"num_messages": counter,
-						"elapsed":      elapsed,
-						"msg_per_sec":  float64(counter) / elapsed.Seconds(),
-						"msg_per_ms":   float64(counter) / float64(elapsed.Milliseconds()),
-						"msg_per_min":  float64(counter) / elapsed.Minutes(),
-					}).Info("Benchmark results")
-
-					counter = 0
+			for t := range client.Channel() {
+				switch err := t.(type) {
+				case message.ActionTrace:
+					counter++
+				case error:
+					log.WithError(err).Error("Error when reading stream")
 				}
 			}
 		}()
 
-		// Read stuff.
-		client.Run()
+		t := time.Now()
+		sig := make(chan os.Signal, 1)
+		signal.Notify(sig, os.Interrupt)
 
-		return nil
+		// Read stuff.
+		for {
+			select {
+			case <-sig:
+				fmt.Println("Got interrupt")
+				client.Close()
+				return nil
+			case now := <-time.After(interval):
+				elapsed := now.Sub(t)
+				t = now
+
+				log.WithFields(log.Fields{
+					"num_messages": counter,
+					"elapsed":      elapsed,
+					"msg_per_sec":  float64(counter) / elapsed.Seconds(),
+					"msg_per_ms":   float64(counter) / float64(elapsed.Milliseconds()),
+					"msg_per_min":  float64(counter) / elapsed.Minutes(),
+				}).Info("Benchmark results")
+
+				counter = 0
+			}
+		}
 	},
 }

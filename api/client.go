@@ -2,15 +2,15 @@ package api
 
 import (
 	"fmt"
-	"reflect"
 	"sync"
+	"time"
 
 	"github.com/eosswedenorg/thalos/api/message"
 )
 
 type handler func([]byte)
 
-// Client reads and decodes messages from a reader and provides callback functions.
+// Client reads and decodes messages from a reader and posts thems to a go channel
 type Client struct {
 	reader  Reader
 	decoder message.Decoder
@@ -18,18 +18,26 @@ type Client struct {
 	// waitgroup for worker threads.
 	wg sync.WaitGroup
 
-	OnError       func(error)
-	OnRollback    func(message.RollbackMessage)
-	OnTransaction func(message.TransactionTrace)
-	OnAction      func(message.ActionTrace)
-	OnHeartbeat   func(message.HeartBeat)
-	OnTableDelta  func(message.TableDelta)
+	// Channel for messages and errors
+	channel chan any
 }
 
 func NewClient(reader Reader, decoder message.Decoder) *Client {
 	return &Client{
 		reader:  reader,
 		decoder: decoder,
+		channel: make(chan any),
+	}
+}
+
+func (c *Client) Channel() <-chan any {
+	return c.channel
+}
+
+func (c *Client) post(msg any) {
+	select {
+	case <-time.After(time.Second):
+	case c.channel <- msg:
 	}
 }
 
@@ -37,9 +45,7 @@ func (c *Client) worker(channel Channel, h handler) {
 	for {
 		payload, err := c.reader.Read(channel)
 		if err != nil {
-			if c.OnError != nil {
-				c.OnError(err)
-			}
+			c.post(err)
 			return
 		}
 
@@ -47,13 +53,11 @@ func (c *Client) worker(channel Channel, h handler) {
 	}
 }
 
-// Helper method to decode a message and call OnError on error.
+// Helper method to decode a message and post and error on the channel if it fails.
 // Returns true if successfull. false otherwise
 func (c *Client) decode(payload []byte, msg any) bool {
 	if err := c.decoder(payload, msg); err != nil {
-		if c.OnError != nil {
-			c.OnError(err)
-		}
+		c.post(err)
 		return false
 	}
 	return true
@@ -63,7 +67,7 @@ func (c *Client) decode(payload []byte, msg any) bool {
 func (c *Client) rollbackHandler(payload []byte) {
 	var rb message.RollbackMessage
 	if ok := c.decode(payload, &rb); ok {
-		c.OnRollback(rb)
+		c.post(rb)
 	}
 }
 
@@ -71,7 +75,7 @@ func (c *Client) rollbackHandler(payload []byte) {
 func (c *Client) transactionHandler(payload []byte) {
 	var trans message.TransactionTrace
 	if ok := c.decode(payload, &trans); ok {
-		c.OnTransaction(trans)
+		c.post(trans)
 	}
 }
 
@@ -79,7 +83,7 @@ func (c *Client) transactionHandler(payload []byte) {
 func (c *Client) actHandler(payload []byte) {
 	var act message.ActionTrace
 	if ok := c.decode(payload, &act); ok {
-		c.OnAction(act)
+		c.post(act)
 	}
 }
 
@@ -87,7 +91,7 @@ func (c *Client) actHandler(payload []byte) {
 func (c *Client) tableDeltaHandler(payload []byte) {
 	td := message.TableDelta{}
 	if ok := c.decode(payload, &td); ok {
-		c.OnTableDelta(td)
+		c.post(td)
 	}
 }
 
@@ -95,37 +99,33 @@ func (c *Client) tableDeltaHandler(payload []byte) {
 func (c *Client) hbHandler(payload []byte) {
 	var hb message.HeartBeat
 	if ok := c.decode(payload, &hb); ok {
-		c.OnHeartbeat(hb)
+		c.post(hb)
 	}
 }
 
 func (c *Client) Subscribe(channel Channel) error {
-	handlers := map[string]struct {
-		handler  handler
-		callback any
-	}{
-		RollbackChannel.Type():               {c.rollbackHandler, c.OnRollback},
-		TransactionChannel.Type():            {c.transactionHandler, c.OnTransaction},
-		HeartbeatChannel.Type():              {c.hbHandler, c.OnHeartbeat},
-		ActionChannel{}.Channel().Type():     {c.actHandler, c.OnAction},
-		TableDeltaChannel{}.Channel().Type(): {c.tableDeltaHandler, c.OnTableDelta},
-	}
+	var handler handler
 
-	h, ok := handlers[channel.Type()]
-
-	if !ok {
+	switch channel.Type() {
+	case RollbackChannel.Type():
+		handler = c.rollbackHandler
+	case TransactionChannel.Type():
+		handler = c.transactionHandler
+	case HeartbeatChannel.Type():
+		handler = c.hbHandler
+	case ActionChannel{}.Channel().Type():
+		handler = c.actHandler
+	case TableDeltaChannel{}.Channel().Type():
+		handler = c.tableDeltaHandler
+	default:
 		return fmt.Errorf("invalid channel type. %s", channel.Type())
-	}
-
-	if h.callback == nil || reflect.ValueOf(h.callback).IsNil() {
-		return fmt.Errorf("please set an handler before calling Subscribe")
 	}
 
 	// Start a worker for this channel.
 	c.wg.Add(1)
 	go func() {
 		defer c.wg.Done()
-		c.worker(channel, h.handler)
+		c.worker(channel, handler)
 	}()
 
 	return nil
@@ -137,5 +137,9 @@ func (c *Client) Run() {
 }
 
 func (c *Client) Close() error {
-	return c.reader.Close()
+	err := c.reader.Close()
+	// Wait for all goroutines before closing channel.
+	c.wg.Wait()
+	close(c.channel)
+	return err
 }
