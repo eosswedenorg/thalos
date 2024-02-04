@@ -19,6 +19,7 @@ type Client struct {
 	wg sync.WaitGroup
 
 	OnError       func(error)
+	OnRollback    func(message.RollbackMessage)
 	OnTransaction func(message.TransactionTrace)
 	OnAction      func(message.ActionTrace)
 	OnHeartbeat   func(message.HeartBeat)
@@ -58,6 +59,14 @@ func (c *Client) decode(payload []byte, msg any) bool {
 	return true
 }
 
+// Rollback handler
+func (c *Client) rollbackHandler(payload []byte) {
+	var rb message.RollbackMessage
+	if ok := c.decode(payload, &rb); ok {
+		c.OnRollback(rb)
+	}
+}
+
 // Transaction handler
 func (c *Client) transactionHandler(payload []byte) {
 	var trans message.TransactionTrace
@@ -95,6 +104,7 @@ func (c *Client) Subscribe(channel Channel) error {
 		handler  handler
 		callback any
 	}{
+		RollbackChannel.Type():               {c.rollbackHandler, c.OnRollback},
 		TransactionChannel.Type():            {c.transactionHandler, c.OnTransaction},
 		HeartbeatChannel.Type():              {c.hbHandler, c.OnHeartbeat},
 		ActionChannel{}.Channel().Type():     {c.actHandler, c.OnAction},
