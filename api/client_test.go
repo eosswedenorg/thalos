@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/eosswedenorg/thalos/api/message"
+	"github.com/stretchr/testify/assert"
 )
 
 type mockReader struct{}
@@ -47,4 +48,14 @@ func TestClient_Subscribe(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestClient_SubscribeWithNilHandler(t *testing.T) {
+	client := NewClient(nil, nil)
+	client.OnAction = mockActionHandler
+	client.OnHeartbeat = mockHbHandler
+
+	err := client.Subscribe(TableDeltaChannel{Name: "name"}.Channel())
+
+	assert.Error(t, err)
 }
