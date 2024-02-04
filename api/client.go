@@ -45,40 +45,40 @@ func (c *Client) worker(channel Channel, h handler) {
 	}
 }
 
-// Action handler
-func (c *Client) actHandler(payload []byte) {
-	var act message.ActionTrace
-	if err := c.decoder(payload, &act); err != nil {
+// Helper method to decode a message and call OnError on error.
+// Returns true if successfull. false otherwise
+func (c *Client) decode(payload []byte, msg any) bool {
+	if err := c.decoder(payload, msg); err != nil {
 		if c.OnError != nil {
 			c.OnError(err)
 		}
-		return
+		return false
 	}
-	c.OnAction(act)
+	return true
+}
+
+// Action handler
+func (c *Client) actHandler(payload []byte) {
+	var act message.ActionTrace
+	if ok := c.decode(payload, &act); ok {
+		c.OnAction(act)
+	}
 }
 
 // TableDelta handler
 func (c *Client) tableDeltaHandler(payload []byte) {
 	td := message.TableDelta{}
-	if err := c.decoder(payload, &td); err != nil {
-		if c.OnError != nil {
-			c.OnError(err)
-		}
-		return
+	if ok := c.decode(payload, &td); ok {
+		c.OnTableDelta(td)
 	}
-	c.OnTableDelta(td)
 }
 
 // HeartBeat handler
 func (c *Client) hbHandler(payload []byte) {
 	var hb message.HeartBeat
-	if err := c.decoder(payload, &hb); err != nil {
-		if c.OnError != nil {
-			c.OnError(err)
-		}
-		return
+	if ok := c.decode(payload, &hb); ok {
+		c.OnHeartbeat(hb)
 	}
-	c.OnHeartbeat(hb)
 }
 
 func (c *Client) Subscribe(channel Channel) error {
