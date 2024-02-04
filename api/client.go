@@ -103,7 +103,7 @@ func (c *Client) hbHandler(payload []byte) {
 	}
 }
 
-func (c *Client) Subscribe(channel Channel) error {
+func (c *Client) sub(channel Channel) error {
 	var handler handler
 
 	switch channel.Type() {
@@ -128,6 +128,15 @@ func (c *Client) Subscribe(channel Channel) error {
 		c.worker(channel, handler)
 	}()
 
+	return nil
+}
+
+func (c *Client) Subscribe(channels ...Channel) error {
+	for _, ch := range channels {
+		if err := c.sub(ch); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
