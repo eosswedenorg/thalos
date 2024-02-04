@@ -18,10 +18,11 @@ type Client struct {
 	// waitgroup for worker threads.
 	wg sync.WaitGroup
 
-	OnError      func(error)
-	OnAction     func(message.ActionTrace)
-	OnHeartbeat  func(message.HeartBeat)
-	OnTableDelta func(message.TableDelta)
+	OnError       func(error)
+	OnTransaction func(message.TransactionTrace)
+	OnAction      func(message.ActionTrace)
+	OnHeartbeat   func(message.HeartBeat)
+	OnTableDelta  func(message.TableDelta)
 }
 
 func NewClient(reader Reader, decoder message.Decoder) *Client {
@@ -57,6 +58,14 @@ func (c *Client) decode(payload []byte, msg any) bool {
 	return true
 }
 
+// Transaction handler
+func (c *Client) transactionHandler(payload []byte) {
+	var trans message.TransactionTrace
+	if ok := c.decode(payload, &trans); ok {
+		c.OnTransaction(trans)
+	}
+}
+
 // Action handler
 func (c *Client) actHandler(payload []byte) {
 	var act message.ActionTrace
@@ -86,6 +95,7 @@ func (c *Client) Subscribe(channel Channel) error {
 		handler  handler
 		callback any
 	}{
+		TransactionChannel.Type():            {c.transactionHandler, c.OnTransaction},
 		HeartbeatChannel.Type():              {c.hbHandler, c.OnHeartbeat},
 		ActionChannel{}.Channel().Type():     {c.actHandler, c.OnAction},
 		TableDeltaChannel{}.Channel().Type(): {c.tableDeltaHandler, c.OnTableDelta},
