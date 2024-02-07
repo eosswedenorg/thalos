@@ -75,6 +75,8 @@ var validateCmd = &cli.Command{
 		go func() {
 			for t := range client.Channel() {
 				switch msg := t.(type) {
+				case error:
+					log.WithError(msg).Error("Error when reading stream")
 				case message.ActionTrace:
 					if block_num > 0 {
 						var diff int32 = int32(msg.BlockNum - block_num)
