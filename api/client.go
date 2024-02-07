@@ -2,6 +2,7 @@ package api
 
 import (
 	"fmt"
+	"io"
 	"sync"
 	"time"
 
@@ -45,7 +46,11 @@ func (c *Client) worker(channel Channel, h handler) {
 	for {
 		payload, err := c.reader.Read(channel)
 		if err != nil {
-			c.post(err)
+			// Dont report EOF as an error because it is used
+			// by readers to signal an graceful end of input.
+			if err != io.EOF {
+				c.post(err)
+			}
 			return
 		}
 
