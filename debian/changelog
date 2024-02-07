@@ -1,3 +1,18 @@
+thalos (1.0.0) bionic focal jammy; urgency=medium
+
+  * Improved code documentation.
+  * Updated dependancies.
+  * Small fixes for thalos tools.
+
+  Go API:
+
+  * Rewrite client api to provide a go channel instead of callback functions
+  * Support Transaction messages
+  * Support Rollback messages
+  * Support TableDelta messages
+
+ -- Henrik Hautakoski <henrik.hautakoski@gmail.com>  Wed, 07 Feb 2024 19:32:10 +0100
+
 thalos (0.3.1) bionic focal jammy; urgency=medium
 
   * Bug: fix incorrect log path in debian packages.
