@@ -6,7 +6,7 @@ Standards-Version: 4.5.0
 Vcs-Git: https://github.com/eosswedenorg/thalos.git
 Vcs-Browser: https://github.com/eosswedenorg/thalos
 Priority: optional
-Maintainer: Henrik Hautakoski <henrik@eossweden.org>
+Maintainer: Henrik Hautakoski <henrik.hautakoski@gmail.com>
 
 Package: thalos
 Section: utils
