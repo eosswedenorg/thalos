@@ -12,7 +12,6 @@ require (
 	github.com/go-redis/cache/v9 v9.0.0
 	github.com/go-redis/redismock/v9 v9.2.0
 	github.com/nikoksr/notify v0.41.0
-	github.com/pborman/getopt/v2 v2.1.0
 	github.com/redis/go-redis/v9 v9.4.0
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.8.4
