@@ -46,8 +46,8 @@ type Config struct {
 	Telegram TelegramConfig `yaml:"telegram"`
 }
 
-func Parse(data []byte) (*Config, error) {
-	cfg := Config{
+func New() Config {
+	return Config{
 		MessageCodec: "json",
 		Log: log.Config{
 			MaxFileSize: 10 * 1000 * 1000, // 10 mb
@@ -60,15 +60,10 @@ func Parse(data []byte) (*Config, error) {
 			IrreversibleOnly:    false,
 		},
 		Redis: RedisConfig{
-			Addr:     "localhost:6379",
-			Password: "",
-			DB:       0,
-			Prefix:   "ship",
+			Addr:   "localhost:6379",
+			Prefix: "ship",
 		},
 	}
-
-	err := yaml.Unmarshal(data, &cfg)
-	return &cfg, err
 }
 
 func (ship *ShipConfig) UnmarshalYAML(value *yaml.Node) error {
@@ -87,11 +82,15 @@ func (ship *ShipConfig) UnmarshalYAML(value *yaml.Node) error {
 	return err
 }
 
-func Load(filename string) (*Config, error) {
+func (cfg *Config) ReadYAML(data []byte) error {
+	return yaml.Unmarshal(data, cfg)
+}
+
+func (cfg *Config) ReadFile(filename string) error {
 	bytes, err := os.ReadFile(filename)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return Parse(bytes)
+	return cfg.ReadYAML(bytes)
 }

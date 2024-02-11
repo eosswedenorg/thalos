@@ -37,7 +37,7 @@ import (
 //  Global variables
 // ---------------------------
 
-var conf *config.Config
+var conf config.Config
 
 var shClient *shipclient.Stream
 
@@ -241,8 +241,8 @@ func serverCmd(ctx *cli.Context) error {
 	}
 
 	// Parse config
-	conf, err = config.Load(ctx.Path("config"))
-	if err != nil {
+	conf = config.New()
+	if err = conf.ReadFile(ctx.Path("config")); err != nil {
 		return err
 	}
 
