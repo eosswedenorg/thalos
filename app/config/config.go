@@ -1,12 +1,9 @@
 package config
 
 import (
-	"os"
 	"time"
 
 	"github.com/eosswedenorg/thalos/app/log"
-
-	"gopkg.in/yaml.v3"
 
 	shipclient "github.com/eosswedenorg-go/antelope-ship-client"
 )
@@ -64,33 +61,4 @@ func New() Config {
 			Prefix: "ship",
 		},
 	}
-}
-
-func (ship *ShipConfig) UnmarshalYAML(value *yaml.Node) error {
-	var err error
-
-	if value.Kind == yaml.ScalarNode {
-		ship.Url = value.Value
-	} else {
-		type ShipConfigRaw ShipConfig
-		raw := ShipConfigRaw(*ship)
-		if err = value.Decode(&raw); err == nil {
-			*ship = ShipConfig(raw)
-		}
-	}
-
-	return err
-}
-
-func (cfg *Config) ReadYAML(data []byte) error {
-	return yaml.Unmarshal(data, cfg)
-}
-
-func (cfg *Config) ReadFile(filename string) error {
-	bytes, err := os.ReadFile(filename)
-	if err != nil {
-		return err
-	}
-
-	return cfg.ReadYAML(bytes)
 }
