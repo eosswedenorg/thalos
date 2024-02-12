@@ -236,7 +236,7 @@ func serverCmd(ctx *cli.Context) error {
 	if len(pidFile) > 0 {
 		log.WithField("file", pidFile).Info("Writing pid to file")
 		if err = pid.Save(pidFile); err != nil {
-			return err
+			return fmt.Errorf("pid: %s", err)
 		}
 	}
 
@@ -264,11 +264,11 @@ func serverCmd(ctx *cli.Context) error {
 	if len(conf.Log.Filename) > 0 {
 		stdWriter, err := NewRotatingFileFromConfig(conf.Log, "info")
 		if err != nil {
-			return err
+			return fmt.Errorf("log: %s", err)
 		}
 		errWriter, err := NewRotatingFileFromConfig(conf.Log, "error")
 		if err != nil {
-			return err
+			return fmt.Errorf("log: %s", err)
 		}
 
 		log.WithFields(log.Fields{
@@ -289,7 +289,7 @@ func serverCmd(ctx *cli.Context) error {
 
 		telegram, err := telegram.New(conf.Telegram.Id)
 		if err != nil {
-			return err
+			return fmt.Errorf("telegram: %s", err)
 		}
 
 		telegram.AddReceivers(conf.Telegram.Channel)
@@ -308,7 +308,7 @@ func serverCmd(ctx *cli.Context) error {
 
 	err = rdb.Ping(context.Background()).Err()
 	if err != nil {
-		return err
+		return fmt.Errorf("redis: %s", err)
 	}
 
 	// Setup cache storage
@@ -325,7 +325,7 @@ func serverCmd(ctx *cli.Context) error {
 	eosClient := eos.New(conf.Api)
 	chainInfo, err = eosClient.GetInfo(context.Background())
 	if err != nil {
-		return err
+		return fmt.Errorf("eosapi: %s", err)
 	}
 
 	shClient = shipclient.NewStream(func(s *shipclient.Stream) {
@@ -337,8 +337,7 @@ func serverCmd(ctx *cli.Context) error {
 	// Get codec
 	codec, err := message.GetCodec(conf.MessageCodec)
 	if err != nil {
-		log.WithError(err)
-		return err
+		return fmt.Errorf("codec: %s", err)
 	}
 
 	chain_id := getChain(chainInfo.ChainID.String())
