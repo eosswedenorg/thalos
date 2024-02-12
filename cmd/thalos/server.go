@@ -7,7 +7,6 @@ import (
 	"io"
 	"os"
 	"os/signal"
-	"path"
 	"syscall"
 	"time"
 
@@ -223,6 +222,20 @@ func stateSaver(state app.State) error {
 	return cache.Set(ctx, "state", state, 0)
 }
 
+func ReadConfig(cfg *config.Config, ctx *cli.Context) error {
+	// Read file first.
+	if err := cfg.ReadFile(ctx.Path("config")); err != nil {
+		return err
+	}
+
+	// Then override any cli flags
+	if err := cfg.ReadCliFlags(ctx); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func serverCmd(ctx *cli.Context) error {
 	var err error
 	var chainInfo *eos.InfoResp
@@ -242,15 +255,8 @@ func serverCmd(ctx *cli.Context) error {
 
 	// Parse config
 	conf = config.New()
-	if err = conf.ReadFile(ctx.Path("config")); err != nil {
-		return err
-	}
-
-	// If log file is given on the commandline, override config values.
-	logFile := ctx.Path("log")
-	if len(logFile) > 0 {
-		conf.Log.Directory = path.Dir(logFile)
-		conf.Log.Filename = path.Base(logFile)
+	if err = ReadConfig(&conf, ctx); err != nil {
+		return fmt.Errorf("config: %s", err)
 	}
 
 	lvl, err := log.ParseLevel(ctx.String("level"))
