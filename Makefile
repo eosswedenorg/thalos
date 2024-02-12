@@ -13,7 +13,7 @@ CFGDIR=$(PREFIX)/etc/thalos
 build: build/$(PROGRAM)
 
 build/$(PROGRAM) :
-	$(GO) build $(GOBUILDFLAGS) -o $@ cmd/thalos/main.go
+	$(GO) build $(GOBUILDFLAGS) -o $@ cmd/thalos/main.go cmd/thalos/server.go
 
 tools : build/thalos-tools
 

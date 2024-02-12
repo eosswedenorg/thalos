@@ -1,12 +1,9 @@
 package config
 
 import (
-	"os"
 	"time"
 
 	"github.com/eosswedenorg/thalos/app/log"
-
-	"gopkg.in/yaml.v3"
 
 	shipclient "github.com/eosswedenorg-go/antelope-ship-client"
 )
@@ -46,8 +43,9 @@ type Config struct {
 	Telegram TelegramConfig `yaml:"telegram"`
 }
 
-func Parse(data []byte) (*Config, error) {
-	cfg := Config{
+// Create a new Config object with default values
+func New() Config {
+	return Config{
 		MessageCodec: "json",
 		Log: log.Config{
 			MaxFileSize: 10 * 1000 * 1000, // 10 mb
@@ -60,38 +58,8 @@ func Parse(data []byte) (*Config, error) {
 			IrreversibleOnly:    false,
 		},
 		Redis: RedisConfig{
-			Addr:     "localhost:6379",
-			Password: "",
-			DB:       0,
-			Prefix:   "ship",
+			Addr:   "localhost:6379",
+			Prefix: "ship",
 		},
 	}
-
-	err := yaml.Unmarshal(data, &cfg)
-	return &cfg, err
-}
-
-func (ship *ShipConfig) UnmarshalYAML(value *yaml.Node) error {
-	var err error
-
-	if value.Kind == yaml.ScalarNode {
-		ship.Url = value.Value
-	} else {
-		type ShipConfigRaw ShipConfig
-		raw := ShipConfigRaw(*ship)
-		if err = value.Decode(&raw); err == nil {
-			*ship = ShipConfig(raw)
-		}
-	}
-
-	return err
-}
-
-func Load(filename string) (*Config, error) {
-	bytes, err := os.ReadFile(filename)
-	if err != nil {
-		return nil, err
-	}
-
-	return Parse(bytes)
 }

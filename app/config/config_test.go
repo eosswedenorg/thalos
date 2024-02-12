@@ -10,7 +10,7 @@ import (
 	shipclient "github.com/eosswedenorg-go/antelope-ship-client"
 )
 
-func TestParse_Default(t *testing.T) {
+func TestNew(t *testing.T) {
 	expected := Config{
 		MessageCodec: "json",
 
@@ -34,12 +34,10 @@ func TestParse_Default(t *testing.T) {
 		},
 	}
 
-	cfg, err := Parse([]byte(``))
-	require.NoError(t, err)
-	require.Equal(t, cfg, &expected)
+	require.Equal(t, New(), expected)
 }
 
-func TestParse(t *testing.T) {
+func TestReadYAML(t *testing.T) {
 	expected := Config{
 		Name:         "ship-reader-1",
 		Api:          "http://127.0.0.1:8080",
@@ -70,7 +68,8 @@ func TestParse(t *testing.T) {
 		},
 	}
 
-	cfg, err := Parse([]byte(`
+	cfg := Config{}
+	err := cfg.ReadYAML([]byte(`
 name: "ship-reader-1"
 api: "http://127.0.0.1:8080"
 message_codec: "mojibake"
@@ -97,10 +96,10 @@ redis:
 `))
 
 	require.NoError(t, err)
-	require.Equal(t, cfg, &expected)
+	require.Equal(t, cfg, expected)
 }
 
-func TestParseShorthandShipUrl(t *testing.T) {
+func TestReadYAMLShorthandShipUrl(t *testing.T) {
 	expected := Config{
 		Name:         "ship-reader-1",
 		Api:          "http://127.0.0.1:8080",
@@ -128,7 +127,9 @@ func TestParseShorthandShipUrl(t *testing.T) {
 		},
 	}
 
-	cfg, err := Parse([]byte(`
+	cfg := New()
+
+	err := cfg.ReadYAML([]byte(`
 name: "ship-reader-1"
 api: "http://127.0.0.1:8080"
 ship: "127.0.0.1:8089"
@@ -143,5 +144,5 @@ redis:
 `))
 
 	require.NoError(t, err)
-	require.Equal(t, cfg, &expected)
+	require.Equal(t, cfg, expected)
 }
