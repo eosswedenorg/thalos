@@ -6,6 +6,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
+// Read cli flag values into the config
 func (cfg *Config) ReadCliFlags(ctx *cli.Context) error {
 	logFile := ctx.Path("log")
 	if len(logFile) > 0 {

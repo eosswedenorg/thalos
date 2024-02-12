@@ -43,6 +43,7 @@ type Config struct {
 	Telegram TelegramConfig `yaml:"telegram"`
 }
 
+// Create a new Config object with default values
 func New() Config {
 	return Config{
 		MessageCodec: "json",

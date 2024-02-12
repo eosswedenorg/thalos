@@ -4,6 +4,7 @@ import (
 	"os"
 )
 
+// Read values from file
 func (cfg *Config) ReadFile(filename string) error {
 	bytes, err := os.ReadFile(filename)
 	if err != nil {

@@ -20,6 +20,7 @@ func (ship *ShipConfig) UnmarshalYAML(value *yaml.Node) error {
 	return err
 }
 
+// Read YAML config data
 func (cfg *Config) ReadYAML(data []byte) error {
 	return yaml.Unmarshal(data, cfg)
 }
