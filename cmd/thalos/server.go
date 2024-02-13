@@ -143,12 +143,11 @@ func run(processor *app.ShipProcessor) {
 	log.WithField("signal", sig).Info("Signal received")
 
 	// Cleanly close the connection by sending a close message.
+	running = false
 	err := shClient.Shutdown()
 	if err != nil {
 		log.WithError(err).Info("failed to send close message to ship server")
 	}
-
-	running = false
 }
 
 func getChain(def string) string {
