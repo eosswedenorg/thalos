@@ -42,8 +42,6 @@ var shClient *shipclient.Stream
 
 var running bool = true
 
-var exit chan bool
-
 var cache *Cache
 
 var cacheStore Store
@@ -109,8 +107,7 @@ func readerLoop(processor *app.ShipProcessor) {
 		})
 		if err != nil {
 			log.WithError(err).Error("Failed to connect to SHIP")
-			running = false
-			continue
+			return
 		}
 
 		recon_cnt = 0
@@ -122,9 +119,8 @@ func readerLoop(processor *app.ShipProcessor) {
 		if err := shClient.Run(); err != nil {
 
 			if errors.Is(err, shipclient.ErrEndBlockReached) {
-				exit <- true
 				log.Info("Endblock reached.")
-				break
+				return
 			}
 
 			log.WithError(err).Error("Failed to read from ship")
@@ -143,17 +139,13 @@ func run(processor *app.ShipProcessor) {
 	signal.Notify(signals, syscall.SIGINT, syscall.SIGTERM)
 
 	// Wait for interrupt
-	select {
-	case sig := <-signals:
-		log.WithField("signal", sig).Info("Signal received")
+	sig := <-signals
+	log.WithField("signal", sig).Info("Signal received")
 
-		// Cleanly close the connection by sending a close message.
-		err := shClient.Shutdown()
-		if err != nil {
-			log.WithError(err).Info("failed to send close message to ship server")
-		}
-	case <-exit:
-		// Do nothing, just exit.
+	// Cleanly close the connection by sending a close message.
+	err := shClient.Shutdown()
+	if err != nil {
+		log.WithError(err).Info("failed to send close message to ship server")
 	}
 
 	running = false
@@ -239,8 +231,6 @@ func ReadConfig(cfg *config.Config, ctx *cli.Context) error {
 func serverCmd(ctx *cli.Context) error {
 	var err error
 	var chainInfo *eos.InfoResp
-
-	exit = make(chan bool)
 
 	skip_currentblock_cache := ctx.Bool("n")
 
