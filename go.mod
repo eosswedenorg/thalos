@@ -6,9 +6,9 @@ require (
 	github.com/cenkalti/backoff/v4 v4.2.1
 	github.com/docker/go-units v0.5.0
 	github.com/eoscanada/eos-go v0.10.3-0.20231109144819-59afdfa3a37d
-	github.com/eosswedenorg-go/antelope-ship-client v0.2.7
+	github.com/eosswedenorg-go/antelope-ship-client v0.2.8
 	github.com/eosswedenorg-go/pid v1.0.1
-	github.com/eosswedenorg/thalos/api v0.3.0
+	github.com/eosswedenorg/thalos/api v1.0.0
 	github.com/go-redis/cache/v9 v9.0.0
 	github.com/go-redis/redismock/v9 v9.2.0
 	github.com/nikoksr/notify v0.41.0
@@ -28,10 +28,9 @@ require (
 	github.com/eosswedenorg-go/jsontime v0.0.0-20230509125027-08422d6236c7 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible // indirect
-	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/gorilla/websocket v1.5.1 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
-	github.com/klauspost/compress v1.17.5 // indirect
+	github.com/klauspost/compress v1.17.6 // indirect
 	github.com/kr/pretty v0.3.1 // indirect
 	github.com/logrusorgru/aurora v2.0.3+incompatible // indirect
 	github.com/mitchellh/go-testing-interface v1.14.1 // indirect
@@ -54,11 +53,11 @@ require (
 	go.uber.org/goleak v1.3.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.26.0 // indirect
-	golang.org/x/crypto v0.18.0 // indirect
-	golang.org/x/net v0.20.0 // indirect
+	golang.org/x/crypto v0.19.0 // indirect
+	golang.org/x/net v0.21.0 // indirect
 	golang.org/x/sync v0.6.0 // indirect
-	golang.org/x/sys v0.16.0 // indirect
-	golang.org/x/term v0.16.0 // indirect
+	golang.org/x/sys v0.17.0 // indirect
+	golang.org/x/term v0.17.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 )
 
