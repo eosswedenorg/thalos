@@ -23,8 +23,8 @@ func main() {
 		DisableDefaultText: true,
 	}
 
-	cli.VersionPrinter = func(cCtx *cli.Context) {
-		fmt.Printf("Version %s\n", VersionString)
+	cli.VersionPrinter = func(ctx *cli.Context) {
+		fmt.Printf("Version %s\n", ctx.App.Version)
 	}
 
 	cli.VersionFlag = &cli.BoolFlag{
