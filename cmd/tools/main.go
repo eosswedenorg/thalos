@@ -5,7 +5,7 @@ import (
 
 	"github.com/urfave/cli/v2"
 
-	_ "github.com/eosswedenorg/thalos/app/log"
+	_ "github.com/eosswedenorg/thalos/internal/log"
 	log "github.com/sirupsen/logrus"
 )
 

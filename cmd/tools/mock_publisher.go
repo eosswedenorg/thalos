@@ -10,7 +10,7 @@ import (
 	"github.com/eosswedenorg/thalos/api/message"
 	_ "github.com/eosswedenorg/thalos/api/message/json"
 	api_redis "github.com/eosswedenorg/thalos/api/redis"
-	redis_driver "github.com/eosswedenorg/thalos/app/driver/redis"
+	redis_driver "github.com/eosswedenorg/thalos/internal/driver/redis"
 
 	"github.com/redis/go-redis/v9"
 	log "github.com/sirupsen/logrus"

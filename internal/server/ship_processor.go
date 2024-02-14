@@ -1,4 +1,4 @@
-package app
+package server
 
 import (
 	"encoding/hex"
@@ -6,8 +6,8 @@ import (
 
 	"github.com/eosswedenorg/thalos/api"
 	"github.com/eosswedenorg/thalos/api/message"
-	"github.com/eosswedenorg/thalos/app/abi"
-	"github.com/eosswedenorg/thalos/app/driver"
+	"github.com/eosswedenorg/thalos/internal/abi"
+	"github.com/eosswedenorg/thalos/internal/driver"
 
 	log "github.com/sirupsen/logrus"
 

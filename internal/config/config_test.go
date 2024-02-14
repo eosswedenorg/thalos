@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/eosswedenorg/thalos/app/log"
+	"github.com/eosswedenorg/thalos/internal/log"
 	"github.com/stretchr/testify/require"
 
 	shipclient "github.com/eosswedenorg-go/antelope-ship-client"

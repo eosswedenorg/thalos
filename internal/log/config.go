@@ -4,7 +4,7 @@ import (
 	"path"
 	"time"
 
-	"github.com/eosswedenorg/thalos/app/types"
+	"github.com/eosswedenorg/thalos/internal/types"
 )
 
 // Config represents configuration parameters for a log.

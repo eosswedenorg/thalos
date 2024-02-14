@@ -1,4 +1,4 @@
-package app
+package server
 
 // State represents thalos runtime state
 type State struct {

@@ -18,12 +18,12 @@ import (
 	_ "github.com/eosswedenorg/thalos/api/message/json"
 	_ "github.com/eosswedenorg/thalos/api/message/msgpack"
 	api_redis "github.com/eosswedenorg/thalos/api/redis"
-	"github.com/eosswedenorg/thalos/app"
-	"github.com/eosswedenorg/thalos/app/abi"
-	. "github.com/eosswedenorg/thalos/app/cache"
-	"github.com/eosswedenorg/thalos/app/config"
-	driver "github.com/eosswedenorg/thalos/app/driver/redis"
-	. "github.com/eosswedenorg/thalos/app/log"
+	"github.com/eosswedenorg/thalos/internal/abi"
+	. "github.com/eosswedenorg/thalos/internal/cache"
+	"github.com/eosswedenorg/thalos/internal/config"
+	driver "github.com/eosswedenorg/thalos/internal/driver/redis"
+	. "github.com/eosswedenorg/thalos/internal/log"
+	. "github.com/eosswedenorg/thalos/internal/server"
 	redis_cache "github.com/go-redis/cache/v9"
 	"github.com/nikoksr/notify"
 	"github.com/nikoksr/notify/service/telegram"
@@ -46,7 +46,7 @@ var cache *Cache
 
 var cacheStore Store
 
-func readerLoop(processor *app.ShipProcessor) {
+func readerLoop(processor *ShipProcessor) {
 	recon_cnt := 0
 
 	exp := &backoff.ExponentialBackOff{
@@ -128,7 +128,7 @@ func readerLoop(processor *app.ShipProcessor) {
 	}
 }
 
-func run(processor *app.ShipProcessor) {
+func run(processor *ShipProcessor) {
 	// Spawn reader loop in another thread.
 	go readerLoop(processor)
 
@@ -170,8 +170,8 @@ func initAbiManger(api *eos.API, chain_id string) *abi.AbiManager {
 	return abi.NewAbiManager(cache, api)
 }
 
-func stateLoader(chainInfo *eos.InfoResp, current_block_no_cache bool) app.StateLoader {
-	return func(state *app.State) {
+func stateLoader(chainInfo *eos.InfoResp, current_block_no_cache bool) StateLoader {
+	return func(state *State) {
 		var source string
 
 		// Load state from cache.
@@ -207,7 +207,7 @@ func stateLoader(chainInfo *eos.InfoResp, current_block_no_cache bool) app.State
 	}
 }
 
-func stateSaver(state app.State) error {
+func stateSaver(state State) error {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond*500)
 	defer cancel()
 	return cache.Set(ctx, "state", state, 0)
@@ -337,7 +337,7 @@ func serverCmd(ctx *cli.Context) error {
 
 	chain_id := getChain(chainInfo.ChainID.String())
 
-	processor := app.SpawnProccessor(
+	processor := SpawnProccessor(
 		shClient,
 		stateLoader(chainInfo, skip_currentblock_cache),
 		stateSaver,
