@@ -18,12 +18,13 @@ import (
 	_ "github.com/eosswedenorg/thalos/api/message/json"
 	_ "github.com/eosswedenorg/thalos/api/message/msgpack"
 	api_redis "github.com/eosswedenorg/thalos/api/redis"
-	"github.com/eosswedenorg/thalos/app"
-	"github.com/eosswedenorg/thalos/app/abi"
-	. "github.com/eosswedenorg/thalos/app/cache"
-	"github.com/eosswedenorg/thalos/app/config"
-	driver "github.com/eosswedenorg/thalos/app/driver/redis"
-	. "github.com/eosswedenorg/thalos/app/log"
+	"github.com/eosswedenorg/thalos/internal/abi"
+	"github.com/eosswedenorg/thalos/internal/cache"
+	. "github.com/eosswedenorg/thalos/internal/cache"
+	"github.com/eosswedenorg/thalos/internal/config"
+	driver "github.com/eosswedenorg/thalos/internal/driver/redis"
+	. "github.com/eosswedenorg/thalos/internal/log"
+	. "github.com/eosswedenorg/thalos/internal/server"
 	redis_cache "github.com/go-redis/cache/v9"
 	"github.com/nikoksr/notify"
 	"github.com/nikoksr/notify/service/telegram"
@@ -33,23 +34,7 @@ import (
 	"github.com/spf13/pflag"
 )
 
-// ---------------------------
-//  Global variables
-// ---------------------------
-
-var conf config.Config
-
-var shClient *shipclient.Stream
-
-var running bool = true
-
-var exit chan bool
-
-var cache *Cache
-
-var cacheStore Store
-
-func readerLoop(processor *app.ShipProcessor) {
+func readerLoop(conf *config.Config, running *bool, shClient *shipclient.Stream, processor *ShipProcessor) {
 	recon_cnt := 0
 
 	exp := &backoff.ExponentialBackOff{
@@ -90,7 +75,7 @@ func readerLoop(processor *app.ShipProcessor) {
 		return shClient.SendBlocksRequest()
 	}
 
-	for running {
+	for *running {
 
 		err := backoff.RetryNotify(connectOp, exp, func(err error, d time.Duration) {
 			if recon_cnt >= 3 {
@@ -110,8 +95,7 @@ func readerLoop(processor *app.ShipProcessor) {
 		})
 		if err != nil {
 			log.WithError(err).Error("Failed to connect to SHIP")
-			running = false
-			continue
+			return
 		}
 
 		recon_cnt = 0
@@ -123,9 +107,8 @@ func readerLoop(processor *app.ShipProcessor) {
 		if err := shClient.Run(); err != nil {
 
 			if errors.Is(err, shipclient.ErrEndBlockReached) {
-				exit <- true
 				log.Info("Endblock reached.")
-				break
+				return
 			}
 
 			log.WithError(err).Error("Failed to read from ship")
@@ -133,9 +116,11 @@ func readerLoop(processor *app.ShipProcessor) {
 	}
 }
 
-func run(processor *app.ShipProcessor) {
+func run(conf *config.Config, shClient *shipclient.Stream, processor *ShipProcessor) {
+	running := true
+
 	// Spawn reader loop in another thread.
-	go readerLoop(processor)
+	go readerLoop(conf, &running, shClient, processor)
 
 	// Create interrupt channel.
 	signals := make(chan os.Signal, 1)
@@ -144,27 +129,15 @@ func run(processor *app.ShipProcessor) {
 	signal.Notify(signals, syscall.SIGINT, syscall.SIGTERM)
 
 	// Wait for interrupt
-	select {
-	case sig := <-signals:
-		log.WithField("signal", sig).Info("Signal received")
+	sig := <-signals
+	log.WithField("signal", sig).Info("Signal received")
 
-		// Cleanly close the connection by sending a close message.
-		err := shClient.Shutdown()
-		if err != nil {
-			log.WithError(err).Info("failed to send close message to ship server")
-		}
-	case <-exit:
-		// Do nothing, just exit.
-	}
-
+	// Cleanly close the connection by sending a close message.
 	running = false
-}
-
-func getChain(def string) string {
-	if len(conf.Ship.Chain) > 0 {
-		return conf.Ship.Chain
+	err := shClient.Shutdown()
+	if err != nil {
+		log.WithError(err).Info("failed to send close message to ship server")
 	}
-	return def
 }
 
 func LogLevels() []string {
@@ -175,13 +148,13 @@ func LogLevels() []string {
 	return list
 }
 
-func initAbiManger(api *eos.API, chain_id string) *abi.AbiManager {
-	cache := NewCache("thalos::cache::abi::"+chain_id, cacheStore)
+func initAbiManager(api *eos.API, store cache.Store, chain_id string) *abi.AbiManager {
+	cache := NewCache("thalos::cache::abi::"+chain_id, store)
 	return abi.NewAbiManager(cache, api)
 }
 
-func stateLoader(chainInfo *eos.InfoResp, current_block_no_cache bool) app.StateLoader {
-	return func(state *app.State) {
+func stateLoader(conf config.Config, chainInfo *eos.InfoResp, cache *cache.Cache, current_block_no_cache bool) StateLoader {
+	return func(state *State) {
 		var source string
 
 		// Load state from cache.
@@ -217,10 +190,12 @@ func stateLoader(chainInfo *eos.InfoResp, current_block_no_cache bool) app.State
 	}
 }
 
-func stateSaver(state app.State) error {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond*500)
-	defer cancel()
-	return cache.Set(ctx, "state", state, 0)
+func stateSaver(cache *cache.Cache) StateSaver {
+	return func(state State) error {
+		ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond*500)
+		defer cancel()
+		return cache.Set(ctx, "state", state, 0)
+	}
 }
 
 func ReadConfig(cfg *config.Config, flags *pflag.FlagSet) error {
@@ -246,8 +221,6 @@ func serverCmd(cmd *cobra.Command, args []string) {
 	var err error
 	var chainInfo *eos.InfoResp
 
-	exit = make(chan bool)
-
 	skip_currentblock_cache, _ := cmd.Flags().GetBool("no-state-cache")
 
 	// Write PID file
@@ -261,7 +234,7 @@ func serverCmd(cmd *cobra.Command, args []string) {
 	}
 
 	// Parse config
-	conf = config.New()
+	conf := config.New()
 	if err = ReadConfig(&conf, cmd.Flags()); err != nil {
 		log.WithError(err).Fatal("Failed to read config")
 		return
@@ -333,14 +306,14 @@ func serverCmd(cmd *cobra.Command, args []string) {
 	}
 
 	// Setup cache storage
-	cacheStore = NewRedisStore(&redis_cache.Options{
+	cacheStore := NewRedisStore(&redis_cache.Options{
 		Redis: rdb,
 		// Cache 10k keys for 10 minutes.
 		LocalCache: redis_cache.NewTinyLFU(10000, 10*time.Minute),
 	})
 
 	// Setup general cache
-	cache = NewCache("thalos::cache::instance::"+conf.Name, cacheStore)
+	cache := NewCache("thalos::cache::instance::"+conf.Name, cacheStore)
 
 	log.WithField("api", conf.Api).Info("Get chain info from api")
 	eosClient := eos.New(conf.Api)
@@ -350,7 +323,7 @@ func serverCmd(cmd *cobra.Command, args []string) {
 		return
 	}
 
-	shClient = shipclient.NewStream(func(s *shipclient.Stream) {
+	shClient := shipclient.NewStream(func(s *shipclient.Stream) {
 		s.StartBlock = conf.Ship.StartBlockNum
 		s.EndBlock = conf.Ship.EndBlockNum
 		s.IrreversibleOnly = conf.Ship.IrreversibleOnly
@@ -363,22 +336,25 @@ func serverCmd(cmd *cobra.Command, args []string) {
 		return
 	}
 
-	chain_id := getChain(chainInfo.ChainID.String())
+	chain_id := conf.Ship.Chain
+	if len(chain_id) < 1 {
+		chain_id = chainInfo.ChainID.String()
+	}
 
-	processor := app.SpawnProccessor(
+	processor := SpawnProccessor(
 		shClient,
-		stateLoader(chainInfo, skip_currentblock_cache),
-		stateSaver,
+		stateLoader(conf, chainInfo, cache, skip_currentblock_cache),
+		stateSaver(cache),
 		driver.NewPublisher(context.Background(), rdb, api_redis.Namespace{
 			Prefix:  conf.Redis.Prefix,
 			ChainID: chain_id,
 		}),
-		initAbiManger(eosClient, chain_id),
+		initAbiManager(eosClient, cacheStore, chain_id),
 		codec,
 	)
 
 	// Run the application
-	run(processor)
+	run(&conf, shClient, processor)
 
 	// Close the processor properly
 	processor.Close()

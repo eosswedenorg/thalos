@@ -9,7 +9,7 @@ import (
 
 	eos "github.com/eoscanada/eos-go"
 
-	"github.com/eosswedenorg/thalos/app/cache"
+	"github.com/eosswedenorg/thalos/internal/cache"
 	"github.com/stretchr/testify/assert"
 )
 

@@ -3,7 +3,7 @@ package main
 import (
 	"time"
 
-	_ "github.com/eosswedenorg/thalos/app/log"
+	_ "github.com/eosswedenorg/thalos/internal/log"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"

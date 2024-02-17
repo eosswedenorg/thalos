@@ -6,7 +6,7 @@ import (
 	"time"
 
 	eos "github.com/eoscanada/eos-go"
-	"github.com/eosswedenorg/thalos/app/cache"
+	"github.com/eosswedenorg/thalos/internal/cache"
 )
 
 // AbiManager handles an ABI cache that fetches the ABI from an API on cache miss.

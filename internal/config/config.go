@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"time"
 
-	"github.com/eosswedenorg/thalos/app/log"
+	"github.com/eosswedenorg/thalos/internal/log"
 
 	shipclient "github.com/eosswedenorg-go/antelope-ship-client"
 )
