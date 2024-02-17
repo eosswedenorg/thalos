@@ -1,80 +1,44 @@
 package main
 
 import (
-	"fmt"
-	"os"
-
 	log "github.com/sirupsen/logrus"
-	"github.com/urfave/cli/v2"
+	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 )
 
 var VersionString string = "dev"
 
-func main() {
-	cli.AppHelpTemplate = `Usage: {{.HelpName}} [options]
+var rootCmd *cobra.Command
 
-   {{range .VisibleFlags}}{{.}}
-   {{end}}`
-
-	cli.HelpFlag = &cli.BoolFlag{
-		Name:               "help",
-		Aliases:            []string{"h"},
-		Usage:              "display this help text",
-		DisableDefaultText: true,
-	}
-
-	cli.VersionPrinter = func(cCtx *cli.Context) {
-		fmt.Printf("Version %s\n", VersionString)
-	}
-
-	cli.VersionFlag = &cli.BoolFlag{
-		Name:               "version",
-		Aliases:            []string{"v"},
-		Usage:              "display the version",
-		DisableDefaultText: true,
-	}
-
-	app := &cli.App{
-		Version:                VersionString,
-		Args:                   true,
-		UseShortOptionHandling: true,
-		HideHelpCommand:        true,
-		Flags: []cli.Flag{
-			&cli.PathFlag{
-				Name:      "config",
-				Aliases:   []string{"c"},
-				Value:     "./config.yml",
-				Usage:     "Config `file` to read",
-				TakesFile: true,
-			},
-			&cli.StringFlag{
-				Name:    "level",
-				Aliases: []string{"L"},
-				Usage:   "Log level to use",
-				Value:   "info",
-			},
-			&cli.PathFlag{
-				Name:      "log",
-				Aliases:   []string{"l"},
-				Usage:     "Path to log `file`",
-				TakesFile: true,
-			},
-			&cli.BoolFlag{
-				Name:               "n",
-				Usage:              "Force the application to take start block from config/api",
-				DisableDefaultText: true,
-			},
-			&cli.StringFlag{
-				Name:      "pid",
-				Aliases:   []string{"p"},
-				Usage:     "`file` to save process id to",
-				TakesFile: true,
-			},
+func init() {
+	rootCmd = &cobra.Command{
+		Use: "thalos-server",
+		FParseErrWhitelist: cobra.FParseErrWhitelist{
+			UnknownFlags: true,
 		},
-		Action: serverCmd,
+		Version: VersionString,
+		Run:     serverCmd,
 	}
 
-	if err := app.Run(os.Args); err != nil {
-		log.WithError(err).Fatal("Application error")
+	rootCmd.SetHelpTemplate(
+		`{{ .Use | trimTrailingWhitespaces}} v{{.Version}}
+
+{{if or .Runnable .HasSubCommands}}{{.UsageString}}{{end}}
+`)
+	rootCmd.SetVersionTemplate(`{{with .Name}}{{printf "%s " .}}{{end}}{{printf "v%s" .Version}}` + "\n")
+
+	flags := pflag.FlagSet{}
+	flags.StringP("config", "c", "./config.yml", "Config file to read")
+	flags.StringP("level", "L", "info", "Log level to use")
+	flags.StringP("log", "l", "", "Path to log file (default: print to stdout/stderr)")
+	flags.StringP("pid", "p", "", "Where to write process id")
+	flags.BoolP("no-state-cache", "n", false, "Force the application to take start block from config/api")
+
+	rootCmd.PersistentFlags().AddFlagSet(&flags)
+}
+
+func main() {
+	if err := rootCmd.Execute(); err != nil {
+		log.Fatal(err)
 	}
 }

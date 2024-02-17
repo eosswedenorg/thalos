@@ -29,7 +29,8 @@ import (
 	"github.com/nikoksr/notify/service/telegram"
 	"github.com/redis/go-redis/v9"
 	log "github.com/sirupsen/logrus"
-	"github.com/urfave/cli/v2"
+	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 )
 
 // ---------------------------
@@ -222,44 +223,52 @@ func stateSaver(state app.State) error {
 	return cache.Set(ctx, "state", state, 0)
 }
 
-func ReadConfig(cfg *config.Config, ctx *cli.Context) error {
+func ReadConfig(cfg *config.Config, flags *pflag.FlagSet) error {
+	filename, err := flags.GetString("config")
+	if err != nil {
+		return err
+	}
+
 	// Read file first.
-	if err := cfg.ReadFile(ctx.Path("config")); err != nil {
+	if err := cfg.ReadFile(filename); err != nil {
 		return err
 	}
 
 	// Then override any cli flags
-	if err := cfg.ReadCliFlags(ctx); err != nil {
+	if err := cfg.ReadCliFlags(flags); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func serverCmd(ctx *cli.Context) error {
+func serverCmd(cmd *cobra.Command, args []string) {
 	var err error
 	var chainInfo *eos.InfoResp
 
 	exit = make(chan bool)
 
-	skip_currentblock_cache := ctx.Bool("n")
+	skip_currentblock_cache, _ := cmd.Flags().GetBool("no-state-cache")
 
 	// Write PID file
-	pidFile := ctx.String("pid")
-	if len(pidFile) > 0 {
+	pidFile, err := cmd.Flags().GetString("pid")
+	if err != nil {
 		log.WithField("file", pidFile).Info("Writing pid to file")
 		if err = pid.Save(pidFile); err != nil {
-			return fmt.Errorf("pid: %s", err)
+			log.WithError(err).Fatal("Failed to write pid")
+			return
 		}
 	}
 
 	// Parse config
 	conf = config.New()
-	if err = ReadConfig(&conf, ctx); err != nil {
-		return fmt.Errorf("config: %s", err)
+	if err = ReadConfig(&conf, cmd.Flags()); err != nil {
+		log.WithError(err).Fatal("Failed to read config")
+		return
 	}
 
-	lvl, err := log.ParseLevel(ctx.String("level"))
+	flagLevel, _ := cmd.Flags().GetString("level")
+	lvl, err := log.ParseLevel(flagLevel)
 	if err == nil {
 		log.WithField("value", lvl).Info("Setting log level")
 		log.SetLevel(lvl)
@@ -268,13 +277,17 @@ func serverCmd(ctx *cli.Context) error {
 	}
 
 	if len(conf.Log.Filename) > 0 {
+		fmt.Println(conf.Log.Filename)
+
 		stdWriter, err := NewRotatingFileFromConfig(conf.Log, "info")
 		if err != nil {
-			return fmt.Errorf("log: %s", err)
+			log.WithError(err).Fatal("Failed to set standard log file")
+			return
 		}
 		errWriter, err := NewRotatingFileFromConfig(conf.Log, "error")
 		if err != nil {
-			return fmt.Errorf("log: %s", err)
+			log.WithError(err).Fatal("Failed to set error log file")
+			return
 		}
 
 		log.WithFields(log.Fields{
@@ -295,7 +308,8 @@ func serverCmd(ctx *cli.Context) error {
 
 		telegram, err := telegram.New(conf.Telegram.Id)
 		if err != nil {
-			return fmt.Errorf("telegram: %s", err)
+			log.WithError(err).Fatal("Failed to initialize telegram notifier")
+			return
 		}
 
 		telegram.AddReceivers(conf.Telegram.Channel)
@@ -314,7 +328,8 @@ func serverCmd(ctx *cli.Context) error {
 
 	err = rdb.Ping(context.Background()).Err()
 	if err != nil {
-		return fmt.Errorf("redis: %s", err)
+		log.WithError(err).Fatal("Failed to connect to redis")
+		return
 	}
 
 	// Setup cache storage
@@ -331,7 +346,8 @@ func serverCmd(ctx *cli.Context) error {
 	eosClient := eos.New(conf.Api)
 	chainInfo, err = eosClient.GetInfo(context.Background())
 	if err != nil {
-		return fmt.Errorf("eosapi: %s", err)
+		log.WithError(err).Fatal("Failed to call eos api")
+		return
 	}
 
 	shClient = shipclient.NewStream(func(s *shipclient.Stream) {
@@ -343,7 +359,8 @@ func serverCmd(ctx *cli.Context) error {
 	// Get codec
 	codec, err := message.GetCodec(conf.MessageCodec)
 	if err != nil {
-		return fmt.Errorf("codec: %s", err)
+		log.WithError(err).Fatal("Failed to initialze codec")
+		return
 	}
 
 	chain_id := getChain(chainInfo.ChainID.String())
@@ -365,6 +382,4 @@ func serverCmd(ctx *cli.Context) error {
 
 	// Close the processor properly
 	processor.Close()
-
-	return nil
 }

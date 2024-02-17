@@ -7,7 +7,7 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/urfave/cli/v2"
+	"github.com/spf13/cobra"
 
 	"github.com/eosswedenorg/thalos/api"
 	"github.com/eosswedenorg/thalos/api/message"
@@ -18,44 +18,38 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-var benchCmd = &cli.Command{
-	Name:  "bench",
-	Usage: "Run a benchmark against a thalos node",
-	Flags: []cli.Flag{
-		redisUrlFlag,
-		redisUserFlag,
-		redisPasswordFlag,
-		redisDbFlag,
-		prefixFlag,
-		chainIdFlag,
-		&cli.DurationFlag{
-			Name:    "interval",
-			Aliases: []string{"i"},
-			Value:   time.Minute,
-			Usage:   "How often the benchmark results should be displayed.",
-		},
-	},
-	Action: func(ctx *cli.Context) error {
+var benchCmd = &cobra.Command{
+	Use:   "bench",
+	Short: "Run a benchmark against a thalos node",
+	Run: func(cmd *cobra.Command, args []string) {
 		var counter int = 0
-		interval := ctx.Duration("interval")
+		interval, _ := cmd.Flags().GetDuration("interval")
+
+		url, _ := cmd.Flags().GetString("redis-url")
+		user, _ := cmd.Flags().GetString("redis-user")
+		pw, _ := cmd.Flags().GetString("redis-pw")
+		prefix, _ := cmd.Flags().GetString("prefix")
+		chain_id, _ := cmd.Flags().GetString("chain_id")
+		db, _ := cmd.Flags().GetInt("redis-db")
 
 		log.WithFields(log.Fields{
-			"url":      ctx.String("redis-url"),
-			"prefix":   ctx.String("prefix"),
-			"chain_id": ctx.String("chain_id"),
-			"database": ctx.Int("redis-db"),
+			"url":      url,
+			"prefix":   prefix,
+			"chain_id": chain_id,
+			"database": db,
 		}).Info("Connecting to redis")
 
 		// Create redis client
 		rdb := redis.NewClient(&redis.Options{
-			Addr:     ctx.String("redis-url"),
-			Username: ctx.String("redis-user"),
-			Password: ctx.String("redis-pw"),
-			DB:       ctx.Int("redis-db"),
+			Addr:     url,
+			Username: user,
+			Password: pw,
+			DB:       db,
 		})
 
 		if err := rdb.Ping(context.Background()).Err(); err != nil {
-			return err
+			log.WithError(err).Fatal("Failed to connect to redis")
+			return
 		}
 
 		log.Println("Connected to redis")
@@ -65,20 +59,22 @@ var benchCmd = &cli.Command{
 		}).Info("Starting benchmark")
 
 		sub := api_redis.NewSubscriber(context.Background(), rdb, api_redis.Namespace{
-			Prefix:  ctx.String("prefix"),
-			ChainID: ctx.String("chain_id"),
+			Prefix:  prefix,
+			ChainID: chain_id,
 		})
 
 		codec, err := message.GetCodec("json")
 		if err != nil {
-			return err
+			log.WithError(err).Fatal("Failed to get codec")
+			return
 		}
 
 		client := api.NewClient(sub, codec.Decoder)
 
 		// Subscribe to all actions
 		if err = client.Subscribe(api.ActionChannel{}.Channel()); err != nil {
-			return err
+			log.WithError(err).Fatal("Failed to subscribe to channels")
+			return
 		}
 
 		go func() {
@@ -102,7 +98,7 @@ var benchCmd = &cli.Command{
 			case <-sig:
 				fmt.Println("Got interrupt")
 				client.Close()
-				return nil
+				return
 			case now := <-time.After(interval):
 				elapsed := now.Sub(t)
 				t = now

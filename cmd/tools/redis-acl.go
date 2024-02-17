@@ -10,7 +10,8 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/urfave/cli/v2"
+	log "github.com/sirupsen/logrus"
+	"github.com/spf13/cobra"
 )
 
 var rnd *rand.Rand
@@ -90,60 +91,30 @@ user {{.client}} on {{.clientpw}} resetchannels &{{.prefix}}::* -@all +subscribe
 	})
 }
 
-var RedisACLCmd = &cli.Command{
-	Name:  "redis-acl",
-	Usage: "create a users.acl file",
-	Flags: []cli.Flag{
-		&cli.StringFlag{
-			Name:  "default-pw",
-			Usage: "Password to use for the default account, if not provided a random one will be generated",
-		},
-		&cli.StringFlag{
-			Name:  "client",
-			Value: "thalos-client",
-			Usage: "Thalos client account name",
-		},
-		&cli.StringFlag{
-			Name:  "client-pw",
-			Usage: "Password to use for the thalos client account, if not provided a random one will be generated",
-		},
-		&cli.StringFlag{
-			Name:  "server",
-			Value: "thalos",
-			Usage: "Thalos account name",
-		},
-		&cli.StringFlag{
-			Name:  "server-pw",
-			Usage: "Password to use for the thalos server account, if not provided a random one will be generated",
-		},
-		&cli.StringFlag{
-			Name:  "prefix",
-			Value: "ship",
-			Usage: "Redis key prefix",
-		},
-		&cli.BoolFlag{
-			Name:  "cleartext",
-			Usage: "If passwords should be hashed or left in cleartext.",
-		},
-		&cli.StringFlag{
-			Name:        "file",
-			DefaultText: "Standard out",
-			Usage:       "Where the config should be written to",
-		},
-	},
-	Action: func(ctx *cli.Context) error {
+var RedisACLCmd = &cobra.Command{
+	Use:   "redis-acl",
+	Short: "create a users.acl file",
+	Run: func(cmd *cobra.Command, args []string) {
 		var err error
 		var out *os.File = os.Stdout
 
 		rnd = rand.New(rand.NewSource(time.Now().UnixNano()))
 
-		defaultUser := NewUser("default", ctx.String("default-pw"))
-		serverUser := NewUser(ctx.String("server"), ctx.String("server-pw"))
-		clientUser := NewUser(ctx.String("client"), ctx.String("client-pw"))
+		flagDefUserPw, _ := cmd.Flags().GetString("default-pw")
+		flagServer, _ := cmd.Flags().GetString("server")
+		flagServerPw, _ := cmd.Flags().GetString("server-pw")
+		flagClient, _ := cmd.Flags().GetString("client")
+		flagClientPw, _ := cmd.Flags().GetString("client-pw")
+		flagPrefix, _ := cmd.Flags().GetString("prefix")
+
+		defaultUser := NewUser("default", flagDefUserPw)
+		serverUser := NewUser(flagServer, flagServerPw)
+		clientUser := NewUser(flagClient, flagClientPw)
 
 		atleastOneGeneratedPw := defaultUser.Generated || serverUser.Generated || clientUser.Generated
 
-		if !ctx.Bool("cleartext") {
+		cleartext, _ := cmd.Flags().GetBool("cleartext")
+		if !cleartext {
 			if atleastOneGeneratedPw {
 				println("Passwords")
 			}
@@ -157,17 +128,22 @@ var RedisACLCmd = &cli.Command{
 			clientUser.Hash()
 		}
 
-		filename := ctx.String("file")
+		filename, _ := cmd.Flags().GetString("file")
 		if len(filename) > 0 {
 			out, err = os.Create(filename)
 			if err != nil {
-				return err
+				log.WithError(err).Fatal("Failed to create output file")
+				return
 			}
 			defer out.Close()
-		} else if !ctx.Bool("cleartext") && atleastOneGeneratedPw {
+		} else if !cleartext && atleastOneGeneratedPw {
 			fmt.Println()
 		}
 
-		return writeTemplate(out, defaultUser, serverUser, clientUser, ctx.String("prefix"))
+		err = writeTemplate(out, defaultUser, serverUser, clientUser, flagPrefix)
+		if err != nil {
+			log.WithError(err).Fatal("Failed to writte config")
+			return
+		}
 	},
 }

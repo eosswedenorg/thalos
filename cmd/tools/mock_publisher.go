@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/urfave/cli/v2"
+	"github.com/spf13/cobra"
 
 	"github.com/eosswedenorg/thalos/api"
 	"github.com/eosswedenorg/thalos/api/message"
@@ -16,45 +16,43 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-var MockPublisherCmd = &cli.Command{
-	Name:  "mock_publisher",
-	Usage: "Run a publisher that mocks messages to a redis server. tries to send as many messages as possible",
-	Flags: []cli.Flag{
-		redisUrlFlag,
-		redisUserFlag,
-		redisPasswordFlag,
-		redisDbFlag,
-		prefixFlag,
-		chainIdFlag,
-		&cli.StringFlag{
-			Name:  "codec",
-			Value: "json",
-		},
-	},
-	Action: func(ctx *cli.Context) error {
+var MockPublisherCmd = &cobra.Command{
+	Use:   "mock_publisher",
+	Short: "Run a publisher that mocks messages to a redis server. tries to send as many messages as possible",
+	Run: func(cmd *cobra.Command, args []string) {
+		url, _ := cmd.Flags().GetString("redis-url")
+		user, _ := cmd.Flags().GetString("redis-user")
+		pw, _ := cmd.Flags().GetString("redis-pw")
+		prefix, _ := cmd.Flags().GetString("prefix")
+		chain_id, _ := cmd.Flags().GetString("chain_id")
+		db, _ := cmd.Flags().GetInt("redis-db")
+
 		// Create redis client
 		rdb := redis.NewClient(&redis.Options{
-			Addr:     ctx.String("redis-url"),
-			Username: ctx.String("redis-user"),
-			Password: ctx.String("redis-pw"),
-			DB:       ctx.Int("redis-db"),
+			Addr:     url,
+			Username: user,
+			Password: pw,
+			DB:       db,
 		})
 
-		codec, err := message.GetCodec(ctx.String("codec"))
+		codecArg, _ := cmd.Flags().GetString("codec")
+
+		codec, err := message.GetCodec(codecArg)
 		if err != nil {
-			return err
+			log.WithError(err).Fatal("Failed to get codec")
+			return
 		}
 
 		log.WithFields(log.Fields{
-			"url":      ctx.String("redis-url"),
-			"prefix":   ctx.String("prefix"),
-			"chain_id": ctx.String("chain_id"),
-			"database": ctx.Int("redis-db"),
+			"url":      url,
+			"prefix":   prefix,
+			"chain_id": chain_id,
+			"database": db,
 		}).Info("Starting mock publisher")
 
 		ns := api_redis.Namespace{
-			Prefix:  ctx.String("prefix"),
-			ChainID: ctx.String("chain_id"),
+			Prefix:  prefix,
+			ChainID: chain_id,
 		}
 		publisher := redis_driver.NewPublisher(context.Background(), rdb, ns)
 
@@ -104,7 +102,8 @@ var MockPublisherCmd = &cli.Command{
 
 		payload, err := codec.Encoder(msg)
 		if err != nil {
-			return err
+			log.WithError(err).Fatal("Failed to encode message")
+			return
 		}
 		channel := api.ActionChannel{}.Channel()
 

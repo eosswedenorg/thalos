@@ -7,7 +7,7 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/urfave/cli/v2"
+	"github.com/spf13/cobra"
 
 	"github.com/eosswedenorg/thalos/api"
 	"github.com/eosswedenorg/thalos/api/message"
@@ -18,33 +18,33 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-var validateCmd = &cli.Command{
-	Name:  "validate",
-	Usage: "Validate a thalos server by following action traces and makes sure that blocks arrive in order.",
-	Flags: []cli.Flag{
-		redisUrlFlag,
-		redisDbFlag,
-		prefixFlag,
-		chainIdFlag,
-	},
-	Action: func(ctx *cli.Context) error {
+var validateCmd = &cobra.Command{
+	Use:   "validate",
+	Short: "Validate a thalos server by following action traces and makes sure that blocks arrive in order.",
+	Run: func(cmd *cobra.Command, args []string) {
 		status_duration := time.Second * 10
 
+		url, _ := cmd.Flags().GetString("redis-url")
+		prefix, _ := cmd.Flags().GetString("prefix")
+		chain_id, _ := cmd.Flags().GetString("chain_id")
+		db, _ := cmd.Flags().GetInt("redis-db")
+
 		log.WithFields(log.Fields{
-			"url":      ctx.String("redis-url"),
-			"prefix":   ctx.String("prefix"),
-			"chain_id": ctx.String("chain_id"),
-			"database": ctx.Int("redis-db"),
+			"url":      url,
+			"prefix":   prefix,
+			"chain_id": chain_id,
+			"database": db,
 		}).Info("Connecting to redis")
 
 		// Create redis client
 		rdb := redis.NewClient(&redis.Options{
-			Addr: ctx.String("redis-url"),
-			DB:   ctx.Int("redis-db"),
+			Addr: url,
+			DB:   db,
 		})
 
 		if err := rdb.Ping(context.Background()).Err(); err != nil {
-			return err
+			log.WithError(err).Fatal("Failed to connect to redis")
+			return
 		}
 
 		log.Println("Connected to redis")
@@ -52,20 +52,22 @@ var validateCmd = &cli.Command{
 		log.Info("Starting validation, following the stream")
 
 		sub := api_redis.NewSubscriber(context.Background(), rdb, api_redis.Namespace{
-			Prefix:  ctx.String("prefix"),
-			ChainID: ctx.String("chain_id"),
+			Prefix:  prefix,
+			ChainID: chain_id,
 		})
 
 		codec, err := message.GetCodec("json")
 		if err != nil {
-			return err
+			log.WithError(err).Fatal("Failed to get codec")
+			return
 		}
 
 		client := api.NewClient(sub, codec.Decoder)
 
 		// Subscribe to all actions
 		if err = client.Subscribe(api.ActionChannel{}.Channel()); err != nil {
-			return err
+			log.WithError(err).Fatal("Failed to subscribe to channels")
+			return
 		}
 
 		block_num := uint32(0)
@@ -102,7 +104,7 @@ var validateCmd = &cli.Command{
 			case <-sig:
 				fmt.Println("Got interrupt")
 				client.Close()
-				return nil
+				return
 			case <-timer.C:
 				log.WithField("duration", timeout).
 					Warn("Did not get any messages during the defined duration")
