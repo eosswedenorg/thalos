@@ -37,7 +37,7 @@ func TestNew(t *testing.T) {
 	require.Equal(t, expected, New())
 }
 
-func TestReadYAML(t *testing.T) {
+func TestRead(t *testing.T) {
 	expected := Config{
 		Name:         "ship-reader-1",
 		Api:          "http://127.0.0.1:8080",
@@ -69,7 +69,7 @@ func TestReadYAML(t *testing.T) {
 	}
 
 	cfg := Config{}
-	err := cfg.ReadYAML([]byte(`
+	err := cfg.Read([]byte(`
 name: "ship-reader-1"
 api: "http://127.0.0.1:8080"
 message_codec: "mojibake"
@@ -99,7 +99,7 @@ redis:
 	require.Equal(t, expected, cfg)
 }
 
-func TestReadYAMLShorthandShipUrl(t *testing.T) {
+func TestReadShorthandShipUrl(t *testing.T) {
 	expected := Config{
 		Name:         "ship-reader-1",
 		Api:          "http://127.0.0.1:8080",
@@ -129,7 +129,7 @@ func TestReadYAMLShorthandShipUrl(t *testing.T) {
 
 	cfg := New()
 
-	err := cfg.ReadYAML([]byte(`
+	err := cfg.Read([]byte(`
 name: "ship-reader-1"
 api: "http://127.0.0.1:8080"
 ship: "127.0.0.1:8089"
