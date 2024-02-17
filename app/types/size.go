@@ -34,3 +34,7 @@ func (s Size) String() string {
 func (s *Size) UnmarshalYAML(value *yaml.Node) error {
 	return s.Parse(value.Value)
 }
+
+func (s *Size) UnmarshalText(text []byte) error {
+	return s.Parse(string(text))
+}
