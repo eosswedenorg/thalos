@@ -17,30 +17,30 @@ type RedisConfig struct {
 }
 
 type TelegramConfig struct {
-	Id      string `yaml:"id"`
-	Channel int64  `yaml:"channel"`
+	Id      string `yaml:"id" mapstructure:"id"`
+	Channel int64  `yaml:"channel" mapstructure:"channel"`
 }
 
 type ShipConfig struct {
-	Url                 string `yaml:"url"`
-	IrreversibleOnly    bool   `yaml:"irreversible_only"`
-	MaxMessagesInFlight uint32 `yaml:"max_messages_in_flight"`
-	StartBlockNum       uint32 `yaml:"start_block_num"`
-	EndBlockNum         uint32 `yaml:"end_block_num"`
-	Chain               string `yaml:"chain"`
+	Url                 string `yaml:"url" mapstructure:"url"`
+	IrreversibleOnly    bool   `yaml:"irreversible_only" mapstructure:"irreversible_only"`
+	MaxMessagesInFlight uint32 `yaml:"max_messages_in_flight" mapstructure:"max_messages_in_flight"`
+	StartBlockNum       uint32 `yaml:"start_block_num" mapstructure:"start_block_num"`
+	EndBlockNum         uint32 `yaml:"end_block_num" mapstructure:"end_block_num"`
+	Chain               string `yaml:"chain" mapstructure:"chain"`
 }
 
 type Config struct {
-	Name string     `yaml:"name"`
-	Ship ShipConfig `yaml:"ship"`
-	Api  string     `yaml:"api"`
+	Name string     `yaml:"name" mapstructure:"name"`
+	Ship ShipConfig `yaml:"ship" mapstructure:"ship"`
+	Api  string     `yaml:"api" mapstructure:"api"`
 
-	Log log.Config `yaml:"log"`
+	Log log.Config `yaml:"log" mapstructure:"log"`
 
-	Redis        RedisConfig `yaml:"redis"`
-	MessageCodec string      `yaml:"message_codec"`
+	Redis        RedisConfig `yaml:"redis" mapstructure:"redis"`
+	MessageCodec string      `yaml:"message_codec" mapstructure:"message_codec"`
 
-	Telegram TelegramConfig `yaml:"telegram"`
+	Telegram TelegramConfig `yaml:"telegram" mapstructure:"telegram"`
 }
 
 // Create a new Config object with default values
