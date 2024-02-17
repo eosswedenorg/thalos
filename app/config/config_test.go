@@ -34,7 +34,7 @@ func TestNew(t *testing.T) {
 		},
 	}
 
-	require.Equal(t, New(), expected)
+	require.Equal(t, expected, New())
 }
 
 func TestReadYAML(t *testing.T) {
@@ -96,7 +96,7 @@ redis:
 `))
 
 	require.NoError(t, err)
-	require.Equal(t, cfg, expected)
+	require.Equal(t, expected, cfg)
 }
 
 func TestReadYAMLShorthandShipUrl(t *testing.T) {
@@ -144,5 +144,5 @@ redis:
 `))
 
 	require.NoError(t, err)
-	require.Equal(t, cfg, expected)
+	require.Equal(t, expected, cfg)
 }
