@@ -265,6 +265,13 @@ func chainInfoOnce(api *eos.API) func() *eos.InfoResp {
 func serverCmd(cmd *cobra.Command, args []string) {
 	var err error
 
+	// Parse config
+	conf, err := GetConfig(cmd.Flags())
+	if err != nil {
+		log.WithError(err).Fatal("Failed to read config")
+		return
+	}
+
 	// Write PID file
 	pidFile, err := cmd.Flags().GetString("pid")
 	if err != nil {
@@ -273,13 +280,6 @@ func serverCmd(cmd *cobra.Command, args []string) {
 			log.WithError(err).Fatal("Failed to write pid")
 			return
 		}
-	}
-
-	// Parse config
-	conf, err := GetConfig(cmd.Flags())
-	if err != nil {
-		log.WithError(err).Fatal("Failed to read config")
-		return
 	}
 
 	skip_currentblock_cache, _ := cmd.Flags().GetBool("no-state-cache")
