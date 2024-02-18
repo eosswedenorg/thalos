@@ -34,6 +34,9 @@ func init() {
 	flags.StringP("pid", "p", "", "Where to write process id")
 	flags.BoolP("no-state-cache", "n", false, "Force the application to take start block from config/api")
 
+	flags.Int("start-block", 0, "Start to stream from this block (default: config value, cache, head from api)")
+	flags.Int("end-block", 0, "Stop streaming when this block is reached")
+
 	rootCmd.PersistentFlags().AddFlagSet(&flags)
 }
 
