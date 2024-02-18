@@ -7,6 +7,7 @@ import (
 	"io"
 	"os"
 	"os/signal"
+	"path"
 	"syscall"
 	"time"
 
@@ -153,7 +154,7 @@ func initAbiManager(api *eos.API, store cache.Store, chain_id string) *abi.AbiMa
 	return abi.NewAbiManager(cache, api)
 }
 
-func stateLoader(conf config.Config, chainInfo func() *eos.InfoResp, cache *cache.Cache, current_block_no_cache bool) StateLoader {
+func stateLoader(conf *config.Config, start_block_flag *pflag.Flag, chainInfo func() *eos.InfoResp, cache *cache.Cache, current_block_no_cache bool) StateLoader {
 	return func(state *State) {
 		var source string
 
@@ -167,7 +168,13 @@ func stateLoader(conf config.Config, chainInfo func() *eos.InfoResp, cache *cach
 		if current_block_no_cache || err != nil {
 			// Set from config if we have a sane value.
 			if conf.Ship.StartBlockNum != shipclient.NULL_BLOCK_NUMBER {
-				source = "config"
+
+				if start_block_flag != nil && start_block_flag.Changed {
+					source = "cli"
+				} else {
+					source = "config"
+				}
+
 				state.CurrentBlock = conf.Ship.StartBlockNum
 			} else {
 				// Otherwise, set from api.
@@ -198,23 +205,34 @@ func stateSaver(cache *cache.Cache) StateSaver {
 	}
 }
 
-func ReadConfig(cfg *config.Config, flags *pflag.FlagSet) error {
+func GetConfig(flags *pflag.FlagSet) (*config.Config, error) {
 	filename, err := flags.GetString("config")
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	// Read file first.
-	if err := cfg.ReadFile(filename); err != nil {
-		return err
+	cfg, err := config.NewBuilder().
+		SetConfigFile(filename).
+		SetFlags(flags).
+		Build()
+	if err != nil {
+		return nil, err
 	}
 
-	// Then override any cli flags
-	if err := cfg.ReadCliFlags(flags); err != nil {
-		return err
+	logFile, _ := flags.GetString("log")
+	if len(logFile) > 0 {
+		cfg.Log.Directory = path.Dir(logFile)
+		cfg.Log.Filename = path.Base(logFile)
 	}
 
-	return nil
+	// If start-block is provided, we should set no-state-cache to true.
+	if startBlock := flags.Lookup("start-block"); startBlock != nil && startBlock.Changed {
+		if err := flags.Set("no-state-cache", "true"); err != nil {
+			return cfg, nil
+		}
+	}
+
+	return cfg, nil
 }
 
 // "Clever" way to make sure we only call the api once.
@@ -244,8 +262,6 @@ func chainInfoOnce(api *eos.API) func() *eos.InfoResp {
 func serverCmd(cmd *cobra.Command, args []string) {
 	var err error
 
-	skip_currentblock_cache, _ := cmd.Flags().GetBool("no-state-cache")
-
 	// Write PID file
 	pidFile, err := cmd.Flags().GetString("pid")
 	if err != nil {
@@ -257,11 +273,13 @@ func serverCmd(cmd *cobra.Command, args []string) {
 	}
 
 	// Parse config
-	conf := config.New()
-	if err = ReadConfig(&conf, cmd.Flags()); err != nil {
+	conf, err := GetConfig(cmd.Flags())
+	if err != nil {
 		log.WithError(err).Fatal("Failed to read config")
 		return
 	}
+
+	skip_currentblock_cache, _ := cmd.Flags().GetBool("no-state-cache")
 
 	flagLevel, _ := cmd.Flags().GetString("level")
 	lvl, err := log.ParseLevel(flagLevel)
@@ -360,7 +378,7 @@ func serverCmd(cmd *cobra.Command, args []string) {
 
 	processor := SpawnProccessor(
 		shClient,
-		stateLoader(conf, chainInfo, cache, skip_currentblock_cache),
+		stateLoader(conf, cmd.Flags().Lookup("start-block"), chainInfo, cache, skip_currentblock_cache),
 		stateSaver(cache),
 		driver.NewPublisher(context.Background(), rdb, api_redis.Namespace{
 			Prefix:  conf.Redis.Prefix,
@@ -371,7 +389,7 @@ func serverCmd(cmd *cobra.Command, args []string) {
 	)
 
 	// Run the application
-	run(&conf, shClient, processor)
+	run(conf, shClient, processor)
 
 	// Close the processor properly
 	processor.Close()
