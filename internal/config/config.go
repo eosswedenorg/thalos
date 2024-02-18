@@ -1,7 +1,6 @@
 package config
 
 import (
-	"reflect"
 	"time"
 
 	"github.com/eosswedenorg/thalos/internal/log"
@@ -52,34 +51,15 @@ func New() Config {
 			MaxFileSize: 10 * 1000 * 1000, // 10 mb
 			MaxTime:     time.Hour * 24,
 		},
-		Ship: defaultShipConfig(""),
+		Ship: ShipConfig{
+			StartBlockNum:       shipclient.NULL_BLOCK_NUMBER,
+			EndBlockNum:         shipclient.NULL_BLOCK_NUMBER,
+			MaxMessagesInFlight: 10,
+			IrreversibleOnly:    false,
+		},
 		Redis: RedisConfig{
 			Addr:   "localhost:6379",
 			Prefix: "ship",
 		},
 	}
-}
-
-func defaultShipConfig(url string) ShipConfig {
-	return ShipConfig{
-		Url:                 url,
-		StartBlockNum:       shipclient.NULL_BLOCK_NUMBER,
-		EndBlockNum:         shipclient.NULL_BLOCK_NUMBER,
-		MaxMessagesInFlight: 10,
-		IrreversibleOnly:    false,
-	}
-}
-
-// mapstructure DecodeHook that can parse a shorthand ship config (only string instead of struct.)
-func decodeShorthandShipConfig(from reflect.Value, to reflect.Value) (interface{}, error) {
-	shipType := reflect.TypeOf(ShipConfig{})
-
-	// If to is a struct and is assignable to a ShipConfig and from is a string.
-	// Then we treat the from value as ShipConfig.Url
-	if to.Kind() == reflect.Struct && to.Type().AssignableTo(shipType) && from.Kind() == reflect.String {
-		return defaultShipConfig(from.String()), nil
-	}
-
-	// If not, decode as normal.
-	return from.Interface(), nil
 }

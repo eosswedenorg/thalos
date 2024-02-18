@@ -109,7 +109,6 @@ func (b *Builder) Build() (*Config, error) {
 		mapstructure.TextUnmarshallerHookFunc(),
 		mapstructure.StringToTimeDurationHookFunc(),
 		mapstructure.StringToSliceHookFunc(","),
-		decodeShorthandShipConfig,
 	)
 
 	err := v.Unmarshal(&conf, viper.DecodeHook(decoders))
