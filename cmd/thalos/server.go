@@ -56,7 +56,7 @@ func readerLoop(conf *config.Config, running *bool, shClient *shipclient.Stream,
 		"max_interval":         exp.MaxInterval,
 		"randomization_factor": exp.RandomizationFactor,
 		"multiplier":           exp.Multiplier,
-	}).Info("Connecting with Exponential Backoff")
+	}).Info("ship client: Connecting with Exponential Backoff")
 
 	connectOp := func() error {
 		recon_cnt++
@@ -64,7 +64,7 @@ func readerLoop(conf *config.Config, running *bool, shClient *shipclient.Stream,
 		log.WithFields(log.Fields{
 			"url": conf.Ship.Url,
 			"try": recon_cnt,
-		}).Info("Connecting to ship")
+		}).Info("ship client: Connecting")
 
 		if err := shClient.Connect(conf.Ship.Url); err != nil {
 			return err
@@ -89,15 +89,15 @@ func readerLoop(conf *config.Config, running *bool, shClient *shipclient.Stream,
 				recon_cnt = 0
 			}
 
-			log.WithError(err).Error("Failed to connect to SHIP")
+			log.WithError(err).Error("ship client: Failed to connect")
 
 			log.WithFields(log.Fields{
 				"reconn_at": time.Now().Add(d),
 				"reconn_in": d,
-			}).Info("Reconnecting in ", d)
+			}).Info("ship client: Reconnecting in ", d)
 		})
 		if err != nil {
-			log.WithError(err).Error("Failed to connect to SHIP")
+			log.WithError(err).Error("ship client:Failed to connect")
 			return
 		}
 
@@ -105,21 +105,21 @@ func readerLoop(conf *config.Config, running *bool, shClient *shipclient.Stream,
 		log.WithFields(log.Fields{
 			"start": shClient.StartBlock,
 			"end":   shClient.EndBlock,
-		}).Info("Connected to ship")
+		}).Info("ship client: Connected to ship")
 
 		if err := shClient.Run(); err != nil {
 
 			if errors.Is(err, shipclient.ErrEndBlockReached) {
-				log.Info("Endblock reached.")
+				log.Info("ship client: Endblock reached.")
 				return
 			}
 
 			if shipws.IsCloseError(err) {
-				log.Info("SHIP Connection closed")
+				log.Info("ship client: Connection closed normally")
 				return
 			}
 
-			log.WithError(err).Error("Failed to read from ship")
+			log.WithError(err).Error("ship client: Failed to read message")
 		}
 	}
 }
