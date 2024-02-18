@@ -17,7 +17,7 @@ $ make
 or using go directly if you dont have make installed.
 
 ```shell
-$ go build -o build/thalos-server cmd/main/main.go
+$ go build -o build/thalos-server cmd/thalos/*.go
 ```
 ## Author
 
