@@ -81,7 +81,7 @@ func (b *Builder) Build() (*Config, error) {
 		return nil, errors.New("Config not set")
 	}
 
-	conf := New()
+	conf := Config{}
 
 	v := viper.New()
 	v.SetConfigType("yaml")

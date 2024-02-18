@@ -1,11 +1,7 @@
 package config
 
 import (
-	"time"
-
 	"github.com/eosswedenorg/thalos/internal/log"
-
-	shipclient "github.com/eosswedenorg-go/antelope-ship-client"
 )
 
 type RedisConfig struct {
@@ -41,25 +37,4 @@ type Config struct {
 	MessageCodec string      `yaml:"message_codec" mapstructure:"message_codec"`
 
 	Telegram TelegramConfig `yaml:"telegram" mapstructure:"telegram"`
-}
-
-// Create a new Config object with default values
-func New() Config {
-	return Config{
-		MessageCodec: "json",
-		Log: log.Config{
-			MaxFileSize: 10 * 1000 * 1000, // 10 mb
-			MaxTime:     time.Hour * 24,
-		},
-		Ship: ShipConfig{
-			StartBlockNum:       shipclient.NULL_BLOCK_NUMBER,
-			EndBlockNum:         shipclient.NULL_BLOCK_NUMBER,
-			MaxMessagesInFlight: 10,
-			IrreversibleOnly:    false,
-		},
-		Redis: RedisConfig{
-			Addr:   "localhost:6379",
-			Prefix: "ship",
-		},
-	}
 }
