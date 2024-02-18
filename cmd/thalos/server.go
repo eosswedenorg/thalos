@@ -250,8 +250,6 @@ func serverCmd(cmd *cobra.Command, args []string) {
 	}
 
 	if len(conf.Log.Filename) > 0 {
-		fmt.Println(conf.Log.Filename)
-
 		stdWriter, err := NewRotatingFileFromConfig(conf.Log, "info")
 		if err != nil {
 			log.WithError(err).Fatal("Failed to set standard log file")
