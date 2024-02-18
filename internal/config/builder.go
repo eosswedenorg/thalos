@@ -93,7 +93,7 @@ func (b *Builder) Build() (*Config, error) {
 
 	// Call custom handler.
 	if b.flags != nil {
-		if err := conf.ReadCliFlags(b.flags); err != nil {
+		if err := overrideCliFlags(&conf, b.flags); err != nil {
 			return nil, err
 		}
 	}
