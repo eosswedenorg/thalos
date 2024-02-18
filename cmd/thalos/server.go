@@ -153,7 +153,7 @@ func initAbiManager(api *eos.API, store cache.Store, chain_id string) *abi.AbiMa
 	return abi.NewAbiManager(cache, api)
 }
 
-func stateLoader(conf config.Config, chainInfo *eos.InfoResp, cache *cache.Cache, current_block_no_cache bool) StateLoader {
+func stateLoader(conf config.Config, chainInfo func() *eos.InfoResp, cache *cache.Cache, current_block_no_cache bool) StateLoader {
 	return func(state *State) {
 		var source string
 
@@ -173,10 +173,10 @@ func stateLoader(conf config.Config, chainInfo *eos.InfoResp, cache *cache.Cache
 				// Otherwise, set from api.
 				if conf.Ship.IrreversibleOnly {
 					source = "api (LIB)"
-					state.CurrentBlock = uint32(chainInfo.LastIrreversibleBlockNum)
+					state.CurrentBlock = uint32(chainInfo().LastIrreversibleBlockNum)
 				} else {
 					source = "api (HEAD)"
-					state.CurrentBlock = uint32(chainInfo.HeadBlockNum)
+					state.CurrentBlock = uint32(chainInfo().HeadBlockNum)
 				}
 			}
 		} else {
@@ -217,9 +217,32 @@ func ReadConfig(cfg *config.Config, flags *pflag.FlagSet) error {
 	return nil
 }
 
+// "Clever" way to make sure we only call the api once.
+// Store a info pointer outside the returned closure.
+// that pointer will live as long as the closure lives.
+// and inside the closure we will reference the pointer and only
+// call the api if it is nil.
+func chainInfoOnce(api *eos.API) func() *eos.InfoResp {
+	var info *eos.InfoResp
+	return func() *eos.InfoResp {
+		if info == nil {
+
+			log.WithField("api", api.BaseURL).Info("Get chain info from api")
+
+			result, err := api.GetInfo(context.Background())
+			if err != nil {
+				log.WithError(err).Fatal("Failed to call eos api")
+				return nil
+			}
+
+			info = result
+		}
+		return info
+	}
+}
+
 func serverCmd(cmd *cobra.Command, args []string) {
 	var err error
-	var chainInfo *eos.InfoResp
 
 	skip_currentblock_cache, _ := cmd.Flags().GetBool("no-state-cache")
 
@@ -313,13 +336,7 @@ func serverCmd(cmd *cobra.Command, args []string) {
 	// Setup general cache
 	cache := NewCache("thalos::cache::instance::"+conf.Name, cacheStore)
 
-	log.WithField("api", conf.Api).Info("Get chain info from api")
 	eosClient := eos.New(conf.Api)
-	chainInfo, err = eosClient.GetInfo(context.Background())
-	if err != nil {
-		log.WithError(err).Fatal("Failed to call eos api")
-		return
-	}
 
 	shClient := shipclient.NewStream(func(s *shipclient.Stream) {
 		s.StartBlock = conf.Ship.StartBlockNum
@@ -334,9 +351,11 @@ func serverCmd(cmd *cobra.Command, args []string) {
 		return
 	}
 
+	chainInfo := chainInfoOnce(eosClient)
+
 	chain_id := conf.Ship.Chain
 	if len(chain_id) < 1 {
-		chain_id = chainInfo.ChainID.String()
+		chain_id = chainInfo().ChainID.String()
 	}
 
 	processor := SpawnProccessor(
