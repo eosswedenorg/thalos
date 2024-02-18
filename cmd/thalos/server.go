@@ -153,7 +153,7 @@ func initAbiManager(api *eos.API, store cache.Store, chain_id string) *abi.AbiMa
 	return abi.NewAbiManager(cache, api)
 }
 
-func stateLoader(conf config.Config, chainInfo *eos.InfoResp, cache *cache.Cache, current_block_no_cache bool) StateLoader {
+func stateLoader(conf *config.Config, chainInfo *eos.InfoResp, cache *cache.Cache, current_block_no_cache bool) StateLoader {
 	return func(state *State) {
 		var source string
 
@@ -198,23 +198,16 @@ func stateSaver(cache *cache.Cache) StateSaver {
 	}
 }
 
-func ReadConfig(cfg *config.Config, flags *pflag.FlagSet) error {
+func GetConfig(flags *pflag.FlagSet) (*config.Config, error) {
 	filename, err := flags.GetString("config")
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	// Read file first.
-	if err := cfg.ReadFile(filename); err != nil {
-		return err
-	}
-
-	// Then override any cli flags
-	if err := cfg.ReadCliFlags(flags); err != nil {
-		return err
-	}
-
-	return nil
+	return config.NewBuilder().
+		SetConfigFile(filename).
+		SetFlags(flags).
+		Build()
 }
 
 func serverCmd(cmd *cobra.Command, args []string) {
@@ -234,8 +227,8 @@ func serverCmd(cmd *cobra.Command, args []string) {
 	}
 
 	// Parse config
-	conf := config.New()
-	if err = ReadConfig(&conf, cmd.Flags()); err != nil {
+	conf, err := GetConfig(cmd.Flags())
+	if err != nil {
 		log.WithError(err).Fatal("Failed to read config")
 		return
 	}
@@ -354,7 +347,7 @@ func serverCmd(cmd *cobra.Command, args []string) {
 	)
 
 	// Run the application
-	run(&conf, shClient, processor)
+	run(conf, shClient, processor)
 
 	// Close the processor properly
 	processor.Close()
