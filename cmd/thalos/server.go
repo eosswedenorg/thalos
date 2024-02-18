@@ -247,7 +247,10 @@ func chainInfoOnce(api *eos.API) func() *eos.InfoResp {
 
 			log.WithField("api", api.BaseURL).Info("Get chain info from api")
 
-			result, err := api.GetInfo(context.Background())
+			ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+			defer cancel()
+
+			result, err := api.GetInfo(ctx)
 			if err != nil {
 				log.WithError(err).Fatal("Failed to call eos api")
 				return nil
