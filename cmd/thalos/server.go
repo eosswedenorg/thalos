@@ -15,6 +15,7 @@ import (
 	"github.com/cenkalti/backoff/v4"
 	eos "github.com/eoscanada/eos-go"
 	shipclient "github.com/eosswedenorg-go/antelope-ship-client"
+	shipws "github.com/eosswedenorg-go/antelope-ship-client/websocket"
 	"github.com/eosswedenorg-go/pid"
 	"github.com/eosswedenorg/thalos/api/message"
 	_ "github.com/eosswedenorg/thalos/api/message/json"
@@ -110,6 +111,11 @@ func readerLoop(conf *config.Config, running *bool, shClient *shipclient.Stream,
 
 			if errors.Is(err, shipclient.ErrEndBlockReached) {
 				log.Info("Endblock reached.")
+				return
+			}
+
+			if shipws.IsCloseError(err) {
+				log.Info("SHIP Connection closed")
 				return
 			}
 
