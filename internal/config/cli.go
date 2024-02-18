@@ -11,12 +11,6 @@ import (
 func GetFlags() *pflag.FlagSet {
 	flags := pflag.FlagSet{}
 
-	// Cli only flags
-	flags.StringP("config", "c", "./config.yml", "Config file to read")
-	flags.StringP("level", "L", "info", "Log level to use")
-	flags.StringP("pid", "p", "", "Where to write process id")
-	flags.BoolP("no-state-cache", "n", false, "Force the application to take start block from config/api")
-
 	// Generic
 	flags.StringP("url", "u", "", "Url to antelope api")
 	flags.String("codec", "json", "Codec used to send messages")
