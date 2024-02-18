@@ -219,14 +219,19 @@ func GetConfig(flags *pflag.FlagSet) (*config.Config, error) {
 		cfg.Log.Filename = path.Base(logFile)
 	}
 
+	// If start-block is provided, we should set no-state-cache to true.
+	if startBlock := flags.Lookup("start-block"); startBlock != nil && startBlock.Changed {
+		if err := flags.Set("no-state-cache", "true"); err != nil {
+			return cfg, nil
+		}
+	}
+
 	return cfg, nil
 }
 
 func serverCmd(cmd *cobra.Command, args []string) {
 	var err error
 	var chainInfo *eos.InfoResp
-
-	skip_currentblock_cache, _ := cmd.Flags().GetBool("no-state-cache")
 
 	// Write PID file
 	pidFile, err := cmd.Flags().GetString("pid")
@@ -244,6 +249,8 @@ func serverCmd(cmd *cobra.Command, args []string) {
 		log.WithError(err).Fatal("Failed to read config")
 		return
 	}
+
+	skip_currentblock_cache, _ := cmd.Flags().GetBool("no-state-cache")
 
 	flagLevel, _ := cmd.Flags().GetString("level")
 	lvl, err := log.ParseLevel(flagLevel)
