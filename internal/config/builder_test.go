@@ -110,8 +110,8 @@ name: "ship-reader-1"
 api: "http://127.0.0.1:8080"
 message_codec: "mojibake"
 log:
-  filename: some_file.log
-  directory: /path/to/whatever
+  filename: mylog.log
+  directory: /var/log
   maxtime: 30m
   maxfilesize: 200b
 ship:
@@ -135,7 +135,6 @@ redis:
 
 	require.NoError(t, flags.Set("url", "https://api.example.com"))
 	require.NoError(t, flags.Set("codec", "msgpack"))
-	require.NoError(t, flags.Set("log", "/var/log/mylog.log"))
 	require.NoError(t, flags.Set("redis-user", "userfromcli"))
 
 	builder.SetFlags(flags)
@@ -164,7 +163,6 @@ func TestBuilder_Flags(t *testing.T) {
 	require.NoError(t, flags.Set("redis-prefix", "custom-prefix"))
 	require.NoError(t, flags.Set("telegram-id", "72983126312982618"))
 	require.NoError(t, flags.Set("telegram-channel", "-293492332"))
-	require.NoError(t, flags.Set("log", "/path/to/logs/mylog"))
 	require.NoError(t, flags.Set("log-max-filesize", "25mb"))
 	require.NoError(t, flags.Set("log-max-time", "10m"))
 	require.NoError(t, flags.Set("ship-url", "ws://myship.com:7823"))
@@ -183,8 +181,6 @@ func TestBuilder_Flags(t *testing.T) {
 		Api:          "https://myapi",
 		MessageCodec: "binary",
 		Log: log.Config{
-			Filename:    "mylog",
-			Directory:   "/path/to/logs",
 			MaxFileSize: 25 * 1000 * 1000, // 25 mb
 			MaxTime:     time.Minute * 10,
 		},

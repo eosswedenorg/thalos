@@ -7,6 +7,7 @@ import (
 	"io"
 	"os"
 	"os/signal"
+	"path"
 	"syscall"
 	"time"
 
@@ -204,10 +205,21 @@ func GetConfig(flags *pflag.FlagSet) (*config.Config, error) {
 		return nil, err
 	}
 
-	return config.NewBuilder().
+	cfg, err := config.NewBuilder().
 		SetConfigFile(filename).
 		SetFlags(flags).
 		Build()
+	if err != nil {
+		return nil, err
+	}
+
+	logFile, _ := flags.GetString("log")
+	if len(logFile) > 0 {
+		cfg.Log.Directory = path.Dir(logFile)
+		cfg.Log.Filename = path.Base(logFile)
+	}
+
+	return cfg, nil
 }
 
 func serverCmd(cmd *cobra.Command, args []string) {

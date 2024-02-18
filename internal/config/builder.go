@@ -116,12 +116,5 @@ func (b *Builder) Build() (*Config, error) {
 		return nil, err
 	}
 
-	// Call custom handler.
-	if b.flags != nil {
-		if err := overrideCliFlags(&conf, b.flags); err != nil {
-			return nil, err
-		}
-	}
-
 	return &conf, nil
 }

@@ -1,7 +1,6 @@
 package config
 
 import (
-	"path"
 	"time"
 
 	shipclient "github.com/eosswedenorg-go/antelope-ship-client"
@@ -44,13 +43,4 @@ func GetFlags() *pflag.FlagSet {
 	flags.String("chain", "", "ChainID used in channel namespace, can be any string (default from api)")
 
 	return &flags
-}
-
-func overrideCliFlags(cfg *Config, flags *pflag.FlagSet) error {
-	logFile, _ := flags.GetString("log")
-	if len(logFile) > 0 {
-		cfg.Log.Directory = path.Dir(logFile)
-		cfg.Log.Filename = path.Base(logFile)
-	}
-	return nil
 }
