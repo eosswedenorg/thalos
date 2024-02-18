@@ -133,16 +133,59 @@ redis:
 func TestBuilder_Flags(t *testing.T) {
 	flags := GetFlags()
 
-	require.NoError(t, flags.Set("log", "/path/to/logs"))
+	require.NoError(t, flags.Set("url", "https://myapi"))
+	require.NoError(t, flags.Set("codec", "binary"))
+	require.NoError(t, flags.Set("redis-addr", "154.223.38.15:6380"))
+	require.NoError(t, flags.Set("redis-user", "myuser"))
+	require.NoError(t, flags.Set("redis-password", "secret123"))
+	require.NoError(t, flags.Set("redis-db", "3"))
+	require.NoError(t, flags.Set("redis-prefix", "custom-prefix"))
+	require.NoError(t, flags.Set("telegram-id", "72983126312982618"))
+	require.NoError(t, flags.Set("telegram-channel", "-293492332"))
+	require.NoError(t, flags.Set("log", "/path/to/logs/mylog"))
+	require.NoError(t, flags.Set("log-max-filesize", "25mb"))
+	require.NoError(t, flags.Set("log-max-time", "10m"))
+	require.NoError(t, flags.Set("ship-url", "ws://myship.com:7823"))
+	require.NoError(t, flags.Set("start-block", "7327833"))
+	require.NoError(t, flags.Set("end-block", "329408392"))
+	require.NoError(t, flags.Set("irreversible-only", "true"))
+	require.NoError(t, flags.Set("max-msg-in-flight", "98"))
+	require.NoError(t, flags.Set("chain", "wax"))
 
 	cfg, err := NewBuilder().
 		SetSource(bytes.NewReader([]byte(``))).
 		SetFlags(flags).
 		Build()
 
-	expected := New()
-	expected.Log.Filename = "logs"
-	expected.Log.Directory = "/path/to"
+	expected := Config{
+		Api:          "https://myapi",
+		MessageCodec: "binary",
+		Log: log.Config{
+			Filename:    "mylog",
+			Directory:   "/path/to/logs",
+			MaxFileSize: 25 * 1000 * 1000, // 25 mb
+			MaxTime:     time.Minute * 10,
+		},
+		Ship: ShipConfig{
+			Url:                 "ws://myship.com:7823",
+			StartBlockNum:       7327833,
+			EndBlockNum:         329408392,
+			MaxMessagesInFlight: 98,
+			IrreversibleOnly:    true,
+			Chain:               "wax",
+		},
+		Telegram: TelegramConfig{
+			Id:      "72983126312982618",
+			Channel: -293492332,
+		},
+		Redis: RedisConfig{
+			Addr:     "154.223.38.15:6380",
+			User:     "myuser",
+			Password: "secret123",
+			DB:       3,
+			Prefix:   "custom-prefix",
+		},
+	}
 
 	require.NoError(t, err)
 	require.Equal(t, &expected, cfg)

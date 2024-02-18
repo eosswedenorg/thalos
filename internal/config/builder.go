@@ -22,8 +22,31 @@ type Builder struct {
 func NewBuilder() *Builder {
 	return &Builder{
 		binds: map[string]string{
-			"ship.start_block_num": "start-block",
-			"ship.end_block_num":   "end-block",
+			"api":           "url",
+			"message_codec": "codec",
+
+			// Redis
+			"redis.addr":     "redis-addr",
+			"redis.user":     "redis-user",
+			"redis.password": "redis-password",
+			"redis.db":       "redis-db",
+			"redis.prefix":   "redis-prefix",
+
+			// Telegram
+			"telegram.id":      "telegram-id",
+			"telegram.channel": "telegram-channel",
+
+			// Log
+			"log.maxfilesize": "log-max-filesize",
+			"log.maxtime":     "log-max-time",
+
+			// Ship
+			"ship.url":                    "ship-url",
+			"ship.start_block_num":        "start-block",
+			"ship.end_block_num":          "end-block",
+			"ship.irreversible_only":      "irreversible-only",
+			"ship.max_messages_in_flight": "max-msg-in-flight",
+			"ship.chain":                  "chain",
 		},
 	}
 }
