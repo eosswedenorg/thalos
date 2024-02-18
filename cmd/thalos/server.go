@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/signal"
 	"path"
+	"strings"
 	"syscall"
 	"time"
 
@@ -262,6 +263,32 @@ func chainInfoOnce(api *eos.API) func() *eos.InfoResp {
 	}
 }
 
+func ConnectRedis(conf *config.RedisConfig) (*redis.Client, error) {
+	logEntry := log.WithFields(log.Fields{
+		"addr": conf.Addr,
+		"db":   conf.DB,
+	})
+
+	if len(conf.User) > 0 {
+		logEntry = logEntry.WithField("user", conf.User)
+	}
+
+	if len(conf.Password) > 0 {
+		logEntry = logEntry.WithField("password", strings.Repeat("*", len(conf.Password)))
+	}
+
+	logEntry.Info("Connecting to redis")
+
+	rdb := redis.NewClient(&redis.Options{
+		Addr:     conf.Addr,
+		Username: conf.User,
+		Password: conf.Password,
+		DB:       conf.DB,
+	})
+
+	return rdb, rdb.Ping(context.Background()).Err()
+}
+
 func serverCmd(cmd *cobra.Command, args []string) {
 	var err error
 
@@ -333,15 +360,7 @@ func serverCmd(cmd *cobra.Command, args []string) {
 		notify.UseServices(telegram)
 	}
 
-	// Connect to redis
-	rdb := redis.NewClient(&redis.Options{
-		Addr:     conf.Redis.Addr,
-		Username: conf.Redis.User,
-		Password: conf.Redis.Password,
-		DB:       conf.Redis.DB,
-	})
-
-	err = rdb.Ping(context.Background()).Err()
+	rdb, err := ConnectRedis(&conf.Redis)
 	if err != nil {
 		log.WithError(err).Fatal("Failed to connect to redis")
 		return
