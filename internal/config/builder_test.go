@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/eosswedenorg/thalos/internal/log"
-	"github.com/spf13/pflag"
 	"github.com/stretchr/testify/require"
 
 	shipclient "github.com/eosswedenorg-go/antelope-ship-client"
@@ -132,14 +131,13 @@ redis:
 }
 
 func TestBuilder_Flags(t *testing.T) {
-	flags := pflag.FlagSet{}
-	flags.StringP("log", "l", "", "")
+	flags := GetFlags()
 
 	require.NoError(t, flags.Set("log", "/path/to/logs"))
 
 	cfg, err := NewBuilder().
 		SetSource(bytes.NewReader([]byte(``))).
-		SetFlags(&flags).
+		SetFlags(flags).
 		Build()
 
 	expected := New()
