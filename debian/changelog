@@ -1,3 +1,20 @@
+thalos (1.1.0~rc1) bionic focal jammy; urgency=medium
+
+  * Adding flags for almost all config values.
+  * Improved disconnect code for ship client.
+    - Application now waits for ship to reply with a close message before exiting
+      the application.
+    - The application now recognizes an close error and no longer reports is as
+      an actual error to the log.
+  * Application only calls "GetInfo" from the antelope API once and only if it actually needs the information.
+  * CI: update actions/checkout to version 4
+  * CI: update actions/setup-go to version 5
+  * golang: update github.com/eosswedenorg-go/antelope-ship-client to v0.2.7
+  * golang: switched github.com/pborman/getopt for github.com/spf13/cobra
+  * golang: use github.com/spf13/viper to handle configuration.
+
+ -- Henrik Hautakoski <henril.hautakoski@gmail.com>  Mon, 19 Feb 2024 14:27:40 +0100
+
 thalos (1.0.0) bionic focal jammy; urgency=medium
 
   * Improved code documentation.
