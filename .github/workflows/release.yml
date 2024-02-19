@@ -82,7 +82,7 @@ jobs:
       - name: Package
         id: package
         run: |
-          dpkg-buildpackage -b -us -uc
+          make build-deb
           DEB_FILE=$(ls ../*.deb | head -1)
           echo "deb_filename=$DEB_FILE" >> "$GITHUB_OUTPUT"
           echo "deb_name=$(basename $DEB_FILE)" >> "$GITHUB_OUTPUT"
