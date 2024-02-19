@@ -2,8 +2,8 @@
 set -e
 
 if [ "$1" = 'configure' ]; then
-        adduser --force-badname --system --home /nonexistent  \
-            --group --no-create-home --quiet thalos || true
+    adduser --force-badname --system --home /nonexistent  \
+        --group --no-create-home --quiet thalos || true
 
 	# Create log directory
 	mkdir -p /var/log/thalos
