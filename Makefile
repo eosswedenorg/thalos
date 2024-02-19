@@ -28,6 +28,9 @@ install: build tools
 install-scripts:
 	install -m 755 -t $(DESTDIR) scripts/start.sh scripts/stop.sh
 
+build-deb:
+	dpkg-buildpackage -b -us -uc
+
 test:
 	$(GO) test -v ./...
 
