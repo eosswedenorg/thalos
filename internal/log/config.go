@@ -15,6 +15,9 @@ type Config struct {
 	// Directory where the log files are stored.
 	Directory string `yaml:"directory" mapstructure:"directory"`
 
+	// Timestamp format when rotation files.
+	FileTimestampFormat string `yaml:"file_timestamp_format" mapstructure:"file_timestamp_format"`
+
 	// Maximum filesize, the log is rotated when this size is exceeded.
 	MaxFileSize types.Size `yaml:"maxfilesize" mapstructure:"maxfilesize"`
 
