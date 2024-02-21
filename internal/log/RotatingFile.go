@@ -25,7 +25,7 @@ func open(filename string) (*os.File, error) {
 
 // Open a new rotating file.
 func NewRotatingFile(filename string, opts ...RotatingFileOption) (*RotatingFile, error) {
-	if err := os.MkdirAll(path.Dir(filename), 0o766); err != nil && !os.IsExist(err) {
+	if err := os.MkdirAll(path.Dir(filename), 0o755); err != nil && !os.IsExist(err) {
 		return nil, err
 	}
 
