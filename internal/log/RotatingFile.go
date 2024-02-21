@@ -24,7 +24,7 @@ func open(filename string) (*os.File, error) {
 }
 
 // Open a new rotating file.
-func NewRotatingFile(filename string, maxSize int64, maxAge time.Duration) (*RotatingFile, error) {
+func NewRotatingFile(filename string, opts ...RotatingFileOption) (*RotatingFile, error) {
 	if err := os.MkdirAll(path.Dir(filename), 0o766); err != nil && !os.IsExist(err) {
 		return nil, err
 	}
@@ -39,14 +39,18 @@ func NewRotatingFile(filename string, maxSize int64, maxAge time.Duration) (*Rot
 		return nil, err
 	}
 
-	return &RotatingFile{
-		fd:      fd,
-		size:    stat.Size(),
-		maxSize: maxSize,
-		ts:      time.Now(),
-		maxAge:  maxAge,
-		format:  "2006-01-02_150405",
-	}, nil
+	file := &RotatingFile{
+		fd:     fd,
+		size:   stat.Size(),
+		ts:     time.Now(),
+		format: "2006-01-02_150405",
+	}
+
+	for _, opt := range opts {
+		opt(file)
+	}
+
+	return file, nil
 }
 
 // Open a new rotating file using a config struct.
@@ -55,7 +59,12 @@ func NewRotatingFileFromConfig(config Config, suffix string) (*RotatingFile, err
 		suffix = "_" + suffix
 	}
 
-	return NewRotatingFile(config.GetFilePath()+suffix+".log", int64(config.MaxFileSize), config.MaxTime)
+	filename := config.GetFilePath() + suffix + ".log"
+
+	return NewRotatingFile(filename, func(f *RotatingFile) {
+		f.maxAge = config.MaxTime
+		f.maxSize = int64(config.MaxFileSize)
+	})
 }
 
 func (w *RotatingFile) newFilename(name string) string {
