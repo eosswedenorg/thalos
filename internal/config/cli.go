@@ -29,6 +29,7 @@ func GetFlags() *pflag.FlagSet {
 	flags.StringP("log", "l", "", "Path to log file (default: print to stdout/stderr)")
 	flags.String("log-max-filesize", "10mb", "Max filesize for logfile to rotate")
 	flags.Duration("log-max-time", time.Hour*24, "Max time for logfile to rotate")
+	flags.String("log-file-timestamp", "2006-01-02_150405", "Timestamp format to use when rotating log files")
 
 	// Ship
 	flags.String("ship-url", "ws://127.0.0.1:8080", "Url to ship node")

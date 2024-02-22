@@ -15,10 +15,11 @@ func TestBuilder(t *testing.T) {
 		Api:          "http://127.0.0.1:8080",
 		MessageCodec: "mojibake",
 		Log: log.Config{
-			Filename:    "some_file.log",
-			Directory:   "/path/to/whatever",
-			MaxFileSize: 200,
-			MaxTime:     30 * time.Minute,
+			Filename:            "some_file.log",
+			Directory:           "/path/to/whatever",
+			MaxFileSize:         200,
+			MaxTime:             30 * time.Minute,
+			FileTimestampFormat: "20060102@150405",
 		},
 		Ship: ShipConfig{
 			Url:                 "127.0.0.1:8089",
@@ -50,6 +51,7 @@ log:
   directory: /path/to/whatever
   maxtime: 30m
   maxfilesize: 200b
+  file_timestamp_format: 20060102@150405
 ship:
   url: "127.0.0.1:8089"
   irreversible_only: true
@@ -79,10 +81,11 @@ func TestBuilder_ConfigWithFlags(t *testing.T) {
 		Api:          "https://api.example.com",
 		MessageCodec: "msgpack",
 		Log: log.Config{
-			Filename:    "mylog.log",
-			Directory:   "/var/log",
-			MaxFileSize: 200,
-			MaxTime:     30 * time.Minute,
+			Filename:            "mylog.log",
+			Directory:           "/var/log",
+			MaxFileSize:         200,
+			MaxTime:             30 * time.Minute,
+			FileTimestampFormat: "2006-01-02_150405",
 		},
 		Ship: ShipConfig{
 			Url:                 "127.0.0.1:8089",
@@ -165,6 +168,7 @@ func TestBuilder_Flags(t *testing.T) {
 	require.NoError(t, flags.Set("telegram-channel", "-293492332"))
 	require.NoError(t, flags.Set("log-max-filesize", "25mb"))
 	require.NoError(t, flags.Set("log-max-time", "10m"))
+	require.NoError(t, flags.Set("log-file-timestamp", "0102-15:04:05"))
 	require.NoError(t, flags.Set("ship-url", "ws://myship.com:7823"))
 	require.NoError(t, flags.Set("start-block", "7327833"))
 	require.NoError(t, flags.Set("end-block", "329408392"))
@@ -181,8 +185,9 @@ func TestBuilder_Flags(t *testing.T) {
 		Api:          "https://myapi",
 		MessageCodec: "binary",
 		Log: log.Config{
-			MaxFileSize: 25 * 1000 * 1000, // 25 mb
-			MaxTime:     time.Minute * 10,
+			MaxFileSize:         25 * 1000 * 1000, // 25 mb
+			MaxTime:             time.Minute * 10,
+			FileTimestampFormat: "0102-15:04:05",
 		},
 		Ship: ShipConfig{
 			Url:                 "ws://myship.com:7823",

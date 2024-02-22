@@ -37,8 +37,9 @@ func NewBuilder() *Builder {
 			"telegram.channel": "telegram-channel",
 
 			// Log
-			"log.maxfilesize": "log-max-filesize",
-			"log.maxtime":     "log-max-time",
+			"log.maxfilesize":           "log-max-filesize",
+			"log.maxtime":               "log-max-time",
+			"log.file_timestamp_format": "log-file-timestamp",
 
 			// Ship
 			"ship.url":                    "ship-url",
