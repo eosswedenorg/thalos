@@ -61,10 +61,11 @@ func NewRotatingFileFromConfig(config Config, suffix string) (*RotatingFile, err
 
 	filename := config.GetFilePath() + suffix + ".log"
 
-	return NewRotatingFile(filename, func(f *RotatingFile) {
-		f.maxAge = config.MaxTime
-		f.maxSize = int64(config.MaxFileSize)
-	})
+	return NewRotatingFile(filename,
+		WithMaxAge(config.MaxTime),
+		WithMaxSize(int64(config.MaxFileSize)),
+		WithTimestampFormat(config.FileTimestampFormat),
+	)
 }
 
 func (w *RotatingFile) newFilename(name string) string {
