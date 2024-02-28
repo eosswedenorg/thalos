@@ -1,3 +1,11 @@
+thalos (1.1.0~rc2) bionic focal jammy; urgency=medium
+
+  * Adding `log.file_timestamp_format` config field
+  * Added cli flag `--log-file-timestamp`
+  * Directory where log files are stored is created with correct permissions.
+
+ -- Henrik Hautakoski <henrik.hautakoski@gmail.com>  Wed, 28 Feb 2024 23:16:44 +0100
+
 thalos (1.1.0~rc1) bionic focal jammy; urgency=medium
 
   * Adding flags for almost all config values.
