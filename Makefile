@@ -33,6 +33,6 @@ build-deb:
 
 test:
 	$(GO) test -v ./...
-
+	cd api; $(GO) test -v ./...
 clean :
 	$(RM) -fr build
