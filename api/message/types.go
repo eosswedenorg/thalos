@@ -64,8 +64,10 @@ type ActionTrace struct {
 	// Contract account.
 	Contract string `json:"contract" msgpack:"contract"`
 
-	Receiver string      `json:"receiver" msgpack:"receiver"`
-	Data     interface{} `json:"data" msgpack:"data"`
+	Receiver      string `json:"receiver" msgpack:"receiver"`
+	FirstReceiver bool   `json:"first_receiver" msgpack:"first_receiver"`
+
+	Data interface{} `json:"data" msgpack:"data"`
 
 	Authorization []PermissionLevel `json:"authorization" msgpack:"authorization"`
 
