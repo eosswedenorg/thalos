@@ -228,12 +228,13 @@ func (processor *ShipProcessor) processBlock(block *ship.GetBlocksResultV0) {
 				}
 
 				act := message.ActionTrace{
-					TxID:      trace.ID.String(),
-					BlockNum:  block.Block.BlockNumber(),
-					Timestamp: block.Block.Timestamp.Time.UTC(),
-					Name:      act_trace.Act.Name.String(),
-					Contract:  act_trace.Act.Account.String(),
-					Receiver:  act_trace.Receiver.String(),
+					TxID:          trace.ID.String(),
+					BlockNum:      block.Block.BlockNumber(),
+					Timestamp:     block.Block.Timestamp.Time.UTC(),
+					Name:          act_trace.Act.Name.String(),
+					Contract:      act_trace.Act.Account.String(),
+					Receiver:      act_trace.Receiver.String(),
+					FirstReceiver: act_trace.Act.Account.String() == act_trace.Receiver.String(),
 				}
 
 				if act_trace.Receipt != nil {
