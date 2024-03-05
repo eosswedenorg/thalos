@@ -2,7 +2,7 @@
 
 ## Usage
 
-The api is designed with callback functions that are called when messages arrive
+The api is designed with go channels.
 
 ## Example
 
@@ -31,59 +31,56 @@ func main() {
 		ChainID: "1064487b3cd1a897ce03ae5b6a865651747e2e152090f99c1d19d44e01aea5a4", // Wax mainnet.
 	})
 
-    // Create client
-	codec, err := message.GetCodec("json")
-	if err != nil {
-		fmt.Println("Failed to get json codec")
-		return
-	}
+    // Create thalos client
+    codec, err := message.GetCodec("json")
+    if err != nil {
+        fmt.Println("Failed to get json codec")
+        return
+    }
 
-	client := api.NewClient(sub, codec.Decoder)
+    client := api.NewClient(sub, codec.Decoder)
 
     // Subscribe to some channels.
-	err = client.Subscribe(
-		api.TransactionChannel,
-		api.ActionChannel{Contract: "eosio"}.Channel(),
-		api.ActionChannel{Name: "mine"}.Channel(),
-		api.HeartbeatChannel,
-		api.TableDeltaChannel{}.Channel(),
-	)
+    err = client.Subscribe(
+        api.TransactionChannel,
+        api.ActionChannel{Contract: "eosio"}.Channel(),
+        api.ActionChannel{Name: "mine"}.Channel(),
+        api.HeartbeatChannel,
+        api.TableDeltaChannel{}.Channel(),
+    )
 
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+    if err != nil {
+        fmt.Println(err)
+        return
+    }
 
     // Wait for interrupt in a go routine and close the client.
-	go func() {
-		sig := make(chan os.Signal)
-		signal.Notify(sig, os.Interrupt)
+    go func() {
+        sig := make(chan os.Signal)
+        signal.Notify(sig, os.Interrupt)
 
-		<-sig
-		fmt.Println("Got interrupt")
+        <-sig
+        fmt.Println("Got interrupt")
 
-		client.Close()
-	}()
+        client.Close()
+    }()
 
     // Read messages
-	for t := range client.Channel() {
-		switch msg := t.(type) {
-		case error:
-			fmt.Println("Error:", msg)
-		case message.TransactionTrace:
-			fmt.Println("Transaction", msg.BlockNum, msg.ID)
-			fmt.Println(msg)
-			fmt.Println("---")
-		case message.HeartBeat :
-			fmt.Println("Heartbeat")
-			fmt.Println(msg)
-			fmt.Println("---")
-		}
-	}
+    for t := range client.Channel() {
+        switch msg := t.(type) {
+        case error:
+            fmt.Println("Error:", msg)
+        case message.TransactionTrace:
+            fmt.Println("Transaction", msg.BlockNum, msg.ID)
+            fmt.Println(msg)
+            fmt.Println("---")
+        case message.HeartBeat :
+            fmt.Println("Heartbeat")
+            fmt.Println(msg)
+            fmt.Println("---")
+        }
+    }
 }
-
-
-
 ```
 
 ## Message channels and types
