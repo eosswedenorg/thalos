@@ -26,6 +26,9 @@ type User struct {
 
 	// True if password was generated, false if not.
 	Generated bool
+
+	// True if password should be hashed, false otherwise.
+	Hash bool
 }
 
 func NewUser(name, password string) User {
@@ -34,13 +37,19 @@ func NewUser(name, password string) User {
 			Name:      name,
 			Password:  randomString(32),
 			Generated: true,
+			Hash:      false,
 		}
 	}
 	return User{Name: name, Password: password}
 }
 
-func (u *User) Hash() {
-	u.Password = "#" + hash(u.Password)
+func (u *User) GetPassword() string {
+
+	if u.Hash {
+		return "#" + hash(u.Password)
+	}
+
+	return ">" + u.Password
 }
 
 func (u User) Print() {
@@ -81,11 +90,11 @@ user {{.client}} on {{.clientpw}} resetchannels &{{.prefix}}::* -@all +subscribe
 	}
 
 	return tmpl.Execute(w, map[string]string{
-		"defaultpw": defUser.Password,
+		"defaultpw": defUser.GetPassword(),
 		"client":    clientUser.Name,
-		"clientpw":  clientUser.Password,
+		"clientpw":  clientUser.GetPassword(),
 		"server":    serverUser.Name,
-		"serverpw":  serverUser.Password,
+		"serverpw":  serverUser.GetPassword(),
 		"prefix":    prefix,
 		"timestamp": time.Now().Format(time.UnixDate),
 	})
@@ -123,9 +132,9 @@ var RedisACLCmd = &cobra.Command{
 			serverUser.PrintIfGeneratedPW()
 			clientUser.PrintIfGeneratedPW()
 
-			defaultUser.Hash()
-			serverUser.Hash()
-			clientUser.Hash()
+			defaultUser.Hash = true
+			serverUser.Hash = true
+			clientUser.Hash = true
 		}
 
 		filename, _ := cmd.Flags().GetString("file")
