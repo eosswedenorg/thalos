@@ -71,7 +71,7 @@ func hash(str string) string {
 func writeTemplate(w io.Writer, defUser, serverUser, clientUser User, prefix string) error {
 	tmplStr := `# Created by thalos-tools on {{.timestamp}}
 user default on {{.defaultpw}} ~* &* +@all
-user {{.server}} on {{.serverpw}} resetchannels ~{{.prefix}}::* &{{.prefix}}::* -@all +get +publish +set
+user {{.server}} on {{.serverpw}} resetchannels ~{{.prefix}}::* &{{.prefix}}::* -@all +ping +get +publish +set
 user {{.client}} on {{.clientpw}} resetchannels &{{.prefix}}::* -@all +subscribe
 `
 
