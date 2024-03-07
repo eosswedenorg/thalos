@@ -59,6 +59,61 @@ jobs:
           asset_path: build/bundle.tar.gz
           asset_content_type: application/tar+gzip
 
+  # Build thalos binaries that are linked with musl libc.
+  musl:
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [ 386, amd64, arm, arm64 ]
+    runs-on: ubuntu-latest
+    name: Build musl (${{ matrix.arch }})
+    container:
+      image: golang:1.21-alpine3.19
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: install dependencies
+        run: apk add make
+
+      - name: compile
+        id: compile
+        run: |
+          mkdir -p build/bundle/{bin,logs}
+          GOARCH=${{matrix.arch}} make -e DESTDIR=build/bundle PREFIX= CFGDIR= install install-scripts
+          tar -C build/bundle -z -cf build/bundle.tar.gz .
+          echo "version=$(sed -n 's/.*PROGRAM_VERSION\s*=\s*//p' Makefile)" >> "$GITHUB_OUTPUT"
+
+      - name: Upload thalos-server
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_name: thalos-server-${{steps.compile.outputs.version}}-linux-${{matrix.arch}}-musl
+          asset_path: build/thalos-server
+          asset_content_type: application/octal-stream
+
+      - name: Upload thalos-tools
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_name: thalos-tools-${{steps.compile.outputs.version}}-linux-${{matrix.arch}}-musl
+          asset_path: build/thalos-tools
+          asset_content_type: application/octal-stream
+
+      - name: Upload bundle
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_name: thalos-${{steps.compile.outputs.version}}-linux-${{matrix.arch}}-musl.tar.gz
+          asset_path: build/bundle.tar.gz
+          asset_content_type: application/tar+gzip
+
+
   package-ubuntu:
     strategy:
       fail-fast: false
