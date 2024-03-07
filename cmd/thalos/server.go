@@ -23,7 +23,6 @@ import (
 	api_redis "github.com/eosswedenorg/thalos/api/redis"
 	"github.com/eosswedenorg/thalos/internal/abi"
 	"github.com/eosswedenorg/thalos/internal/cache"
-	. "github.com/eosswedenorg/thalos/internal/cache"
 	"github.com/eosswedenorg/thalos/internal/config"
 	driver "github.com/eosswedenorg/thalos/internal/driver/redis"
 	. "github.com/eosswedenorg/thalos/internal/log"
@@ -157,7 +156,7 @@ func LogLevels() []string {
 }
 
 func initAbiManager(api *eos.API, store cache.Store, chain_id string) *abi.AbiManager {
-	cache := NewCache("thalos::cache::abi::"+chain_id, store)
+	cache := cache.NewCache("thalos::cache::abi::"+chain_id, store)
 	return abi.NewAbiManager(cache, api)
 }
 
@@ -373,14 +372,14 @@ func serverCmd(cmd *cobra.Command, args []string) {
 	}
 
 	// Setup cache storage
-	cacheStore := NewRedisStore(&redis_cache.Options{
+	cacheStore := cache.NewRedisStore(&redis_cache.Options{
 		Redis: rdb,
 		// Cache 10k keys for 10 minutes.
 		LocalCache: redis_cache.NewTinyLFU(10000, 10*time.Minute),
 	})
 
 	// Setup general cache
-	cache := NewCache("thalos::cache::instance::"+conf.Name, cacheStore)
+	cache := cache.NewCache("thalos::cache::instance::"+conf.Name, cacheStore)
 
 	eosClient := eos.New(conf.Api)
 

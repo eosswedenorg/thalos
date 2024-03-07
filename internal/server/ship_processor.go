@@ -120,7 +120,7 @@ func (processor *ShipProcessor) updateAbiFromAction(act *ship.Action) error {
 		Abi     string
 		Account eos.AccountName
 	}{}
-	if err := decode(ABI, act, &set_abi); err != nil {
+	if err = decode(ABI, act, &set_abi); err != nil {
 		return err
 	}
 
@@ -184,7 +184,7 @@ func (processor *ShipProcessor) processBlock(block *ship.GetBlocksResultV0) {
 			transaction := message.TransactionTrace{
 				ID:            trace.ID.String(),
 				BlockNum:      block.Block.BlockNumber(),
-				Timestamp:     block.Block.Timestamp.Time.UTC(),
+				Timestamp:     block.Block.Timestamp.UTC(),
 				Status:        trace.Status.String(),
 				CPUUsageUS:    trace.CPUUsageUS,
 				NetUsage:      trace.NetUsage,
@@ -230,7 +230,7 @@ func (processor *ShipProcessor) processBlock(block *ship.GetBlocksResultV0) {
 				act := message.ActionTrace{
 					TxID:          trace.ID.String(),
 					BlockNum:      block.Block.BlockNumber(),
-					Timestamp:     block.Block.Timestamp.Time.UTC(),
+					Timestamp:     block.Block.Timestamp.UTC(),
 					Name:          act_trace.Act.Name.String(),
 					Contract:      act_trace.Act.Account.String(),
 					Receiver:      act_trace.Receiver.String(),
@@ -331,7 +331,7 @@ func (processor *ShipProcessor) processBlock(block *ship.GetBlocksResultV0) {
 
 		message := message.TableDelta{
 			BlockNum:  block.Block.BlockNumber(),
-			Timestamp: block.Block.Timestamp.Time.UTC(),
+			Timestamp: block.Block.Timestamp.UTC(),
 			Name:      delta.Name,
 			Rows:      rows,
 		}

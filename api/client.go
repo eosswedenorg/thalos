@@ -109,19 +109,19 @@ func (c *Client) hbHandler(payload []byte) {
 }
 
 func (c *Client) sub(channel Channel) error {
-	var handler handler
+	var h handler
 
 	switch channel.Type() {
 	case RollbackChannel.Type():
-		handler = c.rollbackHandler
+		h = c.rollbackHandler
 	case TransactionChannel.Type():
-		handler = c.transactionHandler
+		h = c.transactionHandler
 	case HeartbeatChannel.Type():
-		handler = c.hbHandler
+		h = c.hbHandler
 	case ActionChannel{}.Channel().Type():
-		handler = c.actHandler
+		h = c.actHandler
 	case TableDeltaChannel{}.Channel().Type():
-		handler = c.tableDeltaHandler
+		h = c.tableDeltaHandler
 	default:
 		return fmt.Errorf("invalid channel type. %s", channel.Type())
 	}
@@ -130,7 +130,7 @@ func (c *Client) sub(channel Channel) error {
 	c.wg.Add(1)
 	go func() {
 		defer c.wg.Done()
-		c.worker(channel, handler)
+		c.worker(channel, h)
 	}()
 
 	return nil

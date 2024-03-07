@@ -81,7 +81,7 @@ var validateCmd = &cobra.Command{
 					log.WithError(msg).Error("Error when reading stream")
 				case message.ActionTrace:
 					if block_num > 0 {
-						var diff int32 = int32(msg.BlockNum - block_num)
+						diff := int32(msg.BlockNum - block_num)
 						if diff < 0 || diff > 1 {
 							log.WithFields(log.Fields{
 								"current_block": block_num,

@@ -22,7 +22,7 @@ var benchCmd = &cobra.Command{
 	Use:   "bench",
 	Short: "Run a benchmark against a thalos node",
 	Run: func(cmd *cobra.Command, args []string) {
-		var counter int = 0
+		counter := 0
 		interval, _ := cmd.Flags().GetDuration("interval")
 
 		url, _ := cmd.Flags().GetString("redis-url")

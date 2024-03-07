@@ -96,7 +96,7 @@ var RedisACLCmd = &cobra.Command{
 	Short: "create a users.acl file",
 	Run: func(cmd *cobra.Command, args []string) {
 		var err error
-		var out *os.File = os.Stdout
+		out := os.Stdout
 
 		rnd = rand.New(rand.NewSource(time.Now().UnixNano()))
 
