@@ -31,13 +31,12 @@ type User struct {
 	Hash bool
 }
 
-func NewUser(name, password string) User {
+func NewUser(name, password string, pass_len uint) User {
 	if len(password) < 1 {
 		return User{
 			Name:      name,
-			Password:  randomString(32),
+			Password:  randomString(pass_len),
 			Generated: true,
-			Hash:      false,
 		}
 	}
 	return User{Name: name, Password: password}
@@ -62,10 +61,10 @@ func (u User) PrintIfGeneratedPW() {
 	}
 }
 
-func randomString(length int) string {
+func randomString(length uint) string {
 	charset := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUWXYZ0123456789"
 	out := ""
-	for i := 0; i < length; i++ {
+	for i := 0; i < int(length); i++ {
 		idx := rnd.Intn(len(charset))
 		out += string(charset[idx])
 	}
@@ -115,10 +114,11 @@ var RedisACLCmd = &cobra.Command{
 		flagClient, _ := cmd.Flags().GetString("client")
 		flagClientPw, _ := cmd.Flags().GetString("client-pw")
 		flagPrefix, _ := cmd.Flags().GetString("prefix")
+		flagPassLen, _ := cmd.Flags().GetUint("pass-len")
 
-		defaultUser := NewUser("default", flagDefUserPw)
-		serverUser := NewUser(flagServer, flagServerPw)
-		clientUser := NewUser(flagClient, flagClientPw)
+		defaultUser := NewUser("default", flagDefUserPw, flagPassLen)
+		serverUser := NewUser(flagServer, flagServerPw, flagPassLen)
+		clientUser := NewUser(flagClient, flagClientPw, flagPassLen)
 
 		atleastOneGeneratedPw := defaultUser.Generated || serverUser.Generated || clientUser.Generated
 

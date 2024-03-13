@@ -47,6 +47,7 @@ func init() {
 	RedisACLCmd.Flags().String("prefix", "ship", "Redis key prefix")
 	RedisACLCmd.Flags().Bool("cleartext", false, "If passwords should be hashed or left in cleartext.")
 	RedisACLCmd.Flags().String("file", "", "Where the config should be written to (default: standard out)")
+	RedisACLCmd.Flags().Uint("pass-len", 32, "The length of generated passwords")
 
 	rootCmd.AddCommand(
 		validateCmd,
