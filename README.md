@@ -2,6 +2,8 @@
 
 [![Test](https://github.com/eosswedenorg/thalos/actions/workflows/test.yml/badge.svg)](https://github.com/eosswedenorg/thalos/actions/workflows/test.yml)
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/eosswedenorg/thalos)](https://goreportcard.com/report/github.com/eosswedenorg/thalos)
+
 Thalos is a application that makes it easy for users to stream blockchain data from an Antelope SHIP node.
 
 Consult the [documentation](https://thalos.waxsweden.org/docs) for more information.
