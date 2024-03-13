@@ -30,7 +30,7 @@ func logDecoratedEncoder(encoder message.Encoder) message.Encoder {
 }
 
 // A ShipProcessor will consume messages from a ship stream, convert the messages into
-// thalos specfic ones, encode them and finally post them to an api.Writer
+// thalos specific ones, encode them and finally post them to an api.Writer
 type ShipProcessor struct {
 	// The ship stream to process.
 	shipStream *shipclient.Stream
