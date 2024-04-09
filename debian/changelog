@@ -1,3 +1,13 @@
+thalos (1.1.1) bionic focal jammy; urgency=medium
+
+  * Build binaries linked with musl libc for alpine linux.
+  * Added docker image.
+  * redis-acl tool: added `--pass-len` flag.
+  * redis-acl tool: fix correct syntax for cleartext passwords.
+  * redis-acl tool: allow ping command for server user.
+
+ -- Henrik Hautakoski <henrik.hautakoski@gmail.com>  Tue, 09 Apr 2024 22:40:20 +0200
+
 thalos (1.1.0) bionic focal jammy; urgency=medium
 
   * Adding `ActionTrace.FirstReceiver` flag, that is `true`
