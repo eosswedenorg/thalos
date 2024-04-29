@@ -1,3 +1,9 @@
+thalos (1.1.2~rc1) bionic focal jammy; urgency=medium
+
+  * Moved from github.com/eoscanda/eos-go to github.com/pnx/antelope-go library
+
+ -- Henrik Hautakoski <henrik.hautakoski@gmail.com>  Mon, 29 Apr 2024 21:14:34 +0200
+
 thalos (1.1.1) bionic focal jammy; urgency=medium
 
   * Build binaries linked with musl libc for alpine linux.
