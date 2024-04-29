@@ -12,7 +12,7 @@ require (
 	github.com/go-redis/redismock/v9 v9.2.0
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/nikoksr/notify v0.41.0
-	github.com/pnx/antelope-go v0.0.2-0.20240425200605-62ec2abfe722
+	github.com/pnx/antelope-go v0.0.3
 	github.com/redis/go-redis/v9 v9.5.1
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/cobra v1.8.0
@@ -68,5 +68,3 @@ require (
 )
 
 replace github.com/eosswedenorg/thalos/api => ./api
-
-replace github.com/pnx/antelope-go => ../../go/antelope-go
