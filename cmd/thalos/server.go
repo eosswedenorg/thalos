@@ -13,7 +13,6 @@ import (
 	"time"
 
 	"github.com/cenkalti/backoff/v4"
-	eos "github.com/eoscanada/eos-go"
 	shipclient "github.com/eosswedenorg-go/antelope-ship-client"
 	shipws "github.com/eosswedenorg-go/antelope-ship-client/websocket"
 	"github.com/eosswedenorg-go/pid"
@@ -30,6 +29,7 @@ import (
 	redis_cache "github.com/go-redis/cache/v9"
 	"github.com/nikoksr/notify"
 	"github.com/nikoksr/notify/service/telegram"
+	antelopeapi "github.com/pnx/antelope-go/api"
 	"github.com/redis/go-redis/v9"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -155,12 +155,12 @@ func LogLevels() []string {
 	return list
 }
 
-func initAbiManager(api *eos.API, store cache.Store, chain_id string) *abi.AbiManager {
+func initAbiManager(api *antelopeapi.Client, store cache.Store, chain_id string) *abi.AbiManager {
 	cache := cache.NewCache("thalos::cache::abi::"+chain_id, store)
 	return abi.NewAbiManager(cache, api)
 }
 
-func stateLoader(conf *config.Config, start_block_flag *pflag.Flag, chainInfo func() *eos.InfoResp, cache *cache.Cache, current_block_no_cache bool) StateLoader {
+func stateLoader(conf *config.Config, start_block_flag *pflag.Flag, chainInfo func() *antelopeapi.Info, cache *cache.Cache, current_block_no_cache bool) StateLoader {
 	return func(state *State) {
 		var source string
 
@@ -186,7 +186,7 @@ func stateLoader(conf *config.Config, start_block_flag *pflag.Flag, chainInfo fu
 				// Otherwise, set from api.
 				if conf.Ship.IrreversibleOnly {
 					source = "api (LIB)"
-					state.CurrentBlock = uint32(chainInfo().LastIrreversibleBlockNum)
+					state.CurrentBlock = uint32(chainInfo().LastIrreversableBlockNum)
 				} else {
 					source = "api (HEAD)"
 					state.CurrentBlock = uint32(chainInfo().HeadBlockNum)
@@ -246,12 +246,12 @@ func GetConfig(flags *pflag.FlagSet) (*config.Config, error) {
 // that pointer will live as long as the closure lives.
 // and inside the closure we will reference the pointer and only
 // call the api if it is nil.
-func chainInfoOnce(api *eos.API) func() *eos.InfoResp {
-	var info *eos.InfoResp
-	return func() *eos.InfoResp {
+func chainInfoOnce(api *antelopeapi.Client) func() *antelopeapi.Info {
+	var info *antelopeapi.Info
+	return func() *antelopeapi.Info {
 		if info == nil {
 
-			log.WithField("api", api.BaseURL).Info("Get chain info from api")
+			log.WithField("api", api.Url).Info("Get chain info from api")
 
 			ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 			defer cancel()
@@ -262,7 +262,7 @@ func chainInfoOnce(api *eos.API) func() *eos.InfoResp {
 				return nil
 			}
 
-			info = result
+			info = &result
 		}
 		return info
 	}
@@ -381,7 +381,7 @@ func serverCmd(cmd *cobra.Command, args []string) {
 	// Setup general cache
 	cache := cache.NewCache("thalos::cache::instance::"+conf.Name, cacheStore)
 
-	eosClient := eos.New(conf.Api)
+	antelopeClient := antelopeapi.New(conf.Api)
 
 	shClient := shipclient.NewStream(func(s *shipclient.Stream) {
 		s.StartBlock = conf.Ship.StartBlockNum
@@ -396,11 +396,11 @@ func serverCmd(cmd *cobra.Command, args []string) {
 		return
 	}
 
-	chainInfo := chainInfoOnce(eosClient)
+	chainInfo := chainInfoOnce(antelopeClient)
 
 	chain_id := conf.Ship.Chain
 	if len(chain_id) < 1 {
-		chain_id = chainInfo().ChainID.String()
+		chain_id = chainInfo().ChainID
 	}
 
 	processor := SpawnProccessor(
@@ -411,7 +411,7 @@ func serverCmd(cmd *cobra.Command, args []string) {
 			Prefix:  conf.Redis.Prefix,
 			ChainID: chain_id,
 		}),
-		initAbiManager(eosClient, cacheStore, chain_id),
+		initAbiManager(antelopeClient, cacheStore, chain_id),
 		codec,
 	)
 

@@ -1,13 +1,14 @@
 package abi
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"strings"
 	"testing"
 
-	eos "github.com/eoscanada/eos-go"
+	"github.com/pnx/antelope-go/api"
+	"github.com/pnx/antelope-go/chain"
 
 	"github.com/eosswedenorg/thalos/internal/cache"
 	"github.com/stretchr/testify/assert"
@@ -73,7 +74,7 @@ var abiString = `
 }
 `
 
-func assert_abi(t *testing.T, abi *eos.ABI) {
+func assert_abi(t *testing.T, abi *chain.Abi) {
 	assert.Equal(t, abi.Version, "eosio::abi/1.0")
 
 	// Types
@@ -110,12 +111,12 @@ func assert_abi(t *testing.T, abi *eos.ABI) {
 	assert.Equal(t, abi.Structs[3].Fields[0].Type, "string")
 
 	// Actions
-	assert.Equal(t, abi.Actions[0].Name, eos.ActN("action_name_1"))
+	assert.Equal(t, abi.Actions[0].Name, chain.N("action_name_1"))
 	assert.Equal(t, abi.Actions[0].Type, "struct_name_1")
 	assert.Equal(t, abi.Actions[0].RicardianContract, "")
 
 	// Tables
-	assert.Equal(t, abi.Tables[0].Name, eos.TableName("table_name_1"))
+	assert.Equal(t, abi.Tables[0].Name, chain.N("table_name_1"))
 	assert.Equal(t, abi.Tables[0].Type, "struct_name_1")
 	assert.Equal(t, abi.Tables[0].IndexType, "i64")
 	assert.Equal(t, abi.Tables[0].KeyNames[0], "key_name_1")
@@ -124,15 +125,10 @@ func assert_abi(t *testing.T, abi *eos.ABI) {
 	assert.Equal(t, abi.Tables[0].KeyTypes[1], "int")
 }
 
-func mockAPI(handler http.HandlerFunc) (*eos.API, *httptest.Server) {
+func mockAPI(handler http.HandlerFunc) (*api.Client, *httptest.Server) {
 	server := httptest.NewServer(handler)
 
-	return &eos.API{
-		HttpClient: server.Client(),
-		BaseURL:    strings.TrimRight(server.URL, "/"),
-		Compress:   eos.CompressionZlib,
-		Header:     make(http.Header),
-	}, server
+	return api.New(server.URL), server
 }
 
 func TestManager_GetAbiFromCache(t *testing.T) {
@@ -143,13 +139,14 @@ func TestManager_GetAbiFromCache(t *testing.T) {
 
 	mgr := NewAbiManager(cache, api)
 
-	abi, err := eos.NewABI(strings.NewReader(abiString))
+	abi := chain.Abi{}
+	err := json.Unmarshal([]byte(abiString), &abi)
 	assert.NoError(t, err)
 
-	err = mgr.SetAbi("testaccount", abi)
+	err = mgr.SetAbi(chain.N("testaccount"), &abi)
 	assert.NoError(t, err)
 
-	c_abi, err := mgr.GetAbi("testaccount")
+	c_abi, err := mgr.GetAbi(chain.N("testaccount"))
 	assert.NoError(t, err)
 	assert_abi(t, c_abi)
 }
@@ -166,8 +163,10 @@ func TestManager_GetAbiFromAPI(t *testing.T) {
 
 	mgr := NewAbiManager(cache, api)
 
-	c_abi, err := mgr.GetAbi("testaccount")
+	c_abi, err := mgr.GetAbi(chain.N("testaccount"))
 	assert.NoError(t, err)
+
+	fmt.Println(c_abi)
 
 	assert_abi(t, c_abi)
 }
