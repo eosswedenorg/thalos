@@ -8,7 +8,7 @@ PREFIX=/usr/local
 BINDIR=$(PREFIX)/bin
 CFGDIR=$(PREFIX)/etc/thalos
 
-.PHONY: build build/$(PROGRAM) build/thalos-tools test
+.PHONY: build build/$(PROGRAM) build/thalos-tools test docker-image docker-publish
 
 build: build/$(PROGRAM)
 
@@ -19,6 +19,12 @@ tools : build/thalos-tools
 
 build/thalos-tools :
 	$(GO) build $(GOBUILDFLAGS) -o $@ $(shell find cmd/tools -type f -name *.go)
+
+docker-image:
+	docker image build --build-arg VERSION=$(PROGRAM_VERSION) -t ghcr.io/eosswedenorg/thalos:$(PROGRAM_VERSION) docker
+
+docker-publish:
+	docker publish ghcr.io/eosswedenorg/thalos:$(PROGRAM_VERSION)
 
 install: build tools
 	install -D build/$(PROGRAM) $(DESTDIR)$(BINDIR)/$(PROGRAM)
