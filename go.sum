@@ -139,6 +139,8 @@ github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 h1:Jamvg5psRI
 github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/pnx/antelope-go v0.0.3 h1:LUTQtCdErPqZqF+15ZinFXvQOHaPYuOHyO24TCaqrN8=
 github.com/pnx/antelope-go v0.0.3/go.mod h1:NCCgAR1/Yzh6DigwtFFMcMhG6kGzfNx5sUorUMpBuNc=
+github.com/pnx/antelope-go v0.0.4-0.20240511122657-905898ed2110 h1:ipRjWXy6HNkd3QdAdr2RJEHUxUETc9UbQB3dyU70Aq0=
+github.com/pnx/antelope-go v0.0.4-0.20240511122657-905898ed2110/go.mod h1:NCCgAR1/Yzh6DigwtFFMcMhG6kGzfNx5sUorUMpBuNc=
 github.com/redis/go-redis/v9 v9.0.0-rc.4/go.mod h1:Vo3EsyWnicKnSKCA7HhgnvnyA74wOA69Cd2Meli5mmA=
 github.com/redis/go-redis/v9 v9.5.1 h1:H1X4D3yHPaYrkL5X06Wh6xNVM/pX0Ft4RV0vMGvLBh8=
 github.com/redis/go-redis/v9 v9.5.1/go.mod h1:hdY0cQFCN4fnSYT6TkisLufl/4W5UIXyv0b/CLO2V2M=
