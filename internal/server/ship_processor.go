@@ -155,10 +155,10 @@ func (processor *ShipProcessor) processTransactionTrace(log *log.Entry, blockNum
 	timestamp := block.BlockHeader.Timestamp.Time().UTC()
 
 	transaction := message.TransactionTrace{
-		ID:        trace.ID.String(),
-		BlockNum:  blockNumber,
-		Timestamp: timestamp,
-		// Status:        trace.Status,
+		ID:            trace.ID.String(),
+		BlockNum:      blockNumber,
+		Timestamp:     timestamp,
+		Status:        trace.Status.String(),
 		CPUUsageUS:    trace.CPUUsageUS,
 		NetUsage:      trace.NetUsage,
 		NetUsageWords: uint32(trace.NetUsageWords),
