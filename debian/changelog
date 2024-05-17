@@ -1,3 +1,10 @@
+thalos (1.1.2~rc2) bionic focal jammy; urgency=medium
+
+  * fix a bug where TableDeltaRow.Data was not set
+  * fix a bug where blockResult.Deltas was not properly nil checked. Resulting in panic if accessed
+
+ -- Henrik Hautakoski <henrik.hautakoski@gmail.com>  Fri, 17 May 2024 18:15:29 +0200
+
 thalos (1.1.2~rc1) bionic focal jammy; urgency=medium
 
   * Moved from github.com/eoscanda/eos-go to github.com/pnx/antelope-go library
