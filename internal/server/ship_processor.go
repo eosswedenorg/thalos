@@ -269,9 +269,11 @@ func (processor *ShipProcessor) processBlock(blockResult *ship.GetBlocksResultV0
 
 					v, err := processor.shipABI.Decode(bytes.NewReader(row.Data), delta.V0.Name)
 					if err == nil {
-						var ok bool
-						if msg.Data, ok = v.(map[string]any); !ok {
-							// logger.Error("Failed to cast table data")
+						v, err := parseTableDeltaData(v)
+						if err == nil {
+							msg.Data = v
+						} else {
+							logger.WithError(err).Error("Failed to parse table delta data")
 						}
 					} else {
 						logger.Error("Failed to decode table delta")
