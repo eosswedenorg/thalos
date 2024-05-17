@@ -24,7 +24,7 @@ docker-image:
 	docker image build --build-arg VERSION=$(PROGRAM_VERSION) -t ghcr.io/eosswedenorg/thalos:$(PROGRAM_VERSION) docker
 
 docker-publish:
-	docker publish ghcr.io/eosswedenorg/thalos:$(PROGRAM_VERSION)
+	docker image push ghcr.io/eosswedenorg/thalos:$(PROGRAM_VERSION)
 
 install: build tools
 	install -D build/$(PROGRAM) $(DESTDIR)$(BINDIR)/$(PROGRAM)
