@@ -7,6 +7,8 @@ Thalos is a application that makes it easy for users to stream blockchain data f
 
 Consult the [documentation](https://thalos.waxsweden.org/docs) for more information.
 
+Join the discussion on [telegram](https://t.me/antelopethalos)
+
 ## Compiling
 
 You will need golang version `1.20` or later to compile the source.
