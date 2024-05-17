@@ -249,50 +249,52 @@ func (processor *ShipProcessor) processBlock(blockResult *ship.GetBlocksResultV0
 	}
 
 	// Process deltas
-	deltas := []ship.TableDelta{}
-	if err := blockResult.Deltas.Unpack(&deltas); err != nil {
-		mainLogger.WithError(err).Error("Failed to unpack table deltas")
-	} else {
-		for _, delta := range deltas {
+	if blockResult.Deltas != nil {
+		deltas := []ship.TableDelta{}
+		if err := blockResult.Deltas.Unpack(&deltas); err != nil {
+			mainLogger.WithError(err).Error("Failed to unpack table deltas")
+		} else {
+			for _, delta := range deltas {
 
-			logger := mainLogger.WithField("type", "table_delta").Dup()
+				logger := mainLogger.WithField("type", "table_delta").Dup()
 
-			rows := []message.TableDeltaRow{}
-			for _, row := range delta.V0.Rows {
+				rows := []message.TableDeltaRow{}
+				for _, row := range delta.V0.Rows {
 
-				msg := message.TableDeltaRow{
-					Present: row.Present,
-					RawData: row.Data,
-				}
+					msg := message.TableDeltaRow{
+						Present: row.Present,
+						RawData: row.Data,
+					}
 
-				if processor.shipABI != nil {
+					if processor.shipABI != nil {
 
-					v, err := processor.shipABI.Decode(bytes.NewReader(row.Data), delta.V0.Name)
-					if err == nil {
-						v, err := parseTableDeltaData(v)
+						v, err := processor.shipABI.Decode(bytes.NewReader(row.Data), delta.V0.Name)
 						if err == nil {
-							msg.Data = v
+							v, err := parseTableDeltaData(v)
+							if err == nil {
+								msg.Data = v
+							} else {
+								logger.WithError(err).Error("Failed to parse table delta data")
+							}
 						} else {
-							logger.WithError(err).Error("Failed to parse table delta data")
+							logger.Error("Failed to decode table delta")
 						}
 					} else {
-						logger.Error("Failed to decode table delta")
+						logger.Warn("No SHIP ABI present")
 					}
-				} else {
-					logger.Warn("No SHIP ABI present")
+					rows = append(rows, msg)
 				}
-				rows = append(rows, msg)
-			}
 
-			msg := message.TableDelta{
-				BlockNum:  blockNumber,
-				Timestamp: timestamp,
-				Name:      delta.V0.Name,
-				Rows:      rows,
-			}
+				msg := message.TableDelta{
+					BlockNum:  blockNumber,
+					Timestamp: timestamp,
+					Name:      delta.V0.Name,
+					Rows:      rows,
+				}
 
-			if err := processor.queue.PostTableDelta(msg); err != nil {
-				logger.WithError(err).Error("Failed to post table delta message")
+				if err := processor.queue.PostTableDelta(msg); err != nil {
+					logger.WithError(err).Error("Failed to post table delta message")
+				}
 			}
 		}
 	}
