@@ -112,11 +112,10 @@ func isVariant(v reflect.Value) bool {
 		return false
 	}
 
-	if !isVariantName(v.Index(0).Elem().String()) {
-		return false
+	for v = v.Index(0); v.Kind() == reflect.Interface || v.Kind() == reflect.Pointer; v = v.Elem() {
 	}
 
-	return true
+	return v.Kind() == reflect.String && isVariantName(v.String())
 }
 
 func parseTableDeltaData(v any) (map[string]interface{}, error) {
