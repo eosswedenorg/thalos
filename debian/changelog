@@ -1,3 +1,10 @@
+thalos (1.1.2~rc3) bionic focal jammy; urgency=medium
+
+  * Fix a bug in isVariant() where v.Elem() was called on non interface/pointer
+  * Minor cleanups in tools
+
+ -- Henrik Hautakoski <henrik.hautakoski@gmail.com>  Wed, 19 Jun 2024 21:50:15 +0200
+
 thalos (1.1.2~rc2) bionic focal jammy; urgency=medium
 
   * fix a bug where TableDeltaRow.Data was not set
