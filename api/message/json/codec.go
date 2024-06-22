@@ -18,7 +18,8 @@ func createCodec() message.Codec {
 
 func init() {
 	// Set timeformat used by SHIP api
-	jsontime.SetDefaultTimeFormat("2006-01-02T15:04:05.000", time.UTC)
+	jsontime.AddTimeFormatAlias("ship", "2006-01-02T15:04:05.000")
+	jsontime.AddLocaleAlias("ship", time.UTC)
 
 	// Register the json codec.
 	message.RegisterCodec("json", createCodec())
