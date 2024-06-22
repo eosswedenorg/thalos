@@ -111,12 +111,12 @@ func assert_abi(t *testing.T, abi *chain.Abi) {
 	assert.Equal(t, abi.Structs[3].Fields[0].Type, "string")
 
 	// Actions
-	assert.Equal(t, abi.Actions[0].Name, chain.N("action_name_1"))
+	assert.Equal(t, abi.Actions[0].Name, "action_name_1")
 	assert.Equal(t, abi.Actions[0].Type, "struct_name_1")
 	assert.Equal(t, abi.Actions[0].RicardianContract, "")
 
 	// Tables
-	assert.Equal(t, abi.Tables[0].Name, chain.N("table_name_1"))
+	assert.Equal(t, abi.Tables[0].Name, "table_name_1")
 	assert.Equal(t, abi.Tables[0].Type, "struct_name_1")
 	assert.Equal(t, abi.Tables[0].IndexType, "i64")
 	assert.Equal(t, abi.Tables[0].KeyNames[0], "key_name_1")
