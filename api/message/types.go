@@ -24,7 +24,7 @@ type AccountAuthSequence struct {
 type TransactionTrace struct {
 	ID            string        `json:"id" msgpack:"id"`
 	BlockNum      uint32        `json:"blocknum" msgpack:"blocknum"`
-	Timestamp     time.Time     `json:"blocktimestamp" msgpack:"blocktimestamp" time_format:"ship" time_location:"ship"`
+	Timestamp     time.Time     `json:"blocktimestamp" msgpack:"blocktimestamp" time_format:"2006-01-02T15:04:05.000" time_location:"UTC"`
 	Status        string        `json:"status" msgpack:"status"`
 	CPUUsageUS    uint32        `json:"cpu_usage_us" msgpack:"cpu_usage_us"`
 	NetUsageWords uint32        `json:"net_usage_words" msgpack:"net_usage_words"`
@@ -54,7 +54,7 @@ type ActionTrace struct {
 
 	BlockNum uint32 `json:"blocknum" msgpack:"blocknum"`
 
-	Timestamp time.Time `json:"blocktimestamp" msgpack:"blocktimestamp" time_format:"ship" time_location:"ship"`
+	Timestamp time.Time `json:"blocktimestamp" msgpack:"blocktimestamp" time_format:"2006-01-02T15:04:05.000" time_location:"UTC"`
 
 	Receipt *ActionReceipt `json:"receipt,omitempty" msgpack:"receipt"`
 
@@ -96,7 +96,7 @@ type TableDeltaRow struct {
 
 type TableDelta struct {
 	BlockNum  uint32          `json:"blocknum" msgpack:"blocknum"`
-	Timestamp time.Time       `json:"blocktimestamp" msgpack:"blocktimestamp" time_format:"ship" time_location:"ship"`
+	Timestamp time.Time       `json:"blocktimestamp" msgpack:"blocktimestamp" time_format:"2006-01-02T15:04:05.000" time_location:"UTC"`
 	Name      string          `json:"name" msgpack:"name"`
 	Rows      []TableDeltaRow `json:"rows" msgpack:"rows"`
 }
