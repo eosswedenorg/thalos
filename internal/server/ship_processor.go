@@ -7,6 +7,7 @@ import (
 	"github.com/eosswedenorg/thalos/api/message"
 	"github.com/eosswedenorg/thalos/internal/abi"
 	"github.com/eosswedenorg/thalos/internal/driver"
+	"github.com/eosswedenorg/thalos/internal/types"
 
 	log "github.com/sirupsen/logrus"
 
@@ -37,6 +38,9 @@ type ShipProcessor struct {
 
 	// ABI Returned from SHIP
 	shipABI *chain.Abi
+
+	// Action blacklist
+	blacklist types.Blacklist
 }
 
 // SpawnProcessor creates a new ShipProccessor that consumes the shipclient.Stream passed to it.
@@ -60,6 +64,10 @@ func SpawnProccessor(shipStream *shipclient.Stream, loader StateLoader, saver St
 	shipStream.TableDeltaHandler = func(*ship.TableDeltaArray) {}
 
 	return processor
+}
+
+func (processor *ShipProcessor) SetBlacklist(list types.Blacklist) {
+	processor.blacklist = list
 }
 
 func (processor *ShipProcessor) initHandler(abi *chain.Abi) {
@@ -142,6 +150,15 @@ func (processor *ShipProcessor) proccessActionTrace(logger *log.Entry, trace *sh
 		if err != nil {
 			logger.WithError(err).Warn("Failed to update abi")
 		}
+	}
+
+	// Check blacklist if we should skip this action
+	if processor.blacklist.Lookup(trace.Act.Account.String(), trace.Act.Name.String()) {
+		logger.WithFields(log.Fields{
+			"contract": trace.Act.Account,
+			"action":   trace.Act.Name,
+		}).Debug("Found in blacklist, skipping")
+		return nil
 	}
 
 	act := &message.ActionTrace{
