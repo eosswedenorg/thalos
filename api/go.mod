@@ -4,9 +4,9 @@ go 1.20
 
 require (
 	github.com/alicebob/miniredis/v2 v2.30.2
-	github.com/eosswedenorg-go/jsontime v0.0.0-20230509125027-08422d6236c7
 	github.com/go-redis/redismock/v9 v9.2.0
 	github.com/redis/go-redis/v9 v9.4.0
+	github.com/shufflingpixels/jsontime-go v0.0.0-20240622163621-cf4b2804c92d
 	github.com/stretchr/testify v1.8.4
 	github.com/ugorji/go/codec v1.2.12
 )

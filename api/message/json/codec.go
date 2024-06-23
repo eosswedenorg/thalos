@@ -1,12 +1,14 @@
 package json
 
 import (
-	jsontime "github.com/eosswedenorg-go/jsontime/v2"
+	"time"
+
 	"github.com/eosswedenorg/thalos/api/message"
+	"github.com/shufflingpixels/jsontime-go"
 )
 
 func createCodec() message.Codec {
-	json_codec := jsontime.ConfigWithCustomTimeFormat
+	json_codec := jsontime.New("2006-01-02T15:04:05.000", time.UTC)
 
 	return message.Codec{
 		Encoder: json_codec.Marshal,
