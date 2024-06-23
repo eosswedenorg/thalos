@@ -415,6 +415,8 @@ func serverCmd(cmd *cobra.Command, args []string) {
 		codec,
 	)
 
+	processor.SetBlacklist(conf.Ship.Blacklist)
+
 	// Run the application
 	run(conf, shClient, processor)
 
