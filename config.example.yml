@@ -43,6 +43,17 @@ ship:
   # Request ship to stop sending blocks when reaching this block.
   #end_block_num: 2000
 
+  # Blacklist contract/actions
+  blacklist:
+    # this is a "useless" action that results in alot of warning messages.
+    # becase thalos does not know it's ABI. Its recommended to have this action blacklisted
+    # unless you have a reason to use it.
+    eosio.null:
+      - nonce
+
+    # blacklist all action from a contract
+    # evilcontract: ["*"]
+
 # Telegram notifications
 #telegram:
 #  id: "123456789:GPdmGPBWvpgHPxlergJLavus-PoAURTjMWP"
