@@ -7,6 +7,8 @@ PROGRAM_VERSION=1.1.2-rc3
 PREFIX=/usr/local
 BINDIR=$(PREFIX)/bin
 CFGDIR=$(PREFIX)/etc/thalos
+DOCKER_IMAGE_REPO ?= ghcr.io/eosswedenorg/thalos
+DOCKER_IMAGE_TAG ?= $(PROGRAM_VERSION)
 
 .PHONY: build build/$(PROGRAM) build/thalos-tools test docker-image docker-publish
 
@@ -21,10 +23,10 @@ build/thalos-tools :
 	$(GO) build $(GOBUILDFLAGS) -o $@ $(shell find cmd/tools -type f -name *.go)
 
 docker-image:
-	docker image build --build-arg VERSION=$(PROGRAM_VERSION) -t ghcr.io/eosswedenorg/thalos:$(PROGRAM_VERSION) docker
+	docker image build --build-arg VERSION=$(PROGRAM_VERSION) -t $(DOCKER_IMAGE_REPO):$(DOCKER_IMAGE_TAG) docker
 
 docker-publish:
-	docker image push ghcr.io/eosswedenorg/thalos:$(PROGRAM_VERSION)
+	docker image push $(DOCKER_IMAGE_REPO):$(DOCKER_IMAGE_TAG)
 
 install: build tools
 	install -D build/$(PROGRAM) $(DESTDIR)$(BINDIR)/$(PROGRAM)
