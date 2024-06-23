@@ -1,3 +1,12 @@
+thalos (1.1.2~rc4) bionic focal jammy; urgency=medium
+
+  * API: Fix a bug regarding json timestamp being encoded/decoded with wrong
+    format
+  * Implement action blacklist, it is not possible to configure a blacklist
+    that will be used to filter out processing of unwanted contracts/actions.
+
+ -- Henrik Hautakoski <henrik.hautakoski@gmail.com>  Sun, 23 Jun 2024 14:55:03 +0200
+
 thalos (1.1.2~rc3) bionic focal jammy; urgency=medium
 
   * Fix a bug in isVariant() where v.Elem() was called on non interface/pointer
