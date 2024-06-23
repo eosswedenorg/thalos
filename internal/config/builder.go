@@ -2,9 +2,13 @@ package config
 
 import (
 	"errors"
+	"fmt"
 	"io"
 	"os"
+	"reflect"
+	"strings"
 
+	"github.com/eosswedenorg/thalos/internal/types"
 	"github.com/mitchellh/mapstructure"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
@@ -48,6 +52,7 @@ func NewBuilder() *Builder {
 			"ship.irreversible_only":      "irreversible-only",
 			"ship.max_messages_in_flight": "max-msg-in-flight",
 			"ship.chain":                  "chain",
+			"ship.blacklist":              "blacklist",
 		},
 	}
 }
@@ -110,6 +115,33 @@ func (b *Builder) Build() (*Config, error) {
 		mapstructure.TextUnmarshallerHookFunc(),
 		mapstructure.StringToTimeDurationHookFunc(),
 		mapstructure.StringToSliceHookFunc(","),
+		func(f reflect.Type, t reflect.Type, in interface{}) (interface{}, error) {
+			if t == reflect.TypeOf(types.Blacklist{}) && f.Kind() == reflect.Slice {
+				if v, ok := in.([]string); ok {
+					list := types.Blacklist{}
+					for _, i := range v {
+						var action string
+						parts := strings.SplitN(i, ":", 2)
+
+						if len(parts) < 2 {
+							action = "*"
+						} else {
+							action = parts[1]
+						}
+
+						list.Add(parts[0], action)
+					}
+
+					if len(list) < 1 {
+						list = nil
+					}
+					return list, nil
+				}
+				return nil, fmt.Errorf("Must be a string slice")
+			}
+
+			return in, nil
+		},
 	)
 
 	err := v.Unmarshal(&conf, viper.DecodeHook(decoders))

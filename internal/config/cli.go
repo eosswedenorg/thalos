@@ -43,5 +43,7 @@ func GetFlags() *pflag.FlagSet {
 	flags.Int("max-msg-in-flight", 10, "Maximum messages that can be sent from SHIP without acknowledgement")
 	flags.String("chain", "", "ChainID used in channel namespace, can be any string (default from api)")
 
+	flags.StringSlice("blacklist", []string{}, "Define a list of 'contract:action' pairs that will be blacklisted (thalos will not process those actions)")
+
 	return &flags
 }

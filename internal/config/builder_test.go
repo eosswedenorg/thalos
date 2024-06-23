@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/eosswedenorg/thalos/internal/log"
+	"github.com/eosswedenorg/thalos/internal/types"
 	"github.com/stretchr/testify/require"
 )
 
@@ -27,6 +28,10 @@ func TestBuilder(t *testing.T) {
 			EndBlockNum:         23872222,
 			IrreversibleOnly:    true,
 			MaxMessagesInFlight: 1337,
+			Blacklist: types.Blacklist{
+				"eosio":    {"noop"},
+				"contract": {"skip1", "skip2"},
+			},
 		},
 		Telegram: TelegramConfig{
 			Id:      "110201543:AAHdqTcvCH1vGWJxfSeofSAs0K5PALDsaw",
@@ -58,6 +63,11 @@ ship:
   max_messages_in_flight: 1337
   start_block_num: 23671836
   end_block_num: 23872222
+  blacklist:
+    eosio: ["noop"]
+    contract:
+      - skip1
+      - skip2
 telegram:
   id: "110201543:AAHdqTcvCH1vGWJxfSeofSAs0K5PALDsaw"
   channel: -123456789
@@ -175,6 +185,7 @@ func TestBuilder_Flags(t *testing.T) {
 	require.NoError(t, flags.Set("irreversible-only", "true"))
 	require.NoError(t, flags.Set("max-msg-in-flight", "98"))
 	require.NoError(t, flags.Set("chain", "wax"))
+	require.NoError(t, flags.Set("blacklist", "contract:action1,contract:action2,contract2:action1"))
 
 	cfg, err := NewBuilder().
 		SetSource(bytes.NewReader([]byte(``))).
@@ -196,6 +207,10 @@ func TestBuilder_Flags(t *testing.T) {
 			MaxMessagesInFlight: 98,
 			IrreversibleOnly:    true,
 			Chain:               "wax",
+			Blacklist: types.Blacklist{
+				"contract":  {"action1", "action2"},
+				"contract2": {"action1"},
+			},
 		},
 		Telegram: TelegramConfig{
 			Id:      "72983126312982618",
@@ -212,4 +227,22 @@ func TestBuilder_Flags(t *testing.T) {
 
 	require.NoError(t, err)
 	require.Equal(t, &expected, cfg)
+}
+
+func TestBuilder_BlacklistFlag(t *testing.T) {
+	flags := GetFlags()
+
+	require.NoError(t, flags.Set("blacklist", "contract,contract:action2"))
+
+	conf, err := NewBuilder().
+		SetSource(bytes.NewReader([]byte(``))).
+		SetFlags(flags).
+		Build()
+
+	expected := types.Blacklist{
+		"contract": {"*", "action2"},
+	}
+
+	require.NoError(t, err)
+	require.Equal(t, expected, conf.Ship.Blacklist)
 }
