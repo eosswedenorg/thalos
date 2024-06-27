@@ -1,3 +1,17 @@
+thalos (1.1.2) bionic focal jammy; urgency=medium
+
+  * API: Fix a bug regarding json timestamp being encoded/decoded with wrong
+    format
+  * Implement action blacklist, it is not possible to configure a blacklist
+    that will be used to filter out processing of unwanted contracts/actions.
+  * Fix a bug in isVariant() where v.Elem() was called on non interface/pointer
+  * Minor cleanups in tools
+  * Fix a bug where TableDeltaRow.Data was not set
+  * Fix a bug where blockResult.Deltas was not properly nil checked. Resulting in panic if accessed
+  * Moved from github.com/eoscanda/eos-go to github.com/pnx/antelope-go library
+
+ -- Henrik Hautakoski <henrik.hautakoski@gmail.com>  Thu, 27 Jun 2024 14:27:38 +0200
+
 thalos (1.1.2~rc4) bionic focal jammy; urgency=medium
 
   * API: Fix a bug regarding json timestamp being encoded/decoded with wrong
