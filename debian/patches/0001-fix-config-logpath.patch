@@ -1,10 +1,9 @@
 diff --git a/config.example.yml b/config.example.yml
-index 9f4272a..8daac0a 100644
 --- a/config.example.yml
 +++ b/config.example.yml
 @@ -11,7 +11,7 @@ log:
    # Filename to use.
-   filename: thalos.log
+   filename: thalos
    # Directory to store the logfiles in.
 -  directory: logs
 +  directory: /var/log/thalos
