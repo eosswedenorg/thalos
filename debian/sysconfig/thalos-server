@@ -1,0 +1,6 @@
+# Environment variables for thalos-server
+#
+# This is file sourced by the systemd unit file
+
+# Append additional cli flags if needed. see: thalos-server -h
+THALOS_SERVER_ARGS="-c /etc/thalos/config.yml"

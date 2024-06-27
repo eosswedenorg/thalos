@@ -6,7 +6,8 @@ After=network.target
 User=thalos
 Group=thalos
 Type=simple
-ExecStart=/usr/bin/thalos-server -c /etc/thalos/config.yml
+EnvironmentFile=-/etc/sysconfig/thalos-server
+ExecStart=/usr/bin/thalos-server $THALOS_SERVER_ARGS
 ExecReload=kill -HUP $MAINPID
 Restart=on-failure
 
