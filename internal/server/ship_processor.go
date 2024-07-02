@@ -146,6 +146,12 @@ func (processor *ShipProcessor) processTransactionTrace(log *log.Entry, blockNum
 func (processor *ShipProcessor) proccessActionTrace(logger *log.Entry, trace *ship.ActionTraceV1) *message.ActionTrace {
 	// Check if actions updates an abi.
 	if trace.Act.Account == processor.syscontract && trace.Act.Name == chain.N("setabi") {
+
+		logger.WithFields(log.Fields{
+			"contract": trace.Act.Account,
+			"action":   trace.Act.Name,
+		}).Debug("Update contract ABI")
+
 		err := processor.updateAbiFromAction(&trace.Act)
 		if err != nil {
 			logger.WithError(err).Warn("Failed to update abi")
@@ -193,6 +199,11 @@ func (processor *ShipProcessor) proccessActionTrace(logger *log.Entry, trace *sh
 			Permission: auth.Permission.String(),
 		})
 	}
+
+	logger.WithFields(log.Fields{
+		"contract": trace.Act.Account,
+		"action":   trace.Act.Name,
+	}).Debug("Reading contract ABI")
 
 	ABI, err := processor.abi.GetAbi(trace.Act.Account)
 	if err == nil {
