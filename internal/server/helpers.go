@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/pnx/antelope-go/ship"
+	"github.com/shufflingpixels/antelope-go/ship"
 )
 
 // convert a ActionTrace to ActionTraceV1

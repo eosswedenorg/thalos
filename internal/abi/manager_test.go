@@ -7,8 +7,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/pnx/antelope-go/api"
-	"github.com/pnx/antelope-go/chain"
+	"github.com/shufflingpixels/antelope-go/api"
+	"github.com/shufflingpixels/antelope-go/chain"
 
 	"github.com/eosswedenorg/thalos/internal/cache"
 	"github.com/stretchr/testify/assert"

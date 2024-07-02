@@ -12,8 +12,8 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	shipclient "github.com/eosswedenorg-go/antelope-ship-client"
-	"github.com/pnx/antelope-go/chain"
-	"github.com/pnx/antelope-go/ship"
+	"github.com/shufflingpixels/antelope-go/chain"
+	"github.com/shufflingpixels/antelope-go/ship"
 )
 
 // A ShipProcessor will consume messages from a ship stream, convert the messages into

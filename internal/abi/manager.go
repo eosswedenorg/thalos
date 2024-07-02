@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/eosswedenorg/thalos/internal/cache"
-	"github.com/pnx/antelope-go/api"
-	"github.com/pnx/antelope-go/chain"
+	"github.com/shufflingpixels/antelope-go/api"
+	"github.com/shufflingpixels/antelope-go/chain"
 )
 
 // AbiManager handles an ABI cache that fetches the ABI from an API on cache miss.
