@@ -13,7 +13,7 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/nikoksr/notify v0.41.0
 	github.com/redis/go-redis/v9 v9.5.1
-	github.com/shufflingpixels/antelope-go v0.1.0
+	github.com/shufflingpixels/antelope-go v0.1.1
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/cobra v1.8.0
 	github.com/spf13/pflag v1.0.5
