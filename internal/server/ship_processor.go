@@ -77,8 +77,8 @@ func (processor *ShipProcessor) initHandler(abi *chain.Abi) {
 // updateAbiFromAction updates the contract abi based on the ship.Action passed.
 func (processor *ShipProcessor) updateAbiFromAction(act *chain.Action) error {
 	set_abi := struct {
-		Abi     string
 		Account chain.Name
+		Abi     string
 	}{}
 
 	if err := act.DecodeInto(&set_abi); err != nil {
