@@ -5,7 +5,7 @@ go 1.20
 require (
 	github.com/cenkalti/backoff/v4 v4.2.1
 	github.com/docker/go-units v0.5.0
-	github.com/eosswedenorg-go/antelope-ship-client v0.2.9
+	github.com/eosswedenorg-go/antelope-ship-client v0.3.0
 	github.com/eosswedenorg-go/pid v1.0.1
 	github.com/eosswedenorg/thalos/api v1.0.0
 	github.com/go-redis/cache/v9 v9.0.0
@@ -47,6 +47,7 @@ require (
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/sagikazarmark/locafero v0.4.0 // indirect
 	github.com/sagikazarmark/slog-shim v0.1.0 // indirect
+	github.com/shufflingpixels/antelope-go v0.1.0 // indirect
 	github.com/shufflingpixels/jsontime-go v0.0.0-20240622163621-cf4b2804c92d // indirect
 	github.com/sourcegraph/conc v0.3.0 // indirect
 	github.com/spf13/afero v1.11.0 // indirect
