@@ -2,7 +2,6 @@ package server
 
 import (
 	"bytes"
-	"encoding/hex"
 
 	"github.com/eosswedenorg/thalos/api/message"
 	"github.com/eosswedenorg/thalos/internal/abi"
@@ -78,24 +77,19 @@ func (processor *ShipProcessor) initHandler(abi *chain.Abi) {
 func (processor *ShipProcessor) updateAbiFromAction(act *chain.Action) error {
 	set_abi := struct {
 		Account chain.Name
-		Abi     string
+		Abi     chain.Bytes
 	}{}
 
 	if err := act.DecodeInto(&set_abi); err != nil {
 		return err
 	}
 
-	binary_abi, err := hex.DecodeString(set_abi.Abi)
-	if err != nil {
+	abi := chain.Abi{}
+	decoder := chain.NewDecoder(bytes.NewReader(set_abi.Abi))
+	if err := decoder.Decode(&abi); err != nil {
 		return err
 	}
-
-	contract_abi := chain.Abi{}
-	err = chain.NewDecoder(bytes.NewReader(binary_abi)).Decode(&contract_abi)
-	if err != nil {
-		return err
-	}
-	return processor.abi.SetAbi(set_abi.Account, &contract_abi)
+	return processor.abi.SetAbi(set_abi.Account, &abi)
 }
 
 // Get the current block.
