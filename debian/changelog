@@ -1,3 +1,14 @@
+thalos (1.1.3) bionic focal jammy; urgency=medium
+
+  * Updated antelope-go library to v0.1.2 that fixes a bug in abi binary
+    decoder, it expects some fields to be strings while they are "names"
+    (strings encoded into a int64)
+  * Fix a bug with "set_abi" struct had the wrong order of fields in ShipProcessor.updateAbiFromAction()
+  * Fix a bug in ShipProcessor.updateAbiFromAction() that assumed the abi
+    was in hex format when in fact it is binary.
+
+ -- Henrik Hautakoski <henrik.hautakoski@gmail.com>  Wed, 03 Jul 2024 18:05:33 +0200
+
 thalos (1.1.2) bionic focal jammy; urgency=medium
 
   * API: Fix a bug regarding json timestamp being encoded/decoded with wrong
