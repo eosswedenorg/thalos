@@ -9,13 +9,17 @@ func (bl Blacklist) Add(contract string, action string) {
 	bl[contract] = append(bl[contract], action)
 }
 
-func (bl Blacklist) Lookup(contract string, action string) bool {
+func (bl Blacklist) IsAllowed(contract string, action string) bool {
 	if v, ok := bl[contract]; ok {
 		for _, act := range v {
 			if act == action || act == "*" {
-				return true
+				return false
 			}
 		}
 	}
-	return false
+	return true
+}
+
+func (bl Blacklist) IsDenied(contract string, action string) bool {
+	return bl.IsAllowed(contract, action)
 }
