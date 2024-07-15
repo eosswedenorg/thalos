@@ -2,6 +2,10 @@ package types
 
 type Blacklist map[string][]string
 
+func (bl Blacklist) Empty() bool {
+	return len(bl) < 1
+}
+
 func (bl Blacklist) Add(contract string, action string) {
 	if len(bl[contract]) < 1 {
 		bl[contract] = []string{}

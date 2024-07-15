@@ -6,6 +6,16 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func TestBlacklist_Empty(t *testing.T) {
+	bl := Blacklist{}
+
+	require.True(t, bl.Empty())
+
+	bl.Add("contract", "action1")
+
+	require.False(t, bl.Empty())
+}
+
 func TestBlacklist_Add(t *testing.T) {
 	bl := Blacklist{}
 	bl.Add("contract", "action1")
