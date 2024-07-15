@@ -28,10 +28,10 @@ func TestBuilder(t *testing.T) {
 			EndBlockNum:         23872222,
 			IrreversibleOnly:    true,
 			MaxMessagesInFlight: 1337,
-			Blacklist: types.Blacklist{
+			Blacklist: *types.NewBlacklist(map[string][]string{
 				"eosio":    {"noop"},
 				"contract": {"skip1", "skip2"},
-			},
+			}),
 		},
 		Telegram: TelegramConfig{
 			Id:      "110201543:AAHdqTcvCH1vGWJxfSeofSAs0K5PALDsaw",
@@ -64,7 +64,7 @@ ship:
   start_block_num: 23671836
   end_block_num: 23872222
   blacklist:
-    eosio: ["noop"]
+    eosio: noop
     contract:
       - skip1
       - skip2
@@ -207,10 +207,10 @@ func TestBuilder_Flags(t *testing.T) {
 			MaxMessagesInFlight: 98,
 			IrreversibleOnly:    true,
 			Chain:               "wax",
-			Blacklist: types.Blacklist{
+			Blacklist: *types.NewBlacklist(map[string][]string{
 				"contract":  {"action1", "action2"},
 				"contract2": {"action1"},
-			},
+			}),
 		},
 		Telegram: TelegramConfig{
 			Id:      "72983126312982618",
@@ -229,20 +229,28 @@ func TestBuilder_Flags(t *testing.T) {
 	require.Equal(t, &expected, cfg)
 }
 
-func TestBuilder_BlacklistFlag(t *testing.T) {
-	flags := GetFlags()
-
-	require.NoError(t, flags.Set("blacklist", "contract,contract:action2"))
-
-	conf, err := NewBuilder().
-		SetSource(bytes.NewReader([]byte(``))).
-		SetFlags(flags).
-		Build()
-
-	expected := types.Blacklist{
-		"contract": {"*", "action2"},
+func TestBuilder_BlacklistSlice(t *testing.T) {
+	expected := Config{
+		Ship: ShipConfig{
+			Blacklist: *types.NewBlacklist(map[string][]string{
+				"contract":  {"action"},
+				"contract2": {"action2"},
+				"contract3": {"*"},
+			}),
+		},
 	}
 
+	builder := NewBuilder()
+	builder.SetSource(bytes.NewBuffer([]byte(`
+ship:
+  blacklist:
+    - "contract:action"
+    - "contract2:action2"
+    - contract3
+`)))
+
+	cfg, err := builder.Build()
+
 	require.NoError(t, err)
-	require.Equal(t, expected, conf.Ship.Blacklist)
+	require.Equal(t, &expected, cfg)
 }
