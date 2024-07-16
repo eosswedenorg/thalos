@@ -53,6 +53,7 @@ func NewBuilder() *Builder {
 			"ship.max_messages_in_flight": "max-msg-in-flight",
 			"ship.chain":                  "chain",
 			"ship.blacklist":              "blacklist",
+			"ship.blacklist_is_whitelist": "blacklist-is-whitelist",
 		},
 	}
 }
@@ -116,30 +117,9 @@ func (b *Builder) Build() (*Config, error) {
 		mapstructure.StringToTimeDurationHookFunc(),
 		mapstructure.StringToSliceHookFunc(","),
 		func(f reflect.Type, t reflect.Type, in interface{}) (interface{}, error) {
-			if t == reflect.TypeOf(types.Blacklist{}) && f.Kind() == reflect.Slice {
-				if v, ok := in.([]string); ok {
-					list := types.Blacklist{}
-					for _, i := range v {
-						var action string
-						parts := strings.SplitN(i, ":", 2)
-
-						if len(parts) < 2 {
-							action = "*"
-						} else {
-							action = parts[1]
-						}
-
-						list.Add(parts[0], action)
-					}
-
-					if len(list) < 1 {
-						list = nil
-					}
-					return list, nil
-				}
-				return nil, fmt.Errorf("Must be a string slice")
+			if t == reflect.TypeOf(types.Blacklist{}) {
+				return decodeIntoBlacklist(in)
 			}
-
 			return in, nil
 		},
 	)
@@ -150,4 +130,62 @@ func (b *Builder) Build() (*Config, error) {
 	}
 
 	return &conf, nil
+}
+
+// Decode a generic structure into types.Blacklist
+func decodeIntoBlacklist(in any) (*types.Blacklist, error) {
+	switch v := in.(type) {
+	// Standard map structure.
+	case map[string]any:
+		return blacklistParseMap(v)
+
+	// slice of "contract:action" pairs. Usually from CLI
+	case []string:
+		return blacklistParseSlice(v)
+
+	// Sometimes we have a slice of interfaces.
+	// Need to convert it to a slice of strings.
+	case []any:
+		sv := make([]string, len(v))
+		for i, j := range v {
+			sv[i] = j.(string)
+		}
+		return blacklistParseSlice(sv)
+	}
+
+	return nil, fmt.Errorf("Must be a string slice")
+}
+
+// Blacklist map parser
+func blacklistParseMap(in map[string]any) (*types.Blacklist, error) {
+	list := &types.Blacklist{}
+	for k, v := range in {
+		switch v := v.(type) {
+		case []any:
+			for _, v := range v {
+				list.Add(k, v.(string))
+			}
+		case any:
+			list.Add(k, v.(string))
+		}
+	}
+	return list, nil
+}
+
+// Blacklist slice parser
+func blacklistParseSlice(in []string) (*types.Blacklist, error) {
+	list := &types.Blacklist{}
+	for _, i := range in {
+		var action string
+		parts := strings.SplitN(i, ":", 2)
+
+		if len(parts) < 2 {
+			action = "*"
+		} else {
+			action = parts[1]
+		}
+
+		list.Add(parts[0], action)
+	}
+	return list, nil
 }

@@ -6,38 +6,73 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func TestBlacklist_Empty(t *testing.T) {
+	bl := Blacklist{
+		table: map[string][]string{},
+	}
+
+	require.True(t, bl.Empty())
+
+	bl.Add("contract", "action1")
+
+	require.False(t, bl.Empty())
+}
+
 func TestBlacklist_Add(t *testing.T) {
-	bl := Blacklist{}
+	bl := Blacklist{
+		table: map[string][]string{},
+	}
 	bl.Add("contract", "action1")
 	bl.Add("contract", "action2")
 	bl.Add("contract2", "action1")
 
 	expected := Blacklist{
-		"contract":  {"action1", "action2"},
-		"contract2": {"action1"},
+		table: map[string][]string{
+			"contract":  {"action1", "action2"},
+			"contract2": {"action1"},
+		},
 	}
 
 	require.Equal(t, expected, bl)
 }
 
-func TestBlacklist_Lookup(t *testing.T) {
+func TestBlacklist_IsAllowed(t *testing.T) {
 	bl := Blacklist{
-		"mycontract": {"myaction", "noop"},
+		table: map[string][]string{
+			"mycontract": {"myaction", "noop"},
+		},
 	}
 
-	require.True(t, bl.Lookup("mycontract", "myaction"))
-	require.True(t, bl.Lookup("mycontract", "noop"))
-	require.False(t, bl.Lookup("mycontract", "xxx"))
-	require.False(t, bl.Lookup("xxx", "yyy"))
+	require.False(t, bl.IsAllowed("mycontract", "myaction"))
+	require.False(t, bl.IsAllowed("mycontract", "noop"))
+	require.True(t, bl.IsAllowed("mycontract", "xxx"))
+	require.True(t, bl.IsAllowed("xxx", "yyy"))
 }
 
-func TestBlacklist_LookupWildcard(t *testing.T) {
+func TestBlacklist_IsAllowedWildcard(t *testing.T) {
 	bl := Blacklist{
-		"mycontract": {"*"},
+		table: map[string][]string{
+			"mycontract": {"*"},
+		},
 	}
 
-	require.True(t, bl.Lookup("mycontract", "myaction"))
-	require.True(t, bl.Lookup("mycontract", "noop"))
-	require.True(t, bl.Lookup("mycontract", "xxx"))
-	require.False(t, bl.Lookup("xxx", "yyy"))
+	require.False(t, bl.IsAllowed("mycontract", "myaction"))
+	require.False(t, bl.IsAllowed("mycontract", "noop"))
+	require.False(t, bl.IsAllowed("mycontract", "xxx"))
+	require.True(t, bl.IsAllowed("xxx", "yyy"))
+}
+
+func TestBlacklist_Whitelist(t *testing.T) {
+	bl := Blacklist{
+		table: map[string][]string{
+			"mycontract": {"myaction", "noop"},
+		},
+	}
+
+	bl.SetWhitelist(true)
+
+	require.True(t, bl.IsAllowed("mycontract", "myaction"))
+	require.True(t, bl.IsAllowed("mycontract", "noop"))
+	require.False(t, bl.IsAllowed("mycontract", "xxx"))
+	require.False(t, bl.IsAllowed("xxx", "yyy"))
 }

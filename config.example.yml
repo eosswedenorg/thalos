@@ -54,6 +54,8 @@ ship:
     # blacklist all action from a contract
     # evilcontract: ["*"]
 
+  # blacklist_is_whitelist: true
+
 # Telegram notifications
 #telegram:
 #  id: "123456789:GPdmGPBWvpgHPxlergJLavus-PoAURTjMWP"

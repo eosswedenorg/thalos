@@ -238,6 +238,8 @@ func GetConfig(flags *pflag.FlagSet) (*config.Config, error) {
 		}
 	}
 
+	cfg.Ship.Blacklist.SetWhitelist(cfg.Ship.BlacklistIsWhitelist)
+
 	return cfg, nil
 }
 

@@ -153,7 +153,7 @@ func (processor *ShipProcessor) proccessActionTrace(logger *log.Entry, trace *sh
 	}
 
 	// Check blacklist if we should skip this action
-	if processor.blacklist.Lookup(trace.Act.Account.String(), trace.Act.Name.String()) {
+	if !processor.blacklist.IsAllowed(trace.Act.Account.String(), trace.Act.Name.String()) {
 		logger.WithFields(log.Fields{
 			"contract": trace.Act.Account,
 			"action":   trace.Act.Name,
