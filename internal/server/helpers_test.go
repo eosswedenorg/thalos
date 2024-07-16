@@ -23,7 +23,7 @@ func TestParseTableDeltaData(t *testing.T) {
 				map[string]interface{}{
 					"consumed":     8107,
 					"last_ordinal": 308855607,
-					"value_ex":     3854030492,
+					"value_ex":     int64(3854030492),
 				},
 			},
 			"slice": []interface{}{
@@ -51,7 +51,7 @@ func TestParseTableDeltaData(t *testing.T) {
 		"average_block_net_usage": map[string]interface{}{
 			"consumed":     8107,
 			"last_ordinal": 308855607,
-			"value_ex":     3854030492,
+			"value_ex":     int64(3854030492),
 		},
 		"slice":             []interface{}{1, 2, "tree"},
 		"single_value":      uint32(12933729),
