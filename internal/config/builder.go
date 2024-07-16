@@ -53,6 +53,7 @@ func NewBuilder() *Builder {
 			"ship.max_messages_in_flight": "max-msg-in-flight",
 			"ship.chain":                  "chain",
 			"ship.blacklist":              "blacklist",
+			"ship.blacklist_is_whitelist": "blacklist-is-whitelist",
 		},
 	}
 }

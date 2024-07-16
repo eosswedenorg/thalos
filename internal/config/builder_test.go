@@ -32,6 +32,7 @@ func TestBuilder(t *testing.T) {
 				"eosio":    {"noop"},
 				"contract": {"skip1", "skip2"},
 			}),
+			BlacklistIsWhitelist: true,
 		},
 		Telegram: TelegramConfig{
 			Id:      "110201543:AAHdqTcvCH1vGWJxfSeofSAs0K5PALDsaw",
@@ -68,6 +69,7 @@ ship:
     contract:
       - skip1
       - skip2
+  blacklist_is_whitelist: true
 telegram:
   id: "110201543:AAHdqTcvCH1vGWJxfSeofSAs0K5PALDsaw"
   channel: -123456789
@@ -186,6 +188,7 @@ func TestBuilder_Flags(t *testing.T) {
 	require.NoError(t, flags.Set("max-msg-in-flight", "98"))
 	require.NoError(t, flags.Set("chain", "wax"))
 	require.NoError(t, flags.Set("blacklist", "contract:action1,contract:action2,contract2:action1"))
+	require.NoError(t, flags.Set("blacklist-is-whitelist", "true"))
 
 	cfg, err := NewBuilder().
 		SetSource(bytes.NewReader([]byte(``))).
@@ -211,6 +214,7 @@ func TestBuilder_Flags(t *testing.T) {
 				"contract":  {"action1", "action2"},
 				"contract2": {"action1"},
 			}),
+			BlacklistIsWhitelist: true,
 		},
 		Telegram: TelegramConfig{
 			Id:      "72983126312982618",

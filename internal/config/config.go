@@ -19,13 +19,14 @@ type TelegramConfig struct {
 }
 
 type ShipConfig struct {
-	Url                 string          `yaml:"url" mapstructure:"url"`
-	IrreversibleOnly    bool            `yaml:"irreversible_only" mapstructure:"irreversible_only"`
-	MaxMessagesInFlight uint32          `yaml:"max_messages_in_flight" mapstructure:"max_messages_in_flight"`
-	StartBlockNum       uint32          `yaml:"start_block_num" mapstructure:"start_block_num"`
-	EndBlockNum         uint32          `yaml:"end_block_num" mapstructure:"end_block_num"`
-	Chain               string          `yaml:"chain" mapstructure:"chain"`
-	Blacklist           types.Blacklist `yaml:"blacklist" mapstructure:"blacklist"`
+	Url                  string          `yaml:"url" mapstructure:"url"`
+	IrreversibleOnly     bool            `yaml:"irreversible_only" mapstructure:"irreversible_only"`
+	MaxMessagesInFlight  uint32          `yaml:"max_messages_in_flight" mapstructure:"max_messages_in_flight"`
+	StartBlockNum        uint32          `yaml:"start_block_num" mapstructure:"start_block_num"`
+	EndBlockNum          uint32          `yaml:"end_block_num" mapstructure:"end_block_num"`
+	Chain                string          `yaml:"chain" mapstructure:"chain"`
+	Blacklist            types.Blacklist `yaml:"blacklist" mapstructure:"blacklist"`
+	BlacklistIsWhitelist bool            `yaml:"blacklist_is_whitelist" mapstructure:"blacklist_is_whitelist"`
 }
 
 type Config struct {

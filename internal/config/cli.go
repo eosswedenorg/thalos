@@ -44,6 +44,7 @@ func GetFlags() *pflag.FlagSet {
 	flags.String("chain", "", "ChainID used in channel namespace, can be any string (default from api)")
 
 	flags.StringSlice("blacklist", []string{}, "Define a list of 'contract:action' pairs that will be blacklisted (thalos will not process those actions)")
+	flags.Bool("blacklist-is-whitelist", false, "Thalos will treat the blacklist as a whitelist")
 
 	return &flags
 }
