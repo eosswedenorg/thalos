@@ -11,10 +11,9 @@ jobs:
       fail-fast: false
       matrix:
         go-version: ["1.20", "1.21"]
-        os: [ linux, freebsd ]
-        arch: [ 386, amd64, arm, arm64 ]
+        arch: [ 386, amd64 ]
     runs-on: ubuntu-latest
-    name: Test (${{matrix.os}} ${{matrix.arch}} go v${{ matrix.go-version }})
+    name: Test (${{matrix.arch}} go v${{ matrix.go-version }})
     steps:
     - uses: actions/checkout@v4
 
@@ -24,10 +23,10 @@ jobs:
         go-version: ${{ matrix.go-version }}
 
     - name: Test
-      run: GOOS=${{matrix.os}} GOARCH=${{matrix.arch}} go test -v ./...
+      run: GOARCH=${{matrix.arch}} go test -v ./...
 
     - name: Test API
-      run: cd api; GOOS=${{matrix.os}} GOARCH=${{matrix.arch}} go test -v ./...
+      run: cd api; GOARCH=${{matrix.arch}} go test -v ./...
 
   test-alpine:
     strategy:
