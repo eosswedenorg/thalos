@@ -166,7 +166,5 @@ func TestManager_GetAbiFromAPI(t *testing.T) {
 	c_abi, err := mgr.GetAbi(chain.N("testaccount"))
 	assert.NoError(t, err)
 
-	fmt.Println(c_abi)
-
 	assert_abi(t, c_abi)
 }
