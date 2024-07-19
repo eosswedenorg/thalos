@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	shipclient "github.com/eosswedenorg-go/antelope-ship-client"
 	"github.com/eosswedenorg/thalos/internal/log"
 	"github.com/eosswedenorg/thalos/internal/types"
 	"github.com/stretchr/testify/require"
@@ -94,7 +95,6 @@ func TestBuilder_WithDefaultConfig(t *testing.T) {
 			MaxFileSize:         10 * 1000 * 1000,
 			MaxTime:             time.Hour * 24,
 			FileTimestampFormat: "2006-01-02_150405",
-		},
 		},
 		Ship: ShipConfig{
 			Url:                 "ws://127.0.0.1:8080",
