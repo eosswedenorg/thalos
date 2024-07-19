@@ -15,7 +15,7 @@ DOCKER_IMAGE_TAG ?= $(PROGRAM_VERSION)
 build: build/$(PROGRAM)
 
 build/$(PROGRAM) :
-	$(GO) build $(GOBUILDFLAGS) -o $@ cmd/thalos/main.go cmd/thalos/server.go
+	$(GO) build $(GOBUILDFLAGS) -o $@ ./cmd/thalos/
 
 tools : build/thalos-tools
 
