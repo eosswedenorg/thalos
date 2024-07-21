@@ -6,11 +6,13 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/shufflingpixels/antelope-go/api"
 	"github.com/shufflingpixels/antelope-go/chain"
 
 	"github.com/eosswedenorg/thalos/internal/cache"
+	"github.com/eosswedenorg/thalos/internal/config"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -132,12 +134,16 @@ func mockAPI(handler http.HandlerFunc) (*api.Client, *httptest.Server) {
 }
 
 func TestManager_GetAbiFromCache(t *testing.T) {
+	cfg := &config.AbiCache{
+		ApiTimeout: time.Second,
+	}
+
 	cache := cache.NewCache("thalos::cache::abi::test", cache.NewMemoryStore())
 
 	api, _ := mockAPI(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	}))
 
-	mgr := NewAbiManager(cache, api)
+	mgr := NewAbiManager(cfg, cache, api)
 
 	abi := chain.Abi{}
 	err := json.Unmarshal([]byte(abiString), &abi)
@@ -152,6 +158,10 @@ func TestManager_GetAbiFromCache(t *testing.T) {
 }
 
 func TestManager_GetAbiFromAPI(t *testing.T) {
+	cfg := &config.AbiCache{
+		ApiTimeout: time.Second,
+	}
+
 	cache := cache.NewCache("thalos::cache::abi::test", cache.NewMemoryStore())
 
 	api, _ := mockAPI(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -161,7 +171,7 @@ func TestManager_GetAbiFromAPI(t *testing.T) {
 		assert.NoError(t, err)
 	}))
 
-	mgr := NewAbiManager(cache, api)
+	mgr := NewAbiManager(cfg, cache, api)
 
 	c_abi, err := mgr.GetAbi(chain.N("testaccount"))
 	assert.NoError(t, err)

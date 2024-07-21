@@ -6,22 +6,25 @@ import (
 	"time"
 
 	"github.com/eosswedenorg/thalos/internal/cache"
+	"github.com/eosswedenorg/thalos/internal/config"
 	"github.com/shufflingpixels/antelope-go/api"
 	"github.com/shufflingpixels/antelope-go/chain"
 )
 
 // AbiManager handles an ABI cache that fetches the ABI from an API on cache miss.
 type AbiManager struct {
+	cfg   *config.AbiCache
 	cache *cache.Cache
 	api   *api.Client
 	ctx   context.Context
 }
 
 // Create a new ABI Manager
-func NewAbiManager(cache *cache.Cache, api *api.Client) *AbiManager {
+func NewAbiManager(cfg *config.AbiCache, cache *cache.Cache, api *api.Client) *AbiManager {
 	return &AbiManager{
 		cache: cache,
 		api:   api,
+		cfg:   cfg,
 		ctx:   context.Background(),
 	}
 }
@@ -38,7 +41,7 @@ func (mgr *AbiManager) SetAbi(account chain.Name, abi *chain.Abi) error {
 func (mgr *AbiManager) GetAbi(account chain.Name) (*chain.Abi, error) {
 	var abi chain.Abi
 	if err := mgr.cacheGet(account, &abi); err != nil {
-		ctx, cancel := context.WithTimeout(mgr.ctx, time.Second)
+		ctx, cancel := context.WithTimeout(mgr.ctx, mgr.cfg.ApiTimeout)
 		defer cancel()
 		resp, err := mgr.api.GetAbi(ctx, account.String())
 		if err != nil {

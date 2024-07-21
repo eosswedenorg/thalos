@@ -155,9 +155,9 @@ func LogLevels() []string {
 	return list
 }
 
-func initAbiManager(api *antelopeapi.Client, store cache.Store, chain_id string) *abi.AbiManager {
+func initAbiManager(cfg *config.AbiCache, api *antelopeapi.Client, store cache.Store, chain_id string) *abi.AbiManager {
 	cache := cache.NewCache("thalos::cache::abi::"+chain_id, store)
-	return abi.NewAbiManager(cache, api)
+	return abi.NewAbiManager(cfg, cache, api)
 }
 
 func stateLoader(conf *config.Config, start_block_flag *pflag.Flag, chainInfo func() *antelopeapi.Info, cache *cache.Cache, current_block_no_cache bool) StateLoader {
@@ -386,7 +386,7 @@ func serverCmd(cmd *cobra.Command, args []string) {
 			Prefix:  conf.Redis.Prefix,
 			ChainID: chain_id,
 		}),
-		initAbiManager(antelopeClient, cacheStore, chain_id),
+		initAbiManager(&conf.AbiCache, antelopeClient, cacheStore, chain_id),
 		codec,
 	)
 
