@@ -23,6 +23,9 @@ func TestBuilder(t *testing.T) {
 			MaxTime:             30 * time.Minute,
 			FileTimestampFormat: "20060102@150405",
 		},
+		AbiCache: AbiCache{
+			ApiTimeout: time.Minute * 300,
+		},
 		Ship: ShipConfig{
 			Url:                 "127.0.0.1:8089",
 			StartBlockNum:       23671836,
@@ -53,6 +56,8 @@ func TestBuilder(t *testing.T) {
 name: "ship-reader-1"
 api: "http://127.0.0.1:8080"
 message_codec: "mojibake"
+abi_cache:
+  api_timeout: 300m
 log:
   filename: some_file.log
   directory: /path/to/whatever
@@ -96,6 +101,9 @@ func TestBuilder_WithDefaultConfig(t *testing.T) {
 			MaxTime:             time.Hour * 24,
 			FileTimestampFormat: "2006-01-02_150405",
 		},
+		AbiCache: AbiCache{
+			ApiTimeout: time.Second,
+		},
 		Ship: ShipConfig{
 			Url:                 "ws://127.0.0.1:8080",
 			StartBlockNum:       shipclient.NULL_BLOCK_NUMBER,
@@ -133,6 +141,7 @@ func TestBuilder_Flags(t *testing.T) {
 	require.NoError(t, flags.Set("redis-password", "secret123"))
 	require.NoError(t, flags.Set("redis-db", "3"))
 	require.NoError(t, flags.Set("redis-prefix", "custom-prefix"))
+	require.NoError(t, flags.Set("abi-cache-api-timeout", "16h"))
 	require.NoError(t, flags.Set("telegram-id", "72983126312982618"))
 	require.NoError(t, flags.Set("telegram-channel", "-293492332"))
 	require.NoError(t, flags.Set("log-max-filesize", "25mb"))
@@ -159,6 +168,9 @@ func TestBuilder_Flags(t *testing.T) {
 			MaxFileSize:         25 * 1000 * 1000, // 25 mb
 			MaxTime:             time.Minute * 10,
 			FileTimestampFormat: "0102-15:04:05",
+		},
+		AbiCache: AbiCache{
+			ApiTimeout: time.Hour * 16,
 		},
 		Ship: ShipConfig{
 			Url:                 "ws://myship.com:7823",

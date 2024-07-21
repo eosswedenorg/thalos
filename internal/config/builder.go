@@ -40,6 +40,9 @@ func NewBuilder() *Builder {
 			"telegram.id":      "telegram-id",
 			"telegram.channel": "telegram-channel",
 
+			// AbiCache
+			"abi_cache.api_timeout": "abi-cache-api-timeout",
+
 			// Log
 			"log.maxfilesize":           "log-max-filesize",
 			"log.maxtime":               "log-max-time",

@@ -1,6 +1,8 @@
 package config
 
 import (
+	"time"
+
 	"github.com/eosswedenorg/thalos/internal/log"
 	"github.com/eosswedenorg/thalos/internal/types"
 )
@@ -16,6 +18,10 @@ type RedisConfig struct {
 type TelegramConfig struct {
 	Id      string `yaml:"id" mapstructure:"id"`
 	Channel int64  `yaml:"channel" mapstructure:"channel"`
+}
+
+type AbiCache struct {
+	ApiTimeout time.Duration `yaml:"api_timeout" mapstructure:"api_timeout"`
 }
 
 type ShipConfig struct {
@@ -38,6 +44,8 @@ type Config struct {
 
 	Redis        RedisConfig `yaml:"redis" mapstructure:"redis"`
 	MessageCodec string      `yaml:"message_codec" mapstructure:"message_codec"`
+
+	AbiCache AbiCache `yaml:"abi_cache" mapstructure:"abi_cache"`
 
 	Telegram TelegramConfig `yaml:"telegram" mapstructure:"telegram"`
 }
