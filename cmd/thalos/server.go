@@ -26,7 +26,6 @@ import (
 	driver "github.com/eosswedenorg/thalos/internal/driver/redis"
 	. "github.com/eosswedenorg/thalos/internal/log"
 	. "github.com/eosswedenorg/thalos/internal/server"
-	redis_cache "github.com/go-redis/cache/v9"
 	"github.com/nikoksr/notify"
 	"github.com/nikoksr/notify/service/telegram"
 	"github.com/redis/go-redis/v9"
@@ -346,12 +345,14 @@ func serverCmd(cmd *cobra.Command, args []string) {
 		return
 	}
 
+	cache.RegisterFactory("redis", cache.NewRedisFactory(rdb))
+
 	// Setup cache storage
-	cacheStore := cache.NewRedisStore(&redis_cache.Options{
-		Redis: rdb,
-		// Cache 10k keys for 10 minutes.
-		LocalCache: redis_cache.NewTinyLFU(10000, 10*time.Minute),
-	})
+	cacheStore, err := cache.Make(conf.Cache.Storage, conf.Cache.Options)
+	if err != nil {
+		log.WithError(err).Fatal("Failed to setup cache")
+		return
+	}
 
 	// Setup general cache
 	cache := cache.NewCache("thalos::cache::instance::"+conf.Name, cacheStore)
