@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/go-redis/redismock/v9"
+	"github.com/karlseguin/typed"
 
 	redis_cache "github.com/go-redis/cache/v9"
 	"github.com/stretchr/testify/assert"
@@ -14,6 +15,38 @@ import (
 type testItem struct {
 	Num  uint32
 	Name string
+}
+
+func TestRedisStore_getOptionsDefaults(t *testing.T) {
+	opts := typed.Typed{}
+
+	expected := options{
+		Stats: false,
+		Size:  1000,
+		TTL:   10 * time.Minute,
+	}
+
+	actual := getOptions(opts)
+
+	assert.Equal(t, expected, actual)
+}
+
+func TestRedisStore_getOptions(t *testing.T) {
+	opts := typed.Typed{
+		"stats": true,
+		"size":  123,
+		"ttl":   60,
+	}
+
+	expected := options{
+		Stats: true,
+		Size:  123,
+		TTL:   60 * time.Minute,
+	}
+
+	actual := getOptions(opts)
+
+	assert.Equal(t, expected, actual)
 }
 
 func TestRedisStore_Set(t *testing.T) {
