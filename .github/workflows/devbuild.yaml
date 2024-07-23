@@ -1,0 +1,79 @@
+name: Development build
+
+on:
+  push:
+    branches: [ dev ]
+
+jobs:
+  cross-compile:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ linux, freebsd ]
+        arch: [ 386, amd64, arm, arm64 ]
+    name: Crosscompile - ${{matrix.os}}-${{matrix.arch}}
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.21
+
+      - name: compile
+        id: compile
+        run: |
+          VER=$(cat Makefile | grep 'PROGRAM_VERSION=' | sed 's/PROGRAM_VERSION=//g')
+          GOOS=${{matrix.os}} GOARCH=${{matrix.arch}} PROGRAM_VERSION="${VER}-${GITHUB_SHA}" make build tools
+
+      - name: Upload thalos-server
+        uses: actions/upload-artifact@v4
+        with:
+          name: thalos-server-${{github.sha}}-${{matrix.os}}-${{matrix.arch}}
+          path: build/thalos-server
+          retention-days: 7
+
+      - name: Upload thalos-tools
+        uses: actions/upload-artifact@v4
+        with:
+          name: thalos-tools-${{github.sha}}-${{matrix.os}}-${{matrix.arch}}
+          path: build/thalos-tools
+          retention-days: 7
+
+  # Build thalos binaries that are linked with musl libc.
+  musl:
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [ 386, amd64, arm, arm64 ]
+    runs-on: ubuntu-latest
+    name: musl (${{ matrix.arch }})
+    container:
+      image: golang:1.21-alpine3.19
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: install dependencies
+        run: apk add make
+
+      - name: compile
+        id: compile
+        run: |
+          VER=$(cat Makefile | grep 'PROGRAM_VERSION=' | sed 's/PROGRAM_VERSION=//g')
+          GOOS=${{matrix.os}} GOARCH=${{matrix.arch}} PROGRAM_VERSION="${VER}-${GITHUB_SHA}" make build tools
+
+      - name: Upload thalos-server
+        uses: actions/upload-artifact@v4
+        with:
+          name: thalos-server-${{github.sha}}-linux-${{matrix.arch}}-musl
+          path: build/thalos-server
+          retention-days: 7
+
+      - name: Upload thalos-tools
+        uses: actions/upload-artifact@v4
+        with:
+          name: thalos-tools-${{github.sha}}-linux-${{matrix.arch}}-musl
+          path: build/thalos-tools
+          retention-days: 7
+
