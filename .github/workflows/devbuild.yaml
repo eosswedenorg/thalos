@@ -24,7 +24,7 @@ jobs:
       - name: compile
         id: compile
         run: |
-          VER=$(cat Makefile | sed -n 's/^PROGRAM_VERSION\s*\(\?\)\s*=\s*//p')
+          VER=$(cat Makefile | sed -n 's/^PROGRAM_VERSION\s*\??=\s*//p')
           GOOS=${{matrix.os}} GOARCH=${{matrix.arch}} PROGRAM_VERSION="${VER}-$(echo $GITHUB_SHA | cut -b -8)" make build tools
 
       - name: Upload thalos-server
@@ -60,7 +60,7 @@ jobs:
       - name: compile
         id: compile
         run: |
-          VER=$(cat Makefile | sed -n 's/^PROGRAM_VERSION\s*\(\?\)\s*=\s*//p')
+          VER=$(cat Makefile | sed -n 's/^PROGRAM_VERSION\s*\??=\s*//p')
           GOOS=${{matrix.os}} GOARCH=${{matrix.arch}} PROGRAM_VERSION="${VER}-$(echo $GITHUB_SHA | cut -b -8)" make build tools
 
       - name: Upload thalos-server
