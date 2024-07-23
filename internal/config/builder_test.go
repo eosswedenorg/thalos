@@ -8,6 +8,7 @@ import (
 	shipclient "github.com/eosswedenorg-go/antelope-ship-client"
 	"github.com/eosswedenorg/thalos/internal/log"
 	"github.com/eosswedenorg/thalos/internal/types"
+	"github.com/karlseguin/typed"
 	"github.com/stretchr/testify/require"
 )
 
@@ -22,6 +23,14 @@ func TestBuilder(t *testing.T) {
 			MaxFileSize:         200,
 			MaxTime:             30 * time.Minute,
 			FileTimestampFormat: "20060102@150405",
+		},
+		Cache: Cache{
+			Storage: "memcached",
+			Options: typed.Typed{
+				"ttl":             "300m",
+				"size":            400,
+				"super_fast_mode": true,
+			},
 		},
 		AbiCache: AbiCache{
 			ApiTimeout: time.Minute * 300,
@@ -56,6 +65,12 @@ func TestBuilder(t *testing.T) {
 name: "ship-reader-1"
 api: "http://127.0.0.1:8080"
 message_codec: "mojibake"
+cache:
+  storage: memcached
+  options:
+    ttl: 300m
+    size: 400
+    super_fast_mode: true
 abi_cache:
   api_timeout: 300m
 log:
@@ -101,6 +116,9 @@ func TestBuilder_WithDefaultConfig(t *testing.T) {
 			MaxTime:             time.Hour * 24,
 			FileTimestampFormat: "2006-01-02_150405",
 		},
+		Cache: Cache{
+			Storage: "redis",
+		},
 		AbiCache: AbiCache{
 			ApiTimeout: time.Second,
 		},
@@ -141,6 +159,7 @@ func TestBuilder_Flags(t *testing.T) {
 	require.NoError(t, flags.Set("redis-password", "secret123"))
 	require.NoError(t, flags.Set("redis-db", "3"))
 	require.NoError(t, flags.Set("redis-prefix", "custom-prefix"))
+	require.NoError(t, flags.Set("cache", "memcached"))
 	require.NoError(t, flags.Set("abi-cache-api-timeout", "16h"))
 	require.NoError(t, flags.Set("telegram-id", "72983126312982618"))
 	require.NoError(t, flags.Set("telegram-channel", "-293492332"))
@@ -168,6 +187,9 @@ func TestBuilder_Flags(t *testing.T) {
 			MaxFileSize:         25 * 1000 * 1000, // 25 mb
 			MaxTime:             time.Minute * 10,
 			FileTimestampFormat: "0102-15:04:05",
+		},
+		Cache: Cache{
+			Storage: "memcached",
 		},
 		AbiCache: AbiCache{
 			ApiTimeout: time.Hour * 16,

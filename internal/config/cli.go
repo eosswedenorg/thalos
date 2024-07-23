@@ -25,6 +25,9 @@ func GetFlags() *pflag.FlagSet {
 	flags.String("telegram-id", "", "Id of telegram bot")
 	flags.Int64("telegram-channel", 0, "Telegram channel to send notifications to")
 
+	// Cache
+	flags.String("cache", "redis", "What cache driver to use")
+
 	// AbiCache
 	flags.Duration("abi-cache-api-timeout", time.Second, "")
 

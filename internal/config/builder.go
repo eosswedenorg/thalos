@@ -40,6 +40,8 @@ func NewBuilder() *Builder {
 			"telegram.id":      "telegram-id",
 			"telegram.channel": "telegram-channel",
 
+			"cache.storage": "cache",
+
 			// AbiCache
 			"abi_cache.api_timeout": "abi-cache-api-timeout",
 

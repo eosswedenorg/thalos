@@ -5,6 +5,7 @@ import (
 
 	"github.com/eosswedenorg/thalos/internal/log"
 	"github.com/eosswedenorg/thalos/internal/types"
+	"github.com/karlseguin/typed"
 )
 
 type RedisConfig struct {
@@ -13,6 +14,11 @@ type RedisConfig struct {
 	Password string `yaml:"password"`
 	DB       int    `yaml:"db"`
 	Prefix   string `yaml:"prefix"`
+}
+
+type Cache struct {
+	Storage string      `yaml:"storage" mapstructure:"storage"`
+	Options typed.Typed `yaml:"options" mapstructure:"options"`
 }
 
 type TelegramConfig struct {
@@ -41,6 +47,8 @@ type Config struct {
 	Api  string     `yaml:"api" mapstructure:"api"`
 
 	Log log.Config `yaml:"log" mapstructure:"log"`
+
+	Cache Cache `yaml:"cache" mapstructure:"cache"`
 
 	Redis        RedisConfig `yaml:"redis" mapstructure:"redis"`
 	MessageCodec string      `yaml:"message_codec" mapstructure:"message_codec"`
