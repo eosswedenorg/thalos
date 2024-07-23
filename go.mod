@@ -10,6 +10,7 @@ require (
 	github.com/eosswedenorg/thalos/api v1.0.0
 	github.com/go-redis/cache/v9 v9.0.0
 	github.com/go-redis/redismock/v9 v9.2.0
+	github.com/karlseguin/typed v1.1.8
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/nikoksr/notify v0.41.0
 	github.com/redis/go-redis/v9 v9.5.1
