@@ -11,7 +11,7 @@ jobs:
       matrix:
         os: [ linux, freebsd ]
         arch: [ 386, amd64, arm, arm64 ]
-    name: Crosscompile - ${{matrix.os}}-${{matrix.arch}}
+    name: ${{matrix.os}} (${{matrix.arch}})
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v4
