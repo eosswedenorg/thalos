@@ -20,7 +20,7 @@ build/$(PROGRAM) :
 tools : build/thalos-tools
 
 build/thalos-tools :
-	$(GO) build $(GOBUILDFLAGS) -o $@ $(shell find cmd/tools -type f -name *.go)
+	$(GO) build $(GOBUILDFLAGS) -o $@ ./cmd/tools/
 
 docker-image:
 	docker image build --build-arg VERSION=$(PROGRAM_VERSION) -t $(DOCKER_IMAGE_REPO):$(DOCKER_IMAGE_TAG) docker
