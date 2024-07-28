@@ -29,7 +29,7 @@ func GetFlags() *pflag.FlagSet {
 	flags.String("cache", "redis", "What cache driver to use")
 
 	// AbiCache
-	flags.Duration("abi-cache-api-timeout", time.Second, "")
+	flags.Duration("abi-cache-api-timeout", time.Second, "Duration before the api call times out when the ABI cache requests an abi.")
 
 	// Log
 	flags.StringP("log", "l", "", "Path to log file (default: print to stdout/stderr)")
