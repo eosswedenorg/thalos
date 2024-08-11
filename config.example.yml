@@ -56,6 +56,16 @@ ship:
 
   # blacklist_is_whitelist: true
 
+# Configure the cache.
+# Default is to use redis. But if you need to
+# you can set additional values or even change the driver
+# to something else that Thalos supports.
+# See the documentation for details
+
+# cache:
+#   storage: redis
+#   options: []
+
 # Telegram notifications
 #telegram:
 #  id: "123456789:GPdmGPBWvpgHPxlergJLavus-PoAURTjMWP"
