@@ -6,6 +6,7 @@ import (
 	"github.com/eosswedenorg/thalos/api/message"
 	"github.com/eosswedenorg/thalos/internal/abi"
 	"github.com/eosswedenorg/thalos/internal/driver"
+	ship_helper "github.com/eosswedenorg/thalos/internal/ship"
 	"github.com/eosswedenorg/thalos/internal/types"
 
 	log "github.com/sirupsen/logrus"
@@ -228,7 +229,7 @@ func (processor *ShipProcessor) proccessDeltaRows(logger *log.Entry, table_name 
 
 			v, err := processor.shipABI.Decode(bytes.NewReader(row.Data), table_name)
 			if err == nil {
-				v, err := parseTableDeltaData(v)
+				v, err := ship_helper.ParseTableDeltaData(v)
 				if err == nil {
 					msg.Data = v
 				} else {

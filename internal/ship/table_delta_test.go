@@ -1,8 +1,9 @@
-package server
+package ship_test
 
 import (
 	"testing"
 
+	"github.com/eosswedenorg/thalos/internal/ship"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -62,7 +63,7 @@ func TestParseTableDeltaData(t *testing.T) {
 		"virtual_net_limit": 1048576000,
 	}
 
-	actual, err := parseTableDeltaData(input)
+	actual, err := ship.ParseTableDeltaData(input)
 
 	assert.NoError(t, err)
 	assert.Equal(t, expected, actual)
