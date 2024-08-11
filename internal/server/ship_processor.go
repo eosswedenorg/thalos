@@ -120,7 +120,7 @@ func (processor *ShipProcessor) processTransactionTrace(log *log.Entry, blockNum
 	// Actions
 	for _, actionTraceVar := range trace.ActionTraces {
 
-		actionTrace := toActionTraceV1(actionTraceVar)
+		actionTrace := ship_helper.ToActionTraceV1(actionTraceVar)
 		actMsg := processor.proccessActionTrace(logger, actionTrace)
 		if actMsg != nil {
 			actMsg.TxID = trace.ID.String()

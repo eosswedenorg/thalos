@@ -1,11 +1,11 @@
-package server
+package ship
 
 import (
 	"github.com/shufflingpixels/antelope-go/ship"
 )
 
 // convert a ActionTrace to ActionTraceV1
-func toActionTraceV1(trace *ship.ActionTrace) *ship.ActionTraceV1 {
+func ToActionTraceV1(trace *ship.ActionTrace) *ship.ActionTraceV1 {
 	if trace.V0 != nil {
 		// convert to v1
 		return &ship.ActionTraceV1{
