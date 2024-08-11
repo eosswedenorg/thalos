@@ -236,7 +236,7 @@ func (processor *ShipProcessor) proccessDeltaRows(logger *log.Entry, table_name 
 					logger.WithError(err).Error("Failed to parse table delta data")
 				}
 			} else {
-				logger.Error("Failed to decode table delta")
+				logger.WithError(err).Error("Failed to decode table delta")
 			}
 		} else {
 			logger.Warn("No SHIP ABI present")
