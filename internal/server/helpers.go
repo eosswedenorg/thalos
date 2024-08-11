@@ -113,6 +113,7 @@ func isVariant(v reflect.Value) bool {
 	}
 
 	for v = v.Index(0); v.Kind() == reflect.Interface || v.Kind() == reflect.Pointer; v = v.Elem() {
+		// Intentionally empty
 	}
 
 	return v.Kind() == reflect.String && isVariantName(v.String())
