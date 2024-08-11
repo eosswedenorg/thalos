@@ -1,3 +1,14 @@
+thalos (1.1.5~rc1) bionic focal jammy; urgency=medium
+
+  * New config section: `cache`
+  * New CLI flag: `cache` specify what cache driver to use
+  * New CLI flag: `abi-cache-api-timeout` configure the timeout for the HTTP
+    request made when Thalos wants to fetch a ABI from the api.
+  * API Table Deltas: abi decode the data in `value` field for contract_row deltas.
+  * golang: update github.com/shufflingpixels/antelope-go to v0.1.4
+
+ -- Henrik Hautakoski <henrik.hautakoski@gmail.com>  Sun, 11 Aug 2024 17:04:55 +0200
+
 thalos (1.1.4) bionic focal jammy; urgency=medium
 
   * Implement whitelist option for ship contract/action blacklist
