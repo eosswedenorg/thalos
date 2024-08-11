@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestContractRow_Decode(t *testing.T) {
+func TestContractRow_Parse(t *testing.T) {
 	expected := &ship.ContractRow{
 		Code:       chain.N("eosio"),
 		Scope:      chain.N("scope"),
@@ -18,7 +18,7 @@ func TestContractRow_Decode(t *testing.T) {
 		Value:      []byte{0x01, 0x01, 0x02, 0x03},
 	}
 
-	actual, err := ship.DecodeContractRow(map[string]any{
+	actual, err := ship.ParseContractRow(map[string]any{
 		"code":        uint64(6138663577826885632),
 		"scope":       uint64(13990807175891517440),
 		"table":       uint64(3607749779137757184),

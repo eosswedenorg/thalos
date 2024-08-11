@@ -14,7 +14,7 @@ type ContractRow struct {
 	Value      chain.Bytes `mapstructure:"value"`
 }
 
-func DecodeContractRow(v map[string]interface{}) (*ContractRow, error) {
+func ParseContractRow(v map[string]interface{}) (*ContractRow, error) {
 	out := &ContractRow{}
 	err := mapstructure.WeakDecode(v, out)
 	return out, err
