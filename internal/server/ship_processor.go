@@ -226,12 +226,20 @@ func (processor *ShipProcessor) proccessDeltaRows(logger *log.Entry, table_name 
 		}
 
 		if processor.shipABI != nil {
-
 			v, err := processor.shipABI.Decode(bytes.NewReader(row.Data), table_name)
 			if err == nil {
-				v, err := ship_helper.ParseTableDeltaData(v)
+				data, err := ship_helper.ParseTableDeltaData(v)
 				if err == nil {
-					msg.Data = v
+					// Decode contract row data
+					if table_name == "contract_row" {
+						dec, err := ship_helper.DecodeContractRow(processor.abi, data)
+						if err != nil {
+							logger.WithError(err).Warn("Failed to decode contract row")
+						} else {
+							data["value"] = dec
+						}
+					}
+					msg.Data = data
 				} else {
 					logger.WithError(err).Error("Failed to parse table delta data")
 				}
