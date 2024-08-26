@@ -43,14 +43,14 @@ func GetFlags() *pflag.FlagSet {
 	flags.Uint32("start-block", shipclient.NULL_BLOCK_NUMBER, "Start to stream from this block")
 	flags.Uint32("end-block", shipclient.NULL_BLOCK_NUMBER, "Stop streaming when this block is reached")
 
-	flags.Lookup("start-block").DefValue = "config value, cache, head from api"
+	flags.Lookup("start-block").DefValue = "Config value, cache, head from api"
 	flags.Lookup("end-block").DefValue = "none"
 
 	flags.Bool("irreversible-only", false, "Only stream irreversible blocks from ship")
 	flags.Int("max-msg-in-flight", 10, "Maximum messages that can be sent from SHIP without acknowledgement")
 	flags.String("chain", "", "ChainID used in channel namespace, can be any string (default from api)")
 
-	flags.StringSlice("blacklist", []string{}, "Define a list of 'contract:action' pairs that will be blacklisted (thalos will not process those actions)")
+	flags.StringSlice("blacklist", []string{}, "Define a list of 'contract:action' pairs that will be blacklisted (Thalos will not process those actions)")
 	flags.Bool("blacklist-is-whitelist", false, "Thalos will treat the blacklist as a whitelist")
 
 	return &flags

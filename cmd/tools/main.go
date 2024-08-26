@@ -11,7 +11,7 @@ var VersionString string = "dev"
 func main() {
 	rootCmd := &cobra.Command{
 		Use:   "thalos-tools",
-		Short: "Collection of tools for dealing with the thalos application",
+		Short: "Collection of tools for dealing with the Thalos application",
 		FParseErrWhitelist: cobra.FParseErrWhitelist{
 			UnknownFlags: true,
 		},
