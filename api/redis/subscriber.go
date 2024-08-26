@@ -48,7 +48,7 @@ func NewSubscriber(ctx context.Context, client *redis.Client, ns Namespace, opti
 	return sub
 }
 
-// worker reads messages from redis pubsub and forwards them to
+// worker reads messages from Redis pubsub and forwards them to
 // correct channels.
 func (s *Subscriber) worker() {
 	for msg := range s.sub.Channel() {

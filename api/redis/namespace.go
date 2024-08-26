@@ -19,7 +19,7 @@ const (
 //
 // Contains a prefix and chain_id to guard keys against collision.
 // Prefix should be sufficient to not collide with other application using the same redis database.
-// chain_id should be ok to not let multiple reader with different chains to write to the same channels.
+// chain_id should be fine to not let multiple reader with different chains to write to the same channels.
 
 type Namespace struct {
 	Prefix  string

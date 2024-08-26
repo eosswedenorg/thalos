@@ -13,7 +13,7 @@ type MessageQueue struct {
 	// Writer to write messages to
 	writer driver.Writer
 
-	// encoder to encode messages with
+	// Encoder to encode messages with
 	encode message.Encoder
 }
 

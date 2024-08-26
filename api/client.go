@@ -11,7 +11,7 @@ import (
 
 type handler func([]byte)
 
-// Client reads and decodes messages from a reader and posts thems to a go channel
+// Client reads and decodes messages from a reader and posts them to a go channel
 type Client struct {
 	reader  Reader
 	decoder message.Decoder
@@ -35,6 +35,7 @@ func (c *Client) Channel() <-chan any {
 	return c.channel
 }
 
+// Helper method to post a message to a channel with timeout.
 func (c *Client) post(msg any) {
 	select {
 	case <-time.After(time.Second):
@@ -46,7 +47,7 @@ func (c *Client) worker(channel Channel, h handler) {
 	for {
 		payload, err := c.reader.Read(channel)
 		if err != nil {
-			// Dont report EOF as an error because it is used
+			// Don't report EOF as an error because it is used
 			// by readers to signal an graceful end of input.
 			if err != io.EOF {
 				c.post(err)
@@ -59,7 +60,7 @@ func (c *Client) worker(channel Channel, h handler) {
 }
 
 // Helper method to decode a message and post and error on the channel if it fails.
-// Returns true if successfull. false otherwise
+// Returns true if successful. False otherwise
 func (c *Client) decode(payload []byte, msg any) bool {
 	if err := c.decoder(payload, msg); err != nil {
 		c.post(err)
@@ -152,7 +153,7 @@ func (c *Client) Run() {
 
 func (c *Client) Close() error {
 	err := c.reader.Close()
-	// Wait for all goroutines before closing channel.
+	// Wait for all goroutines to finish before closing channel.
 	c.wg.Wait()
 	close(c.channel)
 	return err

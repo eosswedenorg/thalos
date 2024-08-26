@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/pflag"
 )
 
+// Get a flag set with all flags mapping to a config value.
 func GetFlags() *pflag.FlagSet {
 	flags := pflag.FlagSet{}
 

@@ -14,7 +14,7 @@ func createCodec() message.Codec {
 	handle.MapType = reflect.TypeOf(map[string]any(nil))
 	handle.Canonical = true
 
-	// Wierd name but this is needed for the newest version of msgpack
+	// Weird name but this is needed for the newest version of msgpack
 	// that has support for time and string datatypes etc.
 	handle.WriteExt = true
 
