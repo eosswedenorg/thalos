@@ -1,3 +1,16 @@
+thalos (1.1.5) bionic focal jammy; urgency=medium
+
+  * New config section: `cache`
+  * New CLI flag: `cache` specify what cache driver to use
+  * New CLI flag: `abi-cache-api-timeout` configure the timeout for the HTTP
+    request made when Thalos wants to fetch a ABI from the api.
+  * API Table Deltas: abi decode the data in `value` field for contract_row deltas.
+  * golang: update github.com/shufflingpixels/antelope-go to v0.1.5
+  * golang: update github.com/quic-go/quic-go from 0.41.0 to 0.42.0
+  * golang: version 1.20 can no longer be used to build the project.
+
+ -- Henrik Hautakoski <henrik.hautakoski@gmail.com>  Thu, 29 Aug 2024 15:33:17 +0200
+
 thalos (1.1.5~rc1) bionic focal jammy; urgency=medium
 
   * New config section: `cache`
