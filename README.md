@@ -9,6 +9,10 @@ Consult the [documentation](https://thalos.waxsweden.org/docs) for more informat
 
 Join the discussion on [telegram](https://t.me/antelopethalos)
 
+## Docker images
+
+Docker images can be found [here](https://github.com/eosswedenorg/thalos/pkgs/container/thalos)
+
 ## Compiling
 
 You will need golang version `1.20` or later to compile the source.
