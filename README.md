@@ -15,7 +15,7 @@ Docker images can be found [here](https://github.com/eosswedenorg/thalos/pkgs/co
 
 ## Compiling
 
-You will need golang version `1.20` or later to compile the source.
+You will need golang version `1.21` or later to compile the source.
 
 Compile using make:
 
