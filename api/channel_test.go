@@ -55,13 +55,13 @@ func TestChannel_Is(t *testing.T) {
 func TestChannel_Format(t *testing.T) {
 	tests := []struct {
 		name  string
-		c     Channel
 		delim string
 		want  string
+		c     Channel
 	}{
-		{"Empty", Channel{}, ":", ""},
-		{"Alot#1", Channel{"one", "two", "three"}, "-", "one-two-three"},
-		{"Alot#2", Channel{"first", "second"}, ":", "first:second"},
+		{"Empty", ":", "", Channel{}},
+		{"Alot#1", "-", "one-two-three", Channel{"one", "two", "three"}},
+		{"Alot#2", ":", "first:second", Channel{"first", "second"}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -75,11 +75,11 @@ func TestChannel_Format(t *testing.T) {
 func TestChannel_String(t *testing.T) {
 	tests := []struct {
 		name string
-		c    Channel
 		want string
+		c    Channel
 	}{
-		{"Empty", Channel{}, ""},
-		{"Alot", Channel{"one", "two", "three"}, "one/two/three"},
+		{"Empty", "", Channel{}},
+		{"Alot", "one/two/three", Channel{"one", "two", "three"}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -93,13 +93,13 @@ func TestChannel_String(t *testing.T) {
 func TestChannel_Type(t *testing.T) {
 	tests := []struct {
 		name string
-		c    Channel
 		want string
+		c    Channel
 	}{
-		{"Empty", Channel{}, "unknown"},
-		{"Heartbeat", HeartbeatChannel, "heartbeat"},
-		{"Transaction", TransactionChannel, "transactions"},
-		{"Actions", ActionChannel{}.Channel(), "actions"},
+		{"Empty", "unknown", Channel{}},
+		{"Heartbeat", "heartbeat", HeartbeatChannel},
+		{"Transaction", "transactions", TransactionChannel},
+		{"Actions", "actions", ActionChannel{}.Channel()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
