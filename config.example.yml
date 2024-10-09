@@ -80,7 +80,7 @@ redis:
   user: ""
 
   # Password to use when authenticating
-  pasword: ""
+  password: ""
 
   # database index
   db: 0
