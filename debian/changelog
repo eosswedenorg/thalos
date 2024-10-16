@@ -1,3 +1,19 @@
+thalos (1.1.6) bionic focal jammy; urgency=medium
+
+  [ Henrik Hautakoski ]
+  * makefile: make sure we apppend to GOBULDFLAGS if user wants to add their own.
+  * minor style fixes.
+  * api/channel_test.go: rearange fields.
+  * README.md: Update minimum go version
+  * README.md: Link to docker page
+  * .github/workflows/release.yml: need to update version regex for musl builds
+
+  [ Avm07 ]
+  * Fix typo in config.example.yml
+
+
+-- Henrik Hautakoski <henrik.hautakoski@gmail.com>  Wed, 16 Oct 2024 16:23:47 +0200
+
 thalos (1.1.5) bionic focal jammy; urgency=medium
 
   * New config section: `cache`
@@ -218,3 +234,4 @@ thalos-server (0.1.0) bionic focal jammy; urgency=medium
   Initial release.
 
  -- Henrik Hautakoski <henrik@eossweden.org>  Sun, 14 May 2023 18:17:35 +0200
+
