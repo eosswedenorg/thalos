@@ -42,6 +42,10 @@ ship:
 
   # Request ship to stop sending blocks when reaching this block.
   #end_block_num: 2000
+  #
+
+  # Disable processing of table deltas
+  # table_deltas: false
 
   # Blacklist contract/actions
   blacklist:
