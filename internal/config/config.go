@@ -39,6 +39,7 @@ type ShipConfig struct {
 	Chain                string          `yaml:"chain" mapstructure:"chain"`
 	Blacklist            types.Blacklist `yaml:"blacklist" mapstructure:"blacklist"`
 	BlacklistIsWhitelist bool            `yaml:"blacklist_is_whitelist" mapstructure:"blacklist_is_whitelist"`
+	EnableTableDeltas    bool            `yaml:"table_deltas" mapstructure:"table_deltas"`
 }
 
 type Config struct {

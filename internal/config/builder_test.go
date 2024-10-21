@@ -127,6 +127,7 @@ func TestBuilder_WithDefaultConfig(t *testing.T) {
 			StartBlockNum:       shipclient.NULL_BLOCK_NUMBER,
 			EndBlockNum:         shipclient.NULL_BLOCK_NUMBER,
 			MaxMessagesInFlight: 10,
+			EnableTableDeltas:   true,
 		},
 		Redis: RedisConfig{
 			Addr:   "127.0.0.1:6379",
@@ -174,6 +175,7 @@ func TestBuilder_Flags(t *testing.T) {
 	require.NoError(t, flags.Set("chain", "wax"))
 	require.NoError(t, flags.Set("blacklist", "contract:action1,contract:action2,contract2:action1"))
 	require.NoError(t, flags.Set("blacklist-is-whitelist", "true"))
+	require.NoError(t, flags.Set("table-deltas", "false"))
 
 	cfg, err := NewBuilder().
 		SetSource(bytes.NewReader([]byte(``))).

@@ -46,6 +46,8 @@ func GetFlags() *pflag.FlagSet {
 	flags.Lookup("start-block").DefValue = "Config value, cache, head from api"
 	flags.Lookup("end-block").DefValue = "none"
 
+	flags.Bool("table-deltas", true, "True if thalos should receive and process table deltas from ship.")
+
 	flags.Bool("irreversible-only", false, "Only stream irreversible blocks from ship")
 	flags.Int("max-msg-in-flight", 10, "Maximum messages that can be sent from SHIP without acknowledgement")
 	flags.String("chain", "", "ChainID used in channel namespace, can be any string (default from api)")

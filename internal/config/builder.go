@@ -59,6 +59,7 @@ func NewBuilder() *Builder {
 			"ship.chain":                  "chain",
 			"ship.blacklist":              "blacklist",
 			"ship.blacklist_is_whitelist": "blacklist-is-whitelist",
+			"ship.table_deltas":           "table-deltas",
 		},
 	}
 }
