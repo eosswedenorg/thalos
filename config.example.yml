@@ -38,13 +38,12 @@ ship:
 
   # Request ship to start sending blocks from this block.
   # If not set, the head block reported by the nodeos api is used.
-  #start_block_num: 1000
+  # start_block_num: 1000
 
   # Request ship to stop sending blocks when reaching this block.
-  #end_block_num: 2000
-  #
+  # end_block_num: 2000
 
-  # Disable processing of table deltas
+  # If true, Thalos will process table deltas
   # table_deltas: false
 
   # Blacklist contract/actions
@@ -71,9 +70,9 @@ ship:
 #   options: []
 
 # Telegram notifications
-#telegram:
-#  id: "123456789:GPdmGPBWvpgHPxlergJLavus-PoAURTjMWP"
-#  channel: -123456789
+# telegram:
+#   id: "123456789:GPdmGPBWvpgHPxlergJLavus-PoAURTjMWP"
+#   channel: -123456789
 
 # Redis settings
 redis:
