@@ -1,3 +1,9 @@
+thalos (1.1.7~rc1) bionic focal jammy; urgency=medium
+
+  * Add support to disable processing of table deltas.
+
+ -- Henrik Hautakoski <henrik.hautakoski@gmail.com>  Mon, 21 Oct 2024 12:31:21 +0200
+
 thalos (1.1.6) bionic focal jammy; urgency=medium
 
   [ Henrik Hautakoski ]
