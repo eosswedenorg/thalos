@@ -392,6 +392,7 @@ func serverCmd(cmd *cobra.Command, args []string) {
 	)
 
 	processor.SetBlacklist(conf.Ship.Blacklist)
+	processor.FetchDeltas(conf.Ship.EnableTableDeltas)
 
 	// Run the application
 	run(conf, shClient, processor)
