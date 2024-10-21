@@ -11,8 +11,7 @@ thalos (1.1.6) bionic focal jammy; urgency=medium
   [ Avm07 ]
   * Fix typo in config.example.yml
 
-
--- Henrik Hautakoski <henrik.hautakoski@gmail.com>  Wed, 16 Oct 2024 16:23:47 +0200
+ -- Henrik Hautakoski <henrik.hautakoski@gmail.com>  Wed, 16 Oct 2024 16:23:47 +0200
 
 thalos (1.1.5) bionic focal jammy; urgency=medium
 
