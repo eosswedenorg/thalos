@@ -66,6 +66,15 @@ func SpawnProccessor(shipStream *shipclient.Stream, loader StateLoader, saver St
 	return processor
 }
 
+func (processor *ShipProcessor) FetchDeltas(value bool) {
+	if value {
+		// empty callback will signal that traces should be included in the response from ship.
+		processor.shipStream.TableDeltaHandler = func(*ship.TableDeltaArray) {}
+	} else {
+		processor.shipStream.TableDeltaHandler = nil
+	}
+}
+
 func (processor *ShipProcessor) SetBlacklist(list types.Blacklist) {
 	processor.blacklist = list
 }
