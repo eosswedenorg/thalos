@@ -1,3 +1,13 @@
+thalos (1.1.7~rc2) bionic focal jammy; urgency=medium
+
+  * ship: set MaxMessagesInFlight to 1. This forces the client/server to ack
+    every message and might be a workaround fix for issue #25
+    according to this comment:
+    https://github.com/AntelopeIO/leap/issues/1358#issuecomment-2276294557
+  * golang: update eosswedenrg-go/antelope-ship-client to v0.3.2
+
+ -- Henrik Hautakoski <henrik.hautakoski@gmail.com>  Sun, 03 Nov 2024 12:04:29 +0100
+
 thalos (1.1.7~rc1) bionic focal jammy; urgency=medium
 
   * Add support to disable processing of table deltas.
