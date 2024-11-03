@@ -363,6 +363,7 @@ func serverCmd(cmd *cobra.Command, args []string) {
 		s.StartBlock = conf.Ship.StartBlockNum
 		s.EndBlock = conf.Ship.EndBlockNum
 		s.IrreversibleOnly = conf.Ship.IrreversibleOnly
+		s.MaxMessagesInFlight = 1
 	})
 
 	// Get codec
