@@ -5,7 +5,7 @@ go 1.21
 require (
 	github.com/cenkalti/backoff/v4 v4.2.1
 	github.com/docker/go-units v0.5.0
-	github.com/eosswedenorg-go/antelope-ship-client v0.3.0
+	github.com/eosswedenorg-go/antelope-ship-client v0.3.2
 	github.com/eosswedenorg-go/pid v1.0.1
 	github.com/eosswedenorg/thalos/api v1.0.0
 	github.com/go-redis/cache/v9 v9.0.0

@@ -29,8 +29,8 @@ github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f h1:lO4WD4F/r
 github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f/go.mod h1:cuUVRXasLTGF7a8hSLbxyZXjz+1KgoB3wDUb6vlszIc=
 github.com/docker/go-units v0.5.0 h1:69rxXcBk27SvSaaxTtLh/8llcHD8vYHT7WSdRZ/jvr4=
 github.com/docker/go-units v0.5.0/go.mod h1:fgPhTUdO+D/Jk86RDLlptpiXQzgHJF7gydDDbaIK4Dk=
-github.com/eosswedenorg-go/antelope-ship-client v0.3.0 h1:L1DTE2ZeOGSbehCAqVF5GhdaAb3ZYgvFFUhpDWmJ2vQ=
-github.com/eosswedenorg-go/antelope-ship-client v0.3.0/go.mod h1:F3nAzlbcANY6zvZ+cTJH9WjJtvJU6hvduBAUAjX2/lA=
+github.com/eosswedenorg-go/antelope-ship-client v0.3.2 h1:mDXZkjQ0bTPJClkhoPEP5ltucxql6bR+QixhnQI/Og4=
+github.com/eosswedenorg-go/antelope-ship-client v0.3.2/go.mod h1:DnUmaRGxz/V73CtVEJx/fReqhgGzhVyWpOrEKVYQSgE=
 github.com/eosswedenorg-go/pid v1.0.1 h1:W4AEnnNwb041SpNR1uTZ/KbJ0OTA5eqiqIR1Q5Ah6A0=
 github.com/eosswedenorg-go/pid v1.0.1/go.mod h1:wiOB/JXGt4YA3+T0j0xmCGSc3Jxzb7Ti/Ftli1fgWu4=
 github.com/frankban/quicktest v1.14.6 h1:7Xjx+VpznH+oBnejlPUj8oUpdxnVs4f8XU8WnHkI4W8=
