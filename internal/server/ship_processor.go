@@ -2,6 +2,7 @@ package server
 
 import (
 	"bytes"
+	"errors"
 
 	"github.com/eosswedenorg/thalos/api/message"
 	"github.com/eosswedenorg/thalos/internal/abi"
@@ -228,39 +229,45 @@ func (processor *ShipProcessor) proccessActionTrace(logger *log.Entry, trace *sh
 func (processor *ShipProcessor) proccessDeltaRows(logger *log.Entry, table_name string, rows []ship.Row) []message.TableDeltaRow {
 	out := []message.TableDeltaRow{}
 	for _, row := range rows {
-
-		msg := message.TableDeltaRow{
-			Present: row.Present,
-			RawData: row.Data,
-		}
-
-		if processor.shipABI != nil {
-			v, err := processor.shipABI.Decode(bytes.NewReader(row.Data), table_name)
-			if err == nil {
-				data, err := ship_helper.ParseTableDeltaData(v)
-				if err == nil {
-					// Decode contract row data
-					if table_name == "contract_row" {
-						dec, err := ship_helper.DecodeContractRow(processor.abi, data)
-						if err != nil {
-							logger.WithError(err).Warn("Failed to decode contract row")
-						} else {
-							data["value"] = dec
-						}
-					}
-					msg.Data = data
-				} else {
-					logger.WithError(err).Error("Failed to parse table delta data")
-				}
-			} else {
-				logger.WithError(err).Error("Failed to decode table delta")
-			}
-		} else {
-			logger.Warn("No SHIP ABI present")
+		msg, err := processor.proccessDeltaRow(row, table_name)
+		if err != nil {
+			logger.WithError(err).Warn("Failed to processs table delta row")
 		}
 		out = append(out, msg)
 	}
 	return out
+}
+
+func (processor *ShipProcessor) proccessDeltaRow(row ship.Row, table_name string) (message.TableDeltaRow, error) {
+	msg := message.TableDeltaRow{
+		Present: row.Present,
+		RawData: row.Data,
+	}
+
+	if processor.shipABI == nil {
+		return msg, errors.New("No SHIP ABI present")
+	}
+
+	v, err := processor.shipABI.Decode(bytes.NewReader(row.Data), table_name)
+	if err != nil {
+		return msg, errors.New("Failed to decode table delta")
+	}
+	data, err := ship_helper.ParseTableDeltaData(v)
+	if err != nil {
+		return msg, errors.New("Failed to parse table delta data")
+	}
+
+	msg.Data = data
+
+	// Decode contract row data
+	if table_name == "contract_row" {
+		dec, err := ship_helper.DecodeContractRow(processor.abi, data)
+		if err != nil {
+			return msg, errors.New("Failed to decode contract row")
+		}
+		msg.Data["value"] = dec
+	}
+	return msg, nil
 }
 
 // Callback function called by shipclient.Stream when a new block arrives.
