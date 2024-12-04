@@ -1,5 +1,7 @@
 package types
 
+const BlacklistWildcard = "*"
+
 type Blacklist struct {
 	table       map[string][]string
 	isWhitelist bool
@@ -42,9 +44,9 @@ func (bl Blacklist) list(contracts ...string) [][]string {
 }
 
 func (bl Blacklist) IsAllowed(contract string, action string) bool {
-	for _, v := range bl.list(contract, "*") {
+	for _, v := range bl.list(contract, BlacklistWildcard) {
 		for _, act := range v {
-			if act == action || act == "*" {
+			if act == action || act == BlacklistWildcard {
 				return bl.isWhitelist == true
 			}
 		}
