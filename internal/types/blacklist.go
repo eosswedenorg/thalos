@@ -31,8 +31,18 @@ func (bl *Blacklist) Add(contract string, action string) {
 	bl.table[contract] = append(bl.table[contract], action)
 }
 
+func (bl Blacklist) list(contracts ...string) [][]string {
+	ret := [][]string{}
+	for _, contract := range contracts {
+		if v, ok := bl.table[contract]; ok {
+			ret = append(ret, v)
+		}
+	}
+	return ret
+}
+
 func (bl Blacklist) IsAllowed(contract string, action string) bool {
-	if v, ok := bl.table[contract]; ok {
+	for _, v := range bl.list(contract, "*") {
 		for _, act := range v {
 			if act == action || act == "*" {
 				return bl.isWhitelist == true

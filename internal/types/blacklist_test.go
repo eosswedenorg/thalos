@@ -52,20 +52,32 @@ func TestBlacklist_IsAllowed(t *testing.T) {
 func TestBlacklist_IsAllowedWildcard(t *testing.T) {
 	bl := Blacklist{
 		table: map[string][]string{
-			"mycontract": {"*"},
+			"mycontract":   {"*"},
+			"*":            {"action1", "action2"},
+			"evilcontract": {"evilaction"},
 		},
 	}
 
 	require.False(t, bl.IsAllowed("mycontract", "myaction"))
 	require.False(t, bl.IsAllowed("mycontract", "noop"))
 	require.False(t, bl.IsAllowed("mycontract", "xxx"))
+
+	// Wildcard contract
+	require.False(t, bl.IsAllowed("somecontract", "action1"))
+	require.False(t, bl.IsAllowed("someothercontract", "action1"))
+	require.False(t, bl.IsAllowed("randomcontract", "action2"))
+	require.False(t, bl.IsAllowed("evilcontract", "action2"))
+	require.False(t, bl.IsAllowed("evilcontract", "evilaction"))
+
 	require.True(t, bl.IsAllowed("xxx", "yyy"))
+	require.True(t, bl.IsAllowed("evilcontract", "alloweaction"))
 }
 
 func TestBlacklist_Whitelist(t *testing.T) {
 	bl := Blacklist{
 		table: map[string][]string{
 			"mycontract": {"myaction", "noop"},
+			"*":          {"goodaction1", "goodaction2"},
 		},
 	}
 
@@ -73,6 +85,11 @@ func TestBlacklist_Whitelist(t *testing.T) {
 
 	require.True(t, bl.IsAllowed("mycontract", "myaction"))
 	require.True(t, bl.IsAllowed("mycontract", "noop"))
+
+	// Wildcard contract
+	require.True(t, bl.IsAllowed("mycontract", "goodaction1"))
+	require.True(t, bl.IsAllowed("someothercontract", "goodaction2"))
+
 	require.False(t, bl.IsAllowed("mycontract", "xxx"))
 	require.False(t, bl.IsAllowed("xxx", "yyy"))
 }
