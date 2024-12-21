@@ -1,4 +1,6 @@
 name: Package
+permissions:
+  contents: write
 
 on:
   release:

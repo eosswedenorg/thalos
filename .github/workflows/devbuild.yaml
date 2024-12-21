@@ -1,5 +1,8 @@
 name: Development build
 
+permissions:
+  contents: write
+
 on:
   push:
     branches: [ dev ]
