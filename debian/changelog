@@ -1,3 +1,11 @@
+thalos (1.1.8) bionic focal jammy; urgency=medium
+
+  * Support for wildcard contracts in Blacklist
+  * [Security CVE-2024-45337] Update golang.org/x/crypto to 0.31.0
+  * [Security CVE-2024-53259] Update github.com/quic-go/quic-go to 0.48.2
+
+ -- Henrik Hautakoski <henrik.hautakoski@gmail.com>  Mon, 23 Dec 2024 09:25:44 +0100
+
 thalos (1.1.8~rc1) bionic focal jammy; urgency=medium
 
   * Support for wildcard contracts in Blacklist
