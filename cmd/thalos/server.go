@@ -253,7 +253,7 @@ func ConnectRedis(conf *config.RedisConfig) (*redis.Client, error) {
 	}
 
 	if len(conf.Password) > 0 {
-		logEntry = logEntry.WithField("password", strings.Repeat("*", len(conf.Password)))
+		logEntry = logEntry.WithField("password", strings.Repeat("*", 10))
 	}
 
 	logEntry.Info("Connecting to redis")
