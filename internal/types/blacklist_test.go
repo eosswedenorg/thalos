@@ -93,3 +93,19 @@ func TestBlacklist_Whitelist(t *testing.T) {
 	require.False(t, bl.IsAllowed("mycontract", "xxx"))
 	require.False(t, bl.IsAllowed("xxx", "yyy"))
 }
+
+func TestBlacklist_IsDenied(t *testing.T) {
+	bl := Blacklist{
+		table: map[string][]string{
+			"mycontract": {"myaction", "noop"},
+		},
+	}
+
+	require.True(t, bl.IsDenied("mycontract", "myaction"))
+	require.False(t, bl.IsDenied("mycontract", "randomaction"))
+
+	bl.SetWhitelist(true)
+
+	require.False(t, bl.IsDenied("mycontract", "myaction"))
+	require.True(t, bl.IsDenied("mycontract", "randomaction"))
+}

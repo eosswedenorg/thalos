@@ -55,5 +55,5 @@ func (bl Blacklist) IsAllowed(contract string, action string) bool {
 }
 
 func (bl Blacklist) IsDenied(contract string, action string) bool {
-	return bl.IsAllowed(contract, action)
+	return !bl.IsAllowed(contract, action)
 }
