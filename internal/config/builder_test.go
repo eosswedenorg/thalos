@@ -46,6 +46,10 @@ func TestBuilder(t *testing.T) {
 				"contract": {"skip1", "skip2"},
 			}),
 			BlacklistIsWhitelist: true,
+			TableDeltaWhitelist: *types.NewBlacklist(map[string][]string{
+				"eosio.token": {"accounts"},
+				"mycontract":  {"*"},
+			}),
 		},
 		Telegram: TelegramConfig{
 			Id:      "110201543:AAHdqTcvCH1vGWJxfSeofSAs0K5PALDsaw",
@@ -85,6 +89,11 @@ ship:
   max_messages_in_flight: 1337
   start_block_num: 23671836
   end_block_num: 23872222
+  table_delta_whitelist:
+    eosio.token:
+      - accounts
+    mycontract:
+      - "*"
   blacklist:
     eosio: noop
     contract:
@@ -176,6 +185,7 @@ func TestBuilder_Flags(t *testing.T) {
 	require.NoError(t, flags.Set("blacklist", "contract:action1,contract:action2,contract2:action1"))
 	require.NoError(t, flags.Set("blacklist-is-whitelist", "true"))
 	require.NoError(t, flags.Set("table-deltas", "false"))
+	require.NoError(t, flags.Set("table-delta-whitelist", "eosio.token:accounts,mycontract:*"))
 
 	cfg, err := NewBuilder().
 		SetSource(bytes.NewReader([]byte(``))).
@@ -208,6 +218,10 @@ func TestBuilder_Flags(t *testing.T) {
 				"contract2": {"action1"},
 			}),
 			BlacklistIsWhitelist: true,
+			TableDeltaWhitelist: *types.NewBlacklist(map[string][]string{
+				"eosio.token": {"accounts"},
+				"mycontract":  {"*"},
+			}),
 		},
 		Telegram: TelegramConfig{
 			Id:      "72983126312982618",

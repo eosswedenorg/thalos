@@ -40,6 +40,7 @@ type ShipConfig struct {
 	Blacklist            types.Blacklist `yaml:"blacklist" mapstructure:"blacklist"`
 	BlacklistIsWhitelist bool            `yaml:"blacklist_is_whitelist" mapstructure:"blacklist_is_whitelist"`
 	EnableTableDeltas    bool            `yaml:"table_deltas" mapstructure:"table_deltas"`
+	TableDeltaWhitelist  types.Blacklist `yaml:"table_delta_whitelist" mapstructure:"table_delta_whitelist"`
 }
 
 type Config struct {

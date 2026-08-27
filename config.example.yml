@@ -46,6 +46,18 @@ ship:
   # If true, Thalos will process table deltas
   # table_deltas: false
 
+  # Optional: whitelist table deltas by contract and table.
+  # When set, thalos will only process `contract_row` deltas where both
+  # `code` and `table` match this whitelist.
+  #
+  # NOTE: values must be arrays of table names.
+  # Use "*" to allow all tables for a contract.
+  # table_delta_whitelist:
+  #   eosio.token:
+  #     - accounts
+  #   mycontract:
+  #     - "*"
+
   # Blacklist contract/actions
   blacklist:
     # this is a "useless" action that results in alot of warning messages.

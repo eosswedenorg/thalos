@@ -47,6 +47,7 @@ func GetFlags() *pflag.FlagSet {
 	flags.Lookup("end-block").DefValue = "none"
 
 	flags.Bool("table-deltas", true, "True if thalos should receive and process table deltas from ship.")
+	flags.StringSlice("table-delta-whitelist", []string{}, "Define a list of 'contract:table' pairs to whitelist table deltas. Use '*' for wildcard table names, e.g. 'mycontract:*'.")
 
 	flags.Bool("irreversible-only", false, "Only stream irreversible blocks from ship")
 	flags.Int("max-msg-in-flight", 10, "Maximum messages that can be sent from SHIP without acknowledgement")

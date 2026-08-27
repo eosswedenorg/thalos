@@ -60,6 +60,7 @@ func NewBuilder() *Builder {
 			"ship.blacklist":              "blacklist",
 			"ship.blacklist_is_whitelist": "blacklist-is-whitelist",
 			"ship.table_deltas":           "table-deltas",
+			"ship.table_delta_whitelist":  "table-delta-whitelist",
 		},
 	}
 }
@@ -152,9 +153,9 @@ func decodeIntoBlacklist(in any) (*types.Blacklist, error) {
 	// Sometimes we have a slice of interfaces.
 	// Need to convert it to a slice of strings.
 	case []any:
-		sv := make([]string, len(v))
-		for i, j := range v {
-			sv[i] = j.(string)
+		sv, err := toStringSlice(v)
+		if err != nil {
+			return nil, err
 		}
 		return blacklistParseSlice(sv)
 	}
@@ -165,17 +166,46 @@ func decodeIntoBlacklist(in any) (*types.Blacklist, error) {
 // Blacklist map parser
 func blacklistParseMap(in map[string]any) (*types.Blacklist, error) {
 	list := &types.Blacklist{}
-	for k, v := range in {
-		switch v := v.(type) {
-		case []any:
-			for _, v := range v {
-				list.Add(k, v.(string))
-			}
-		case any:
-			list.Add(k, v.(string))
+	for contract, value := range in {
+		if err := blacklistParseValue(list, contract, value); err != nil {
+			return nil, err
 		}
 	}
 	return list, nil
+}
+
+func blacklistParseValue(list *types.Blacklist, contract string, in any) error {
+	switch value := in.(type) {
+	case map[string]any:
+		for nested, nestedValue := range value {
+			if err := blacklistParseValue(list, contract+"."+nested, nestedValue); err != nil {
+				return err
+			}
+		}
+		return nil
+	case map[any]any:
+		for nested, nestedValue := range value {
+			nestedKey, ok := nested.(string)
+			if !ok {
+				return fmt.Errorf("Must be a string slice")
+			}
+			if err := blacklistParseValue(list, contract+"."+nestedKey, nestedValue); err != nil {
+				return err
+			}
+		}
+		return nil
+	}
+
+	values, err := toStringSlice(in)
+	if err != nil {
+		return err
+	}
+
+	for _, entry := range values {
+		list.Add(contract, entry)
+	}
+
+	return nil
 }
 
 // Blacklist slice parser
@@ -194,4 +224,25 @@ func blacklistParseSlice(in []string) (*types.Blacklist, error) {
 		list.Add(parts[0], action)
 	}
 	return list, nil
+}
+
+func toStringSlice(in any) ([]string, error) {
+	switch value := in.(type) {
+	case string:
+		return []string{value}, nil
+	case []string:
+		return value, nil
+	case []any:
+		out := make([]string, 0, len(value))
+		for _, item := range value {
+			str, ok := item.(string)
+			if !ok {
+				return nil, fmt.Errorf("Must be a string slice")
+			}
+			out = append(out, str)
+		}
+		return out, nil
+	default:
+		return nil, fmt.Errorf("Must be a string slice")
+	}
 }

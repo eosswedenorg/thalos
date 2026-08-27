@@ -42,6 +42,9 @@ type ShipProcessor struct {
 
 	// Action blacklist
 	blacklist types.Blacklist
+
+	// Optional whitelist for contract_row table delta contract+table names.
+	tableDeltaWhitelist types.Blacklist
 }
 
 // SpawnProcessor creates a new ShipProccessor that consumes the shipclient.Stream passed to it.
@@ -78,6 +81,69 @@ func (processor *ShipProcessor) FetchDeltas(value bool) {
 
 func (processor *ShipProcessor) SetBlacklist(list types.Blacklist) {
 	processor.blacklist = list
+}
+
+func (processor *ShipProcessor) SetTableDeltaWhitelist(list types.Blacklist) {
+	list.SetWhitelist(true)
+	processor.tableDeltaWhitelist = list
+}
+
+func (processor *ShipProcessor) hasTableDeltaWhitelist() bool {
+	return !processor.tableDeltaWhitelist.Empty()
+}
+
+func mapValueToString(data map[string]any, key string) (string, bool) {
+	value, ok := data[key]
+	if !ok {
+		return "", false
+	}
+
+	if name, ok := value.(string); ok {
+		return name, true
+	}
+
+	if name, ok := value.(interface{ String() string }); ok {
+		return name.String(), true
+	}
+
+	return "", false
+}
+
+func (processor *ShipProcessor) shouldProcessTableDeltaName(name string) bool {
+	if !processor.hasTableDeltaWhitelist() {
+		return true
+	}
+
+	return name == "contract_row"
+}
+
+func (processor *ShipProcessor) filterWhitelistedContractRows(rows []message.TableDeltaRow) []message.TableDeltaRow {
+	if !processor.hasTableDeltaWhitelist() {
+		return rows
+	}
+
+	out := make([]message.TableDeltaRow, 0, len(rows))
+	for _, row := range rows {
+		if row.Data == nil {
+			continue
+		}
+
+		contract, ok := mapValueToString(row.Data, "code")
+		if !ok {
+			continue
+		}
+
+		table, ok := mapValueToString(row.Data, "table")
+		if !ok {
+			continue
+		}
+
+		if processor.tableDeltaWhitelist.IsAllowed(contract, table) {
+			out = append(out, row)
+		}
+	}
+
+	return out
 }
 
 func (processor *ShipProcessor) initHandler(abi *chain.Abi) {
@@ -333,12 +399,23 @@ func (processor *ShipProcessor) processBlock(blockResult *ship.GetBlocksResultV0
 		} else {
 			logger := mainLogger.WithField("type", "table_delta").Dup()
 			for _, delta := range deltas {
+				if !processor.shouldProcessTableDeltaName(delta.V0.Name) {
+					continue
+				}
+
+				rows := processor.proccessDeltaRows(logger, delta.V0.Name, delta.V0.Rows)
+				if processor.hasTableDeltaWhitelist() {
+					rows = processor.filterWhitelistedContractRows(rows)
+					if len(rows) < 1 {
+						continue
+					}
+				}
 
 				msg := message.TableDelta{
 					BlockNum:  blockNumber,
 					Timestamp: timestamp,
 					Name:      delta.V0.Name,
-					Rows:      processor.proccessDeltaRows(logger, delta.V0.Name, delta.V0.Rows),
+					Rows:      rows,
 				}
 
 				if err := processor.queue.PostTableDelta(msg); err != nil {
