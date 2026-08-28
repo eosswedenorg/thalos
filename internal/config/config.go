@@ -3,8 +3,8 @@ package config
 import (
 	"time"
 
+	"github.com/eosswedenorg/thalos/internal/filter"
 	"github.com/eosswedenorg/thalos/internal/log"
-	"github.com/eosswedenorg/thalos/internal/types"
 	"github.com/karlseguin/typed"
 )
 
@@ -31,16 +31,16 @@ type AbiCache struct {
 }
 
 type ShipConfig struct {
-	Url                  string          `yaml:"url" mapstructure:"url"`
-	IrreversibleOnly     bool            `yaml:"irreversible_only" mapstructure:"irreversible_only"`
-	MaxMessagesInFlight  uint32          `yaml:"max_messages_in_flight" mapstructure:"max_messages_in_flight"`
-	StartBlockNum        uint32          `yaml:"start_block_num" mapstructure:"start_block_num"`
-	EndBlockNum          uint32          `yaml:"end_block_num" mapstructure:"end_block_num"`
-	Chain                string          `yaml:"chain" mapstructure:"chain"`
-	Blacklist            types.Blacklist `yaml:"blacklist" mapstructure:"blacklist"`
-	BlacklistIsWhitelist bool            `yaml:"blacklist_is_whitelist" mapstructure:"blacklist_is_whitelist"`
-	EnableTableDeltas    bool            `yaml:"table_deltas" mapstructure:"table_deltas"`
-	TableDeltaWhitelist  types.Blacklist `yaml:"table_delta_whitelist" mapstructure:"table_delta_whitelist"`
+	Url                  string      `yaml:"url" mapstructure:"url"`
+	IrreversibleOnly     bool        `yaml:"irreversible_only" mapstructure:"irreversible_only"`
+	MaxMessagesInFlight  uint32      `yaml:"max_messages_in_flight" mapstructure:"max_messages_in_flight"`
+	StartBlockNum        uint32      `yaml:"start_block_num" mapstructure:"start_block_num"`
+	EndBlockNum          uint32      `yaml:"end_block_num" mapstructure:"end_block_num"`
+	Chain                string      `yaml:"chain" mapstructure:"chain"`
+	Blacklist            filter.List `yaml:"blacklist" mapstructure:"blacklist"`
+	BlacklistIsWhitelist bool        `yaml:"blacklist_is_whitelist" mapstructure:"blacklist_is_whitelist"`
+	EnableTableDeltas    bool        `yaml:"table_deltas" mapstructure:"table_deltas"`
+	TableDeltaWhitelist  filter.List `yaml:"table_delta_whitelist" mapstructure:"table_delta_whitelist"`
 }
 
 type Config struct {

@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/eosswedenorg/thalos/api/message"
-	"github.com/eosswedenorg/thalos/internal/types"
+	"github.com/eosswedenorg/thalos/internal/filter"
 	"github.com/shufflingpixels/antelope-go/chain"
 	"github.com/stretchr/testify/require"
 )
@@ -15,7 +15,7 @@ func TestShipProcessor_ShouldProcessTableDeltaName(t *testing.T) {
 	require.True(t, processor.shouldProcessTableDeltaName("contract_row"))
 	require.True(t, processor.shouldProcessTableDeltaName("resource_limits"))
 
-	processor.SetTableDeltaWhitelist(*types.NewBlacklist(map[string][]string{
+	processor.SetTableDeltaWhitelist(*filter.New(map[string][]string{
 		"eosio.token": {"accounts"},
 	}))
 
@@ -25,7 +25,7 @@ func TestShipProcessor_ShouldProcessTableDeltaName(t *testing.T) {
 
 func TestShipProcessor_FilterWhitelistedContractRows(t *testing.T) {
 	processor := &ShipProcessor{}
-	processor.SetTableDeltaWhitelist(*types.NewBlacklist(map[string][]string{
+	processor.SetTableDeltaWhitelist(*filter.New(map[string][]string{
 		"eosio.token": {"accounts"},
 		"eosio":       {"*"},
 	}))
@@ -50,7 +50,7 @@ func TestShipProcessor_FilterWhitelistedContractRows(t *testing.T) {
 
 func TestShipProcessor_FilterWhitelistedContractRows_StringerCode(t *testing.T) {
 	processor := &ShipProcessor{}
-	processor.SetTableDeltaWhitelist(*types.NewBlacklist(map[string][]string{
+	processor.SetTableDeltaWhitelist(*filter.New(map[string][]string{
 		"eosio.token": {"accounts"},
 	}))
 

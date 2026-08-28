@@ -7,8 +7,8 @@ import (
 	"github.com/eosswedenorg/thalos/api/message"
 	"github.com/eosswedenorg/thalos/internal/abi"
 	"github.com/eosswedenorg/thalos/internal/driver"
+	"github.com/eosswedenorg/thalos/internal/filter"
 	ship_helper "github.com/eosswedenorg/thalos/internal/ship"
-	"github.com/eosswedenorg/thalos/internal/types"
 
 	log "github.com/sirupsen/logrus"
 
@@ -41,10 +41,10 @@ type ShipProcessor struct {
 	shipABI *chain.Abi
 
 	// Action blacklist
-	blacklist types.Blacklist
+	blacklist filter.List
 
 	// Optional whitelist for contract_row table delta contract+table names.
-	tableDeltaWhitelist types.Blacklist
+	tableDeltaWhitelist filter.List
 }
 
 // SpawnProcessor creates a new ShipProccessor that consumes the shipclient.Stream passed to it.
@@ -79,12 +79,12 @@ func (processor *ShipProcessor) FetchDeltas(value bool) {
 	}
 }
 
-func (processor *ShipProcessor) SetBlacklist(list types.Blacklist) {
+func (processor *ShipProcessor) SetBlacklist(list filter.List) {
 	processor.blacklist = list
 }
 
-func (processor *ShipProcessor) SetTableDeltaWhitelist(list types.Blacklist) {
-	list.SetWhitelist(true)
+func (processor *ShipProcessor) SetTableDeltaWhitelist(list filter.List) {
+	list.SetMode(filter.Include)
 	processor.tableDeltaWhitelist = list
 }
 
@@ -138,7 +138,7 @@ func (processor *ShipProcessor) filterWhitelistedContractRows(rows []message.Tab
 			continue
 		}
 
-		if processor.tableDeltaWhitelist.IsAllowed(contract, table) {
+		if processor.tableDeltaWhitelist.IsIncluded(contract, table) {
 			out = append(out, row)
 		}
 	}
@@ -230,7 +230,7 @@ func (processor *ShipProcessor) proccessActionTrace(logger *log.Entry, trace *sh
 	}
 
 	// Check blacklist if we should skip this action
-	if !processor.blacklist.IsAllowed(trace.Act.Account.String(), trace.Act.Name.String()) {
+	if !processor.blacklist.IsIncluded(trace.Act.Account.String(), trace.Act.Name.String()) {
 		logger.WithFields(log.Fields{
 			"contract": trace.Act.Account,
 			"action":   trace.Act.Name,

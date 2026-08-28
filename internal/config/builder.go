@@ -8,7 +8,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/eosswedenorg/thalos/internal/types"
+	"github.com/eosswedenorg/thalos/internal/filter"
 	"github.com/mitchellh/mapstructure"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
@@ -124,8 +124,8 @@ func (b *Builder) Build() (*Config, error) {
 		mapstructure.StringToTimeDurationHookFunc(),
 		mapstructure.StringToSliceHookFunc(","),
 		func(f reflect.Type, t reflect.Type, in interface{}) (interface{}, error) {
-			if t == reflect.TypeOf(types.Blacklist{}) {
-				return decodeIntoBlacklist(in)
+			if t == reflect.TypeOf(filter.List{}) {
+				return decodeIntoFilter(in)
 			}
 			return in, nil
 		},
@@ -139,16 +139,24 @@ func (b *Builder) Build() (*Config, error) {
 	return &conf, nil
 }
 
-// Decode a generic structure into types.Blacklist
-func decodeIntoBlacklist(in any) (*types.Blacklist, error) {
+// Decode a generic structure into filter.List.
+func decodeIntoFilter(in any) (*filter.List, error) {
 	switch v := in.(type) {
 	// Standard map structure.
 	case map[string]any:
-		return blacklistParseMap(v)
+		list, err := filterParseMap(v)
+		if err != nil {
+			return nil, err
+		}
+		return list.SetMode(filter.Exclude), nil
 
 	// slice of "contract:action" pairs. Usually from CLI
 	case []string:
-		return blacklistParseSlice(v)
+		list, err := filterParseSlice(v)
+		if err != nil {
+			return nil, err
+		}
+		return list.SetMode(filter.Exclude), nil
 
 	// Sometimes we have a slice of interfaces.
 	// Need to convert it to a slice of strings.
@@ -157,28 +165,32 @@ func decodeIntoBlacklist(in any) (*types.Blacklist, error) {
 		if err != nil {
 			return nil, err
 		}
-		return blacklistParseSlice(sv)
+		list, err := filterParseSlice(sv)
+		if err != nil {
+			return nil, err
+		}
+		return list.SetMode(filter.Exclude), nil
 	}
 
 	return nil, fmt.Errorf("Must be a string slice")
 }
 
-// Blacklist map parser
-func blacklistParseMap(in map[string]any) (*types.Blacklist, error) {
-	list := &types.Blacklist{}
+// Filter map parser
+func filterParseMap(in map[string]any) (*filter.List, error) {
+	list := &filter.List{}
 	for contract, value := range in {
-		if err := blacklistParseValue(list, contract, value); err != nil {
+		if err := filterParseValue(list, contract, value); err != nil {
 			return nil, err
 		}
 	}
 	return list, nil
 }
 
-func blacklistParseValue(list *types.Blacklist, contract string, in any) error {
+func filterParseValue(list *filter.List, contract string, in any) error {
 	switch value := in.(type) {
 	case map[string]any:
 		for nested, nestedValue := range value {
-			if err := blacklistParseValue(list, contract+"."+nested, nestedValue); err != nil {
+			if err := filterParseValue(list, contract+"."+nested, nestedValue); err != nil {
 				return err
 			}
 		}
@@ -189,7 +201,7 @@ func blacklistParseValue(list *types.Blacklist, contract string, in any) error {
 			if !ok {
 				return fmt.Errorf("Must be a string slice")
 			}
-			if err := blacklistParseValue(list, contract+"."+nestedKey, nestedValue); err != nil {
+			if err := filterParseValue(list, contract+"."+nestedKey, nestedValue); err != nil {
 				return err
 			}
 		}
@@ -208,9 +220,9 @@ func blacklistParseValue(list *types.Blacklist, contract string, in any) error {
 	return nil
 }
 
-// Blacklist slice parser
-func blacklistParseSlice(in []string) (*types.Blacklist, error) {
-	list := &types.Blacklist{}
+// Filter slice parser
+func filterParseSlice(in []string) (*filter.List, error) {
+	list := &filter.List{}
 	for _, i := range in {
 		var action string
 		parts := strings.SplitN(i, ":", 2)

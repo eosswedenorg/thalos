@@ -24,6 +24,7 @@ import (
 	"github.com/eosswedenorg/thalos/internal/cache"
 	"github.com/eosswedenorg/thalos/internal/config"
 	driver "github.com/eosswedenorg/thalos/internal/driver/redis"
+	"github.com/eosswedenorg/thalos/internal/filter"
 	. "github.com/eosswedenorg/thalos/internal/log"
 	. "github.com/eosswedenorg/thalos/internal/server"
 	"github.com/nikoksr/notify"
@@ -237,7 +238,10 @@ func GetConfig(flags *pflag.FlagSet) (*config.Config, error) {
 		}
 	}
 
-	cfg.Ship.Blacklist.SetWhitelist(cfg.Ship.BlacklistIsWhitelist)
+	cfg.Ship.Blacklist.SetMode(filter.Exclude)
+	if cfg.Ship.BlacklistIsWhitelist {
+		cfg.Ship.Blacklist.SetMode(filter.Include)
+	}
 
 	return cfg, nil
 }

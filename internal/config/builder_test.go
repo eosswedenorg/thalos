@@ -6,8 +6,8 @@ import (
 	"time"
 
 	shipclient "github.com/eosswedenorg-go/antelope-ship-client"
+	"github.com/eosswedenorg/thalos/internal/filter"
 	"github.com/eosswedenorg/thalos/internal/log"
-	"github.com/eosswedenorg/thalos/internal/types"
 	"github.com/karlseguin/typed"
 	"github.com/stretchr/testify/require"
 )
@@ -41,15 +41,15 @@ func TestBuilder(t *testing.T) {
 			EndBlockNum:         23872222,
 			IrreversibleOnly:    true,
 			MaxMessagesInFlight: 1337,
-			Blacklist: *types.NewBlacklist(map[string][]string{
+			Blacklist: *filter.New(map[string][]string{
 				"eosio":    {"noop"},
 				"contract": {"skip1", "skip2"},
-			}),
+			}).SetMode(filter.Exclude),
 			BlacklistIsWhitelist: true,
-			TableDeltaWhitelist: *types.NewBlacklist(map[string][]string{
+			TableDeltaWhitelist: *filter.New(map[string][]string{
 				"eosio.token": {"accounts"},
 				"mycontract":  {"*"},
-			}),
+			}).SetMode(filter.Exclude),
 		},
 		Telegram: TelegramConfig{
 			Id:      "110201543:AAHdqTcvCH1vGWJxfSeofSAs0K5PALDsaw",
@@ -137,6 +137,8 @@ func TestBuilder_WithDefaultConfig(t *testing.T) {
 			EndBlockNum:         shipclient.NULL_BLOCK_NUMBER,
 			MaxMessagesInFlight: 10,
 			EnableTableDeltas:   true,
+			Blacklist:           *filter.New(nil).SetMode(filter.Exclude),
+			TableDeltaWhitelist: *filter.New(nil).SetMode(filter.Exclude),
 		},
 		Redis: RedisConfig{
 			Addr:   "127.0.0.1:6379",
@@ -213,15 +215,15 @@ func TestBuilder_Flags(t *testing.T) {
 			MaxMessagesInFlight: 98,
 			IrreversibleOnly:    true,
 			Chain:               "wax",
-			Blacklist: *types.NewBlacklist(map[string][]string{
+			Blacklist: *filter.New(map[string][]string{
 				"contract":  {"action1", "action2"},
 				"contract2": {"action1"},
-			}),
+			}).SetMode(filter.Exclude),
 			BlacklistIsWhitelist: true,
-			TableDeltaWhitelist: *types.NewBlacklist(map[string][]string{
+			TableDeltaWhitelist: *filter.New(map[string][]string{
 				"eosio.token": {"accounts"},
 				"mycontract":  {"*"},
-			}),
+			}).SetMode(filter.Exclude),
 		},
 		Telegram: TelegramConfig{
 			Id:      "72983126312982618",
@@ -243,11 +245,11 @@ func TestBuilder_Flags(t *testing.T) {
 func TestBuilder_BlacklistSlice(t *testing.T) {
 	expected := Config{
 		Ship: ShipConfig{
-			Blacklist: *types.NewBlacklist(map[string][]string{
+			Blacklist: *filter.New(map[string][]string{
 				"contract":  {"action"},
 				"contract2": {"action2"},
 				"contract3": {"*"},
-			}),
+			}).SetMode(filter.Exclude),
 		},
 	}
 
