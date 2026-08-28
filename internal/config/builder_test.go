@@ -41,6 +41,8 @@ func TestBuilder(t *testing.T) {
 			EndBlockNum:         23872222,
 			IrreversibleOnly:    true,
 			MaxMessagesInFlight: 1337,
+			EnableTransactions:  false,
+			EnableActions:       false,
 			Blacklist: *filter.New(map[string][]string{
 				"eosio":    {"noop"},
 				"contract": {"skip1", "skip2"},
@@ -87,6 +89,8 @@ ship:
   url: "127.0.0.1:8089"
   irreversible_only: true
   max_messages_in_flight: 1337
+  transactions: false
+  actions: false
   start_block_num: 23671836
   end_block_num: 23872222
   table_delta_whitelist:
@@ -136,6 +140,8 @@ func TestBuilder_WithDefaultConfig(t *testing.T) {
 			StartBlockNum:       shipclient.NULL_BLOCK_NUMBER,
 			EndBlockNum:         shipclient.NULL_BLOCK_NUMBER,
 			MaxMessagesInFlight: 10,
+			EnableTransactions:  true,
+			EnableActions:       true,
 			EnableTableDeltas:   true,
 			Blacklist:           *filter.New(nil).SetMode(filter.Exclude),
 			TableDeltaWhitelist: *filter.New(nil).SetMode(filter.Exclude),
@@ -186,6 +192,8 @@ func TestBuilder_Flags(t *testing.T) {
 	require.NoError(t, flags.Set("chain", "wax"))
 	require.NoError(t, flags.Set("blacklist", "contract:action1,contract:action2,contract2:action1"))
 	require.NoError(t, flags.Set("blacklist-is-whitelist", "true"))
+	require.NoError(t, flags.Set("transactions", "false"))
+	require.NoError(t, flags.Set("actions", "false"))
 	require.NoError(t, flags.Set("table-deltas", "false"))
 	require.NoError(t, flags.Set("table-delta-whitelist", "eosio.token:accounts,mycontract:*"))
 
@@ -214,6 +222,8 @@ func TestBuilder_Flags(t *testing.T) {
 			EndBlockNum:         329408392,
 			MaxMessagesInFlight: 98,
 			IrreversibleOnly:    true,
+			EnableTransactions:  false,
+			EnableActions:       false,
 			Chain:               "wax",
 			Blacklist: *filter.New(map[string][]string{
 				"contract":  {"action1", "action2"},

@@ -77,3 +77,19 @@ func TestShipProcessor_FilterWhitelistedContractRows_NoWhitelist(t *testing.T) {
 
 	require.Equal(t, rows, actual)
 }
+
+func TestShipProcessor_SetPostTransactions(t *testing.T) {
+	processor := &ShipProcessor{postTransactions: true}
+
+	processor.SetPostTransactions(false)
+
+	require.False(t, processor.postTransactions)
+}
+
+func TestShipProcessor_SetPostActions(t *testing.T) {
+	processor := &ShipProcessor{postActions: true}
+
+	processor.SetPostActions(false)
+
+	require.False(t, processor.postActions)
+}

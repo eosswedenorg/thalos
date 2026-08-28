@@ -398,6 +398,8 @@ func serverCmd(cmd *cobra.Command, args []string) {
 
 	processor.SetBlacklist(conf.Ship.Blacklist)
 	processor.SetTableDeltaWhitelist(conf.Ship.TableDeltaWhitelist)
+	processor.SetPostTransactions(conf.Ship.EnableTransactions)
+	processor.SetPostActions(conf.Ship.EnableActions)
 	processor.FetchDeltas(conf.Ship.EnableTableDeltas)
 
 	// Run the application

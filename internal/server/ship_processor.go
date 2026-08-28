@@ -45,16 +45,24 @@ type ShipProcessor struct {
 
 	// Optional whitelist for contract_row table delta contract+table names.
 	tableDeltaWhitelist filter.List
+
+	// If false, TransactionTrace messages will not be posted.
+	postTransactions bool
+
+	// If false, ActionTrace messages will not be posted.
+	postActions bool
 }
 
 // SpawnProcessor creates a new ShipProccessor that consumes the shipclient.Stream passed to it.
 func SpawnProccessor(shipStream *shipclient.Stream, loader StateLoader, saver StateSaver, writer driver.Writer, abi *abi.AbiManager, codec message.Codec) *ShipProcessor {
 	processor := &ShipProcessor{
-		saver:       saver,
-		abi:         abi,
-		shipStream:  shipStream,
-		syscontract: chain.N("eosio"),
-		queue:       NewMessageQueue(writer, codec.Encoder),
+		saver:            saver,
+		abi:              abi,
+		shipStream:       shipStream,
+		syscontract:      chain.N("eosio"),
+		queue:            NewMessageQueue(writer, codec.Encoder),
+		postTransactions: true,
+		postActions:      true,
 	}
 
 	loader(&processor.state)
@@ -86,6 +94,14 @@ func (processor *ShipProcessor) SetBlacklist(list filter.List) {
 func (processor *ShipProcessor) SetTableDeltaWhitelist(list filter.List) {
 	list.SetMode(filter.Include)
 	processor.tableDeltaWhitelist = list
+}
+
+func (processor *ShipProcessor) SetPostTransactions(enabled bool) {
+	processor.postTransactions = enabled
+}
+
+func (processor *ShipProcessor) SetPostActions(enabled bool) {
+	processor.postActions = enabled
 }
 
 func (processor *ShipProcessor) hasTableDeltaWhitelist() bool {
@@ -203,16 +219,20 @@ func (processor *ShipProcessor) processTransactionTrace(log *log.Entry, blockNum
 			actMsg.BlockNum = blockNumber
 			actMsg.Timestamp = timestamp
 
-			if err := processor.queue.PostAction(*actMsg); err != nil {
-				logger.WithError(err).Error("Failed to post action trace")
+			if processor.postActions {
+				if err := processor.queue.PostAction(*actMsg); err != nil {
+					logger.WithError(err).Error("Failed to post action trace")
+				}
 			}
 
 			transaction.ActionTraces = append(transaction.ActionTraces, *actMsg)
 		}
 	}
 
-	if err := processor.queue.PostTransactionTrace(transaction); err != nil {
-		logger.WithError(err).Error("Failed to post transaction trace")
+	if processor.postTransactions {
+		if err := processor.queue.PostTransactionTrace(transaction); err != nil {
+			logger.WithError(err).Error("Failed to post transaction trace")
+		}
 	}
 }
 

@@ -46,6 +46,12 @@ ship:
   # If true, Thalos will process table deltas
   # table_deltas: false
 
+  # If false, thalos will skip posting transaction trace messages.
+  # transactions: true
+
+  # If false, thalos will skip posting action trace messages.
+  # actions: true
+
   # Optional: whitelist table deltas by contract and table.
   # When set, thalos will only process `contract_row` deltas where both
   # `code` and `table` match this whitelist.
