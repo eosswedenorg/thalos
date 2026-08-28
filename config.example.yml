@@ -73,9 +73,10 @@ ship:
 
 # Configure the cache.
 # Default is to use redis. But if you need to
-# you can set additional values or even change the driver
-# to something else that Thalos supports.
-# See the documentation for details
+# you can set additional values or change the driver
+# supported drivers: redis, memory
+#
+# see https://thalos.waxsweden.org/docs/configuration#cache
 
 # cache:
 #   storage: redis
