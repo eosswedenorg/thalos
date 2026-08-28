@@ -203,7 +203,9 @@ func (processor *ShipProcessor) processTransactionTrace(log *log.Entry, blockNum
 			actMsg.BlockNum = blockNumber
 			actMsg.Timestamp = timestamp
 
-			processor.queue.PostAction(*actMsg)
+			if err := processor.queue.PostAction(*actMsg); err != nil {
+				logger.WithError(err).Error("Failed to post action trace")
+			}
 
 			transaction.ActionTraces = append(transaction.ActionTraces, *actMsg)
 		}
@@ -311,16 +313,16 @@ func (processor *ShipProcessor) proccessDeltaRow(row ship.Row, table_name string
 	}
 
 	if processor.shipABI == nil {
-		return msg, errors.New("No SHIP ABI present")
+		return msg, errors.New("no SHIP ABI present")
 	}
 
 	v, err := processor.shipABI.Decode(bytes.NewReader(row.Data), table_name)
 	if err != nil {
-		return msg, errors.New("Failed to decode table delta")
+		return msg, errors.New("failed to decode table delta")
 	}
 	data, err := ship_helper.ParseTableDeltaData(v)
 	if err != nil {
-		return msg, errors.New("Failed to parse table delta data")
+		return msg, errors.New("failed to parse table delta data")
 	}
 
 	msg.Data = data
@@ -329,7 +331,7 @@ func (processor *ShipProcessor) proccessDeltaRow(row ship.Row, table_name string
 	if table_name == "contract_row" {
 		dec, err := ship_helper.DecodeContractRow(processor.abi, data)
 		if err != nil {
-			return msg, errors.New("Failed to decode contract row")
+			return msg, errors.New("failed to decode contract row")
 		}
 		msg.Data["value"] = dec
 	}
@@ -339,7 +341,10 @@ func (processor *ShipProcessor) proccessDeltaRow(row ship.Row, table_name string
 // Callback function called by shipclient.Stream when a new block arrives.
 func (processor *ShipProcessor) processBlock(blockResult *ship.GetBlocksResultV0) {
 	block := ship.SignedBlock{}
-	blockResult.Block.Unpack(&block)
+	if err := blockResult.Block.Unpack(&block); err != nil {
+		log.WithError(err).Error("Failed to unpack block")
+		return
+	}
 	timestamp := block.BlockHeader.Timestamp.Time().UTC()
 	blockNumber := blockResult.ThisBlock.BlockNum
 

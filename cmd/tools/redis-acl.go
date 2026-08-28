@@ -144,7 +144,11 @@ func CreateRedisACLCmd() *cobra.Command {
 					log.WithError(err).Fatal("Failed to create output file")
 					return
 				}
-				defer out.Close()
+				defer func() {
+					if closeErr := out.Close(); closeErr != nil {
+						log.WithError(closeErr).Error("Failed to close output file")
+					}
+				}()
 			} else if !cleartext && atleastOneGeneratedPw {
 				fmt.Println()
 			}

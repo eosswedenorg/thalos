@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/eosswedenorg/thalos/api"
-	. "github.com/eosswedenorg/thalos/api/redis"
+	api_redis "github.com/eosswedenorg/thalos/api/redis"
 
 	"github.com/redis/go-redis/v9"
 )
@@ -12,10 +12,10 @@ import (
 type Publisher struct {
 	pipeline redis.Pipeliner
 	ctx      context.Context
-	ns       Namespace
+	ns       api_redis.Namespace
 }
 
-func NewPublisher(ctx context.Context, client *redis.Client, ns Namespace) *Publisher {
+func NewPublisher(ctx context.Context, client *redis.Client, ns api_redis.Namespace) *Publisher {
 	return &Publisher{
 		pipeline: client.Pipeline(),
 		ctx:      ctx,

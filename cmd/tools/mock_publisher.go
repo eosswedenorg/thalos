@@ -109,8 +109,14 @@ func CreateMockPublisherCmd() *cobra.Command {
 			channel := api.ActionChannel{}.Channel()
 
 			for {
-				_ = publisher.Write(channel, payload)
-				publisher.Flush()
+				if err := publisher.Write(channel, payload); err != nil {
+					log.WithError(err).Error("Failed to queue message")
+					continue
+				}
+
+				if err := publisher.Flush(); err != nil {
+					log.WithError(err).Error("Failed to flush publisher")
+				}
 			}
 		},
 	}

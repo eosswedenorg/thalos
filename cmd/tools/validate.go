@@ -104,7 +104,9 @@ func CreateValidateCmd() *cobra.Command {
 				select {
 				case <-sig:
 					fmt.Println("Got interrupt")
-					client.Close()
+					if err := client.Close(); err != nil {
+						log.WithError(err).Warn("Failed to close client")
+					}
 					return
 				case <-timer.C:
 					log.WithField("duration", timeout).

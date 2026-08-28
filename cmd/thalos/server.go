@@ -25,8 +25,8 @@ import (
 	"github.com/eosswedenorg/thalos/internal/config"
 	driver "github.com/eosswedenorg/thalos/internal/driver/redis"
 	"github.com/eosswedenorg/thalos/internal/filter"
-	. "github.com/eosswedenorg/thalos/internal/log"
-	. "github.com/eosswedenorg/thalos/internal/server"
+	internallog "github.com/eosswedenorg/thalos/internal/log"
+	shipserver "github.com/eosswedenorg/thalos/internal/server"
 	"github.com/nikoksr/notify"
 	"github.com/nikoksr/notify/service/telegram"
 	"github.com/redis/go-redis/v9"
@@ -36,7 +36,7 @@ import (
 	"github.com/spf13/pflag"
 )
 
-func readerLoop(conf *config.Config, running *bool, shClient *shipclient.Stream, processor *ShipProcessor) {
+func readerLoop(conf *config.Config, running *bool, shClient *shipclient.Stream, processor *shipserver.ShipProcessor) {
 	recon_cnt := 0
 
 	exp := &backoff.ExponentialBackOff{
@@ -123,7 +123,7 @@ func readerLoop(conf *config.Config, running *bool, shClient *shipclient.Stream,
 	}
 }
 
-func run(conf *config.Config, shClient *shipclient.Stream, processor *ShipProcessor) {
+func run(conf *config.Config, shClient *shipclient.Stream, processor *shipserver.ShipProcessor) {
 	running := true
 
 	// Spawn reader loop in another thread.
@@ -160,8 +160,8 @@ func initAbiManager(cfg *config.AbiCache, api *antelopeapi.Client, store cache.S
 	return abi.NewAbiManager(cfg, cache, api)
 }
 
-func stateLoader(conf *config.Config, start_block_flag *pflag.Flag, chainInfo func() *antelopeapi.Info, cache *cache.Cache, current_block_no_cache bool) StateLoader {
-	return func(state *State) {
+func stateLoader(conf *config.Config, start_block_flag *pflag.Flag, chainInfo func() *antelopeapi.Info, cache *cache.Cache, current_block_no_cache bool) shipserver.StateLoader {
+	return func(state *shipserver.State) {
 		var source string
 
 		// Load state from cache.
@@ -203,8 +203,8 @@ func stateLoader(conf *config.Config, start_block_flag *pflag.Flag, chainInfo fu
 	}
 }
 
-func stateSaver(cache *cache.Cache) StateSaver {
-	return func(state State) error {
+func stateSaver(cache *cache.Cache) shipserver.StateSaver {
+	return func(state shipserver.State) error {
 		ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond*500)
 		defer cancel()
 		return cache.Set(ctx, "state", state, 0)
@@ -304,12 +304,12 @@ func serverCmd(cmd *cobra.Command, args []string) {
 	}
 
 	if len(conf.Log.Filename) > 0 {
-		stdWriter, err := NewRotatingFileFromConfig(conf.Log, "info")
+		stdWriter, err := internallog.NewRotatingFileFromConfig(conf.Log, "info")
 		if err != nil {
 			log.WithError(err).Fatal("Failed to set standard log file")
 			return
 		}
-		errWriter, err := NewRotatingFileFromConfig(conf.Log, "error")
+		errWriter, err := internallog.NewRotatingFileFromConfig(conf.Log, "error")
 		if err != nil {
 			log.WithError(err).Fatal("Failed to set error log file")
 			return
@@ -324,8 +324,8 @@ func serverCmd(cmd *cobra.Command, args []string) {
 		}).Info("Logging to file")
 
 		log.SetOutput(io.Discard)
-		log.AddHook(MakeStdHook(stdWriter))
-		log.AddHook(MakeErrorHook(errWriter))
+		log.AddHook(internallog.MakeStdHook(stdWriter))
+		log.AddHook(internallog.MakeErrorHook(errWriter))
 	}
 
 	// Init telegram notification service
@@ -384,7 +384,7 @@ func serverCmd(cmd *cobra.Command, args []string) {
 		chain_id = chainInfo().ChainID
 	}
 
-	processor := SpawnProccessor(
+	processor := shipserver.SpawnProccessor(
 		shClient,
 		stateLoader(conf, cmd.Flags().Lookup("start-block"), chainInfo, cache, skip_currentblock_cache),
 		stateSaver(cache),
@@ -404,5 +404,7 @@ func serverCmd(cmd *cobra.Command, args []string) {
 	run(conf, shClient, processor)
 
 	// Close the processor properly
-	processor.Close()
+	if err := processor.Close(); err != nil {
+		log.WithError(err).Error("Failed to close processor")
+	}
 }

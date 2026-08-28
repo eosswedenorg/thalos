@@ -92,7 +92,7 @@ func (b *Builder) AddFlag(flag *pflag.Flag) *Builder {
 // Build the config object from file, cli-flags
 func (b *Builder) Build() (*Config, error) {
 	if b.in == nil {
-		return nil, errors.New("Config not set")
+		return nil, errors.New("config not set")
 	}
 
 	conf := Config{}
@@ -172,7 +172,7 @@ func decodeIntoFilter(in any) (*filter.List, error) {
 		return list.SetMode(filter.Exclude), nil
 	}
 
-	return nil, fmt.Errorf("Must be a string slice")
+	return nil, fmt.Errorf("must be a string slice")
 }
 
 // Filter map parser
@@ -199,7 +199,7 @@ func filterParseValue(list *filter.List, contract string, in any) error {
 		for nested, nestedValue := range value {
 			nestedKey, ok := nested.(string)
 			if !ok {
-				return fmt.Errorf("Must be a string slice")
+				return fmt.Errorf("must be a string slice")
 			}
 			if err := filterParseValue(list, contract+"."+nestedKey, nestedValue); err != nil {
 				return err
@@ -249,12 +249,12 @@ func toStringSlice(in any) ([]string, error) {
 		for _, item := range value {
 			str, ok := item.(string)
 			if !ok {
-				return nil, fmt.Errorf("Must be a string slice")
+				return nil, fmt.Errorf("must be a string slice")
 			}
 			out = append(out, str)
 		}
 		return out, nil
 	default:
-		return nil, fmt.Errorf("Must be a string slice")
+		return nil, fmt.Errorf("must be a string slice")
 	}
 }

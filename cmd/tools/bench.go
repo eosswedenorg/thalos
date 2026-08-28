@@ -98,7 +98,9 @@ func CreateBenchCmd() *cobra.Command {
 				select {
 				case <-sig:
 					fmt.Println("Got interrupt")
-					client.Close()
+					if err := client.Close(); err != nil {
+						log.WithError(err).Warn("Failed to close client")
+					}
 					return
 				case now := <-time.After(interval):
 					elapsed := now.Sub(t)

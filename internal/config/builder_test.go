@@ -158,7 +158,7 @@ func TestBuilder_WithDefaultConfig(t *testing.T) {
 func TestBuilder_NilSource(t *testing.T) {
 	cfg, err := NewBuilder().Build()
 	require.Nil(t, cfg)
-	require.EqualError(t, err, "Config not set")
+	require.EqualError(t, err, "config not set")
 }
 
 func TestBuilder_Flags(t *testing.T) {

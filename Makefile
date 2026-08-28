@@ -10,7 +10,7 @@ CFGDIR=$(PREFIX)/etc/thalos
 DOCKER_IMAGE_REPO ?= ghcr.io/eosswedenorg/thalos
 DOCKER_IMAGE_TAG ?= $(PROGRAM_VERSION)
 
-.PHONY: build build/$(PROGRAM) build/thalos-tools test docker-image docker-publish
+.PHONY: build build/$(PROGRAM) build/thalos-tools test lint docker-image docker-publish
 
 build: build/$(PROGRAM)
 
@@ -42,5 +42,10 @@ build-deb:
 test:
 	$(GO) test -v ./...
 	cd api; $(GO) test -v ./...
+
+lint:
+	golangci-lint run ./...
+	cd api; golangci-lint run ./...
+
 clean :
 	$(RM) -fr build

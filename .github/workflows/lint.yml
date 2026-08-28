@@ -1,0 +1,30 @@
+name: Lint
+
+permissions:
+  contents: read
+
+on:
+  - push
+  - pull_request
+
+jobs:
+  golangci-lint:
+    strategy:
+      fail-fast: false
+      matrix:
+        module: [".", "api"]
+    runs-on: ubuntu-latest
+    name: golangci-lint (${{ matrix.module }})
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ${{ matrix.module }}/go.mod
+
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v9
+        with:
+          version: v2.12
+          working-directory: ${{ matrix.module }}

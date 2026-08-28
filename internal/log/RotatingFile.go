@@ -82,12 +82,16 @@ func (w RotatingFile) GetFilename() string {
 }
 
 // Rotate the file.
-func (w *RotatingFile) Rotate() error {
+func (w *RotatingFile) Rotate() (err error) {
 	dst, err := os.OpenFile(w.newFilename(w.fd.Name()), os.O_CREATE|os.O_WRONLY, 0o666)
 	if err != nil {
 		return err
 	}
-	defer dst.Close()
+	defer func() {
+		if closeErr := dst.Close(); err == nil && closeErr != nil {
+			err = closeErr
+		}
+	}()
 
 	// Seek to the beginning of file
 	if _, err = w.fd.Seek(0, io.SeekStart); err != nil {
