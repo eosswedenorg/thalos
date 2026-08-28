@@ -1,3 +1,19 @@
+thalos (1.1.10) bionic focal jammy; urgency=medium
+
+  * SHIP messages controls: add `ship.transactions` and `ship.actions`
+    (and matching CLI flags) to optionally skip publishing transaction/action
+    messages.
+  * Table delta filtering: add `ship.table_delta_whitelist` to allow
+    `contract_row` deltas by `contract:table` (supports `*` wildcard).
+  * Action filter internals: migrate blacklist handling to a shared filter
+    implementation for more consistent matching behavior.
+  * Quality and CI: add golangci-lint configuration + workflow, and fix
+    existing lint findings across server/tools code paths.
+  * Build/runtime maintenance: update Go toolchain/dependencies and refresh
+    CI workflow versions.
+
+ -- Henrik Hautakoski <henrik.hautakoski@gmail.com>  Fri, 28 Aug 2026 14:18:33 +0200
+
 thalos (1.1.9) bionic focal jammy; urgency=medium
 
   * [Security CVE-2024-45338] Update golang.org/x/net to 0.33.0
@@ -280,4 +296,3 @@ thalos-server (0.1.0) bionic focal jammy; urgency=medium
   Initial release.
 
  -- Henrik Hautakoski <henrik@eossweden.org>  Sun, 14 May 2023 18:17:35 +0200
-
