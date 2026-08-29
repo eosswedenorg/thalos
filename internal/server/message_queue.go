@@ -38,7 +38,8 @@ func (mq MessageQueue) PostTransactionTrace(trace message.TransactionTrace) erro
 
 // Post a ActionTrace message to the queue
 func (mq MessageQueue) PostAction(act message.ActionTrace) error {
-	return mq.post(act,
+	return mq.post(
+		act,
 		api.ActionChannel{}.Channel(),
 		api.ActionChannel{Name: act.Name}.Channel(),
 		api.ActionChannel{Contract: act.Contract}.Channel(),
@@ -47,7 +48,8 @@ func (mq MessageQueue) PostAction(act message.ActionTrace) error {
 }
 
 func (mq MessageQueue) PostTableDelta(delta message.TableDelta) error {
-	return mq.post(delta,
+	return mq.post(
+		delta,
 		api.TableDeltaChannel{}.Channel(),
 		api.TableDeltaChannel{Name: delta.Name}.Channel(),
 	)
@@ -61,12 +63,12 @@ func (mq MessageQueue) Close() error {
 	return mq.writer.Close()
 }
 
-func (mq MessageQueue) post(v interface{}, channels ...api.Channel) error {
+func (mq MessageQueue) post(v any, channels ...api.Channel) error {
 	payload, err := mq.encode(v)
 	if err == nil {
 		for _, channel := range channels {
-			if w_err := mq.writer.Write(channel, payload); err != nil {
-				err = errors.Join(w_err)
+			if wErr := mq.writer.Write(channel, payload); wErr != nil {
+				err = errors.Join(err, wErr)
 			}
 		}
 	}
