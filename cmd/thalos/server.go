@@ -166,7 +166,7 @@ func stateLoader(conf *config.Config, start_block_flag *pflag.Flag, chainInfo fu
 
 		// Load state from cache.
 		ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond*500)
-		err := cache.Get(ctx, "state", &state)
+		err := cache.Get(ctx, "state", state)
 		cancel()
 
 		// on error (cache miss) or if current_block_no_cache is set.
