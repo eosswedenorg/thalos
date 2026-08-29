@@ -234,7 +234,7 @@ func GetConfig(flags *pflag.FlagSet) (*config.Config, error) {
 	// If start-block is provided, we should set no-state-cache to true.
 	if startBlock := flags.Lookup("start-block"); startBlock != nil && startBlock.Changed {
 		if err := flags.Set("no-state-cache", "true"); err != nil {
-			return cfg, nil
+			return nil, fmt.Errorf("failed to set no-state-cache flag: %w", err)
 		}
 	}
 

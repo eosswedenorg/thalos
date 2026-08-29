@@ -19,6 +19,7 @@ import (
 
 type Builder struct {
 	in    io.Reader
+	err   error
 	flags *pflag.FlagSet
 	binds map[string]string
 }
@@ -69,13 +70,19 @@ func NewBuilder() *Builder {
 
 // Set the config file to read
 func (b *Builder) SetConfigFile(filename string) *Builder {
-	file, _ := os.Open(filename)
+	file, err := os.Open(filename)
+	if err != nil {
+		b.err = err
+		return b
+	}
+	b.err = nil
 	return b.SetSource(file)
 }
 
 // Set the source to read
 func (b *Builder) SetSource(in io.Reader) *Builder {
 	b.in = in
+	b.err = nil
 	return b
 }
 
@@ -93,6 +100,10 @@ func (b *Builder) AddFlag(flag *pflag.Flag) *Builder {
 
 // Build the config object from file, cli-flags
 func (b *Builder) Build() (*Config, error) {
+	if b.err != nil {
+		return nil, b.err
+	}
+
 	if b.in == nil {
 		return nil, errors.New("config not set")
 	}

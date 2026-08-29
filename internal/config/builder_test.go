@@ -2,6 +2,7 @@ package config
 
 import (
 	"bytes"
+	"path/filepath"
 	"testing"
 	"time"
 
@@ -165,6 +166,16 @@ func TestBuilder_NilSource(t *testing.T) {
 	cfg, err := NewBuilder().Build()
 	require.Nil(t, cfg)
 	require.EqualError(t, err, "config not set")
+}
+
+func TestBuilder_SetConfigFile_FileNotFound(t *testing.T) {
+	missingFile := filepath.Join(t.TempDir(), "missing.yml")
+
+	cfg, err := NewBuilder().SetConfigFile(missingFile).Build()
+
+	require.Nil(t, cfg)
+	require.Error(t, err)
+	require.ErrorContains(t, err, missingFile)
 }
 
 func TestBuilder_Flags(t *testing.T) {
