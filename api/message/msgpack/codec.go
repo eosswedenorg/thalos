@@ -11,7 +11,7 @@ import (
 func createCodec() message.Codec {
 	// Create handler.
 	handle := codec.MsgpackHandle{}
-	handle.MapType = reflect.TypeOf(map[string]any(nil))
+	handle.MapType = reflect.TypeFor[map[string]any]()
 	handle.Canonical = true
 
 	// Weird name but this is needed for the newest version of msgpack
