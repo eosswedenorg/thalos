@@ -13,15 +13,15 @@ log:
   # Directory to store the logfiles in.
   directory: logs
   # Format to rename log files when rotating
-  time_format: 2006-01-02_150405
+  file_timestamp_format: 2006-01-02_150405
 
   # Log rotation, logfile is rotated when any of these
   # conditions are met. set to 0 or remove to disable.
 
   # Rotate when the file reaches this size.
-  max_filesize: 200mb
+  maxfilesize: 200mb
   # Rotate when the file is this old.
-  max_time: 24h
+  maxtime: 24h
 
 # SHIP settings
 ship:
