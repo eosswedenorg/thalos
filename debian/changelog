@@ -1,3 +1,13 @@
+thalos (1.1.11) bionic focal jammy; urgency=medium
+
+  * chore(api/msgpack): use reflect.TypeFor for map type
+  * docs(config): align example log keys with parser
+  * fix(config): propagate config setup errors
+  * fix(server): load state with correct pointer
+  * fix(server): handle message queue write errors
+
+ -- Henrik Hautakoski <henrik.hautakoski@gmail.com>  Mon, 31 Aug 2026 14:14:25 +0200
+
 thalos (1.1.10) bionic focal jammy; urgency=medium
 
   * SHIP messages controls: add `ship.transactions` and `ship.actions`
